@@ -7,7 +7,7 @@ The U-Net! Released in 2015, [the original literature covering the U-Net archite
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 # Architecture
 
-## Encoder Network
+## Contracting Path
 
 As you can see in the above image, the U-Net derives its name from its signature U shape. Descending the U, we downsample our input image to a more condensed representation before upsampling it as we ascend the U-shaped structure. Think of it like learning to play basketball: before you can hope to catch-and-shoot running around a screen, you first have to learn the fundamentals. How do you set your feet for your shot? How do you keep the ball at head height to prevent it from getting blocked? How do you release the ball when shooting? Distilling a complex operation into a smaller, more manageable area of learning allows you to focus on the truly important features. Rather than trying to learn all of these techniques at once, at every step of the process we can learn a portion of the bigger picture and then put these steps together for a finished product at the end. We follow this practice with the U-Net. The input image enters the network. For this purpose, we will be considering a 572x572 image as those are the dimensions considered in the above illustration. The image is passed through two sequential 3x3 convolution layers followed by a ReLU activation function applied element-wise. For those of you not from an ML background, it might seem like I slipped into a different language. I'll explain what each of these concepts mean.  
 
@@ -40,9 +40,6 @@ We take the 3x3 kernel given above and perform convolution between the kernel an
 Now imagine we've only been looking at the topmost of the kaleidoscope image. And so we shift the lens down slightly to the next stage. A lot of the image will still look the same but we've lost the topmost row of the image and gained another row instead. ![Second row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_second_row.png) We shift down another row. ![Third row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_third_row.png) And another, where we've arrived at all the information our kaleidoscope has to offer. ![Fourth row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_fourth_row.png) 
 As you can see in the example, our input matrix is 6x6 while our output matrix is 4x4. The reason for this decrease in size is that as we move the kernel around the input matrix, we inevitably lose out on the edgemost matrix elements. This is intended for the U-Net architecture. The authors refer to it as the overlap-tile strategy, important for biomedical image segmentation as we only utilize pixels of the image where the full context is available in the input image. 
 
-### Batch Normalization
-Sometimes, we have batch normalization.
-
 ### Rectified Linear Unit
 Now that we have our output matrix, we apply an element-wise activation function. An activation function takes in a value and 
 
@@ -52,6 +49,9 @@ Now that we have our output matrix, we apply an element-wise activation function
 
 ## Bridge
 
-## Decoder Network
+## Expansive Path
+
+### Batch Normalization
+The original paper does not include batch normalization, but it has become very common in subsequent architectures. Given a wide potential range of values included in the output matrix, we may want to take some action to stabilize the network and prevent it from being too affected by outlier values. One option is batch normalization. Batch normalization reduces the covariance, or joint variability of two variables. It is used to minimize the influence singular values may have on other values in the matrix. [Its PyTorch implementation can be found here](https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html). After performing our convolution operations, we can pass our output matrix through a batch normalization layer to concentrate our values and bring them closer to a
 
 ### Dropout
