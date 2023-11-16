@@ -41,17 +41,38 @@ Now imagine we've only been looking at the topmost of the kaleidoscope image. An
 As you can see in the example, our input matrix is 6x6 while our output matrix is 4x4. The reason for this decrease in size is that as we move the kernel around the input matrix, we inevitably lose out on the edgemost matrix elements. This is intended for the U-Net architecture. The authors refer to it as the overlap-tile strategy, important for biomedical image segmentation as we only utilize pixels of the image where the full context is available in the input image. 
 
 ### Rectified Linear Unit
-Now that we have our output matrix, we apply an element-wise activation function. An activation function takes in a value and 
+Now that we have our output matrix, we apply an element-wise activation function. An activation function takes in a value and acts as a filter. Depending on the value received, the activation function may simply allow it to pass, apply a sinusoidal function, or reject the value entirely and replace it with 0. The rectified linear unit (ReLU) activation function allows all nonnegative values to pass, and sets all negative values to 0. 
+![A graph demonstrating the Rectified Linear Unit activation function](relu_activation_function.png)
+By passing our output matrix through this activation function, we are simply zeroing out all negative values. 
 
 ### Max Pooling
-
-## Skip Connections
 
 ## Bridge
 
 ## Expansive Path
+Words. 
+
+### Up-Convolution
+
+## Skip Connections
+Words about concatenation b/t contracting path and expansive path images. Images from contracting path must be cropped because of pixels lost from convolution for expansive path. 
+
+### Convolution and ReLU
+
+### Final Layer (1x1 Convolution)
+
+### Error Function (Cross-Entropy)
+We've done it. We've practiced setting our feet coming around the screen, we've practiced our hand positioning, we've practiced our follow-through. We've spent time practicing each part of the technique separately and now it's time to put it all together. You run around the screen, catch the ball, shoot, and... CLANGGGG! Off front-rim. What happened? Somewhere in the process, something went wrong. Despite all the time and energy you've put into practicing your technique, something is still a little bit off. It's okay though! Maybe it was the positioning of your feet, maybe it was your release point, maybe you hadn't practiced enough with a defender and that threw off your shot. Whatever the reason, it's okay. This is a learning process and with time, you'll be able to adjust your shot as you learn more and more about what a good shot looks like and take fewer and fewer bad shots. That's exactly what happens with neural networks!
+
+Backpropagation is key to the success of any neural network. It spends its time practicing and learning its task, and adjusts its predicted value to the true value provided by the training data. In this case, the U-Net predicts its segmentations and finds out how good of a job it did. If it did a great job, it might go back and only slightly adjust its follow-through. If it did a really bad job, it might go back and do a serious rewrite of setting its feet and practice bringing the ball up to head height again. How good of a job the network did is decided by its loss function. For the U-Net, that loss function is Cross-Entropy. 
+
+Cross-Entropy functions 
+
+## Other
+
+### Data Augmentation
 
 ### Batch Normalization
-The original paper does not include batch normalization, but it has become very common in subsequent architectures. Given a wide potential range of values included in the output matrix, we may want to take some action to stabilize the network and prevent it from being too affected by outlier values. One option is batch normalization. Batch normalization reduces the covariance, or joint variability of two variables. It is used to minimize the influence singular values may have on other values in the matrix. [Its PyTorch implementation can be found here](https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html). After performing our convolution operations, we can pass our output matrix through a batch normalization layer to concentrate our values and bring them closer to a
+The original paper does not include batch normalization, but it has become very common in subsequent architectures. Given a wide potential range of values included in the output matrix, we may want to take some action to stabilize the network and prevent it from being too affected by outlier values. One option is batch normalization. Batch normalization reduces the covariance, or joint variability of two variables. It is used to minimize the influence singular values may have on other values in the matrix. [Its PyTorch implementation can be found here](https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html). After performing our convolution operations, we can pass our output matrix through a batch normalization layer to concentrate our values and bring them closer to a uniform distribution. Uniform distributions become a lot easier to optimize for, than distributions spanning a wide range of values with outliers, which is what we had before. For this reason, batch normalization layers can aid in "simplifying" our values and bringing them closer to a standard distribution before feeding them to our activation layer. 
 
 ### Dropout
