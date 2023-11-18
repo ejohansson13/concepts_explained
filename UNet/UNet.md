@@ -42,7 +42,7 @@ As you can see in the example, our input matrix is 6x6 while our output matrix i
 
 ### Rectified Linear Unit
 Now that we have our output matrix, we apply an element-wise activation function. An activation function takes in a value and acts as a filter. Depending on the value received, the activation function may simply allow it to pass, apply a sinusoidal function, or reject the value entirely and replace it with 0. The rectified linear unit (ReLU) activation function allows all nonnegative values to pass, and sets all negative values to 0. 
-![A graph demonstrating the Rectified Linear Unit activation function](relu_activation_function.png)
+![A graph demonstrating the Rectified Linear Unit activation function](/UNet/Images/relu_activation_function.png)
 By passing our output matrix through this activation function, we are simply zeroing out all negative values. 
 
 ### Max Pooling
