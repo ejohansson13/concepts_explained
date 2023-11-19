@@ -42,6 +42,7 @@ As you can see in the example, our input matrix is 6x6 while our output is 4x4. 
 <p align="center" width="100%">
   <img src="/UNet/Images/biomed_convolution_example.png" alt="Biomedical image segmentation example of convolution operation from U-Net research paper released in 2015" width="50%"
 </p>
+
 With training, the network was able to extract the important features from the image. The convolution operation also discarded the edges of the image due to the incomplete context around those pixels, similar to our example.
 
 ### Rectified Linear Unit
