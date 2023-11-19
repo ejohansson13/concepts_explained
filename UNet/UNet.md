@@ -48,7 +48,7 @@ Now that we have our output matrix, we apply an element-wise activation function
 
 After passing our output matrix through the ReLU activation function, we have the following output.
 <p align="center" width="100%">
-  <img src="/UNet/Images/matrix_after__activation.png" width="75%">
+  <img src="/UNet/Images/matrix_after_activation.png" width="75%">
 </p>
 
 By passing our output matrix through this activation function, we are zeroing all negative values. This is important. Activation functions take on the nonlinear responsibility of our network. For those of you with an ML background, this is intuitive. For others, I'll give a brief overview and attach some resources for further reading. Without introducing any nonlinearity, we are bounding our network to linear representations. Regardless of our architecture or number of layers, a combination of linear operations will always result in a linear output and fail to capture a more complex relationship.
