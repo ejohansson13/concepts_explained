@@ -58,14 +58,26 @@ After passing our output matrix through the ReLU activation function, we have th
 
 By passing our output matrix through this activation function, we are zeroing all negative values. This is important. Activation functions take on the nonlinear responsibility of our network. For those of you with an ML background, this is intuitive. For others, I'll give a brief overview and attach some resources for further reading. Without introducing any nonlinearity, we are bounding our network to linear representations. Regardless of our architecture or number of layers, a combination of linear operations will always result in a linear output and fail to capture a more complex relationship.
 <p align="center" width="100%">
-  <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="60%"
+  <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="40%"
 </p>
+  
 Expressing this idea in 2-dimensions might seem reductive, but we can see that regardless of the complexity of our linear relationship, we fail to adequately represent the quadratic curve. Non-linear activation functions allow us to express more complex relationships for the network to better understand the data. [Here's a video of Andrew Ng on nonlinear activation functions](https://www.youtube.com/watch?v=NkOv_k7r6no). [And a blog post covering the functions with some code examples](https://machinelearningmastery.com/using-activation-functions-in-neural-networks/).
 
 ### Max Pooling
+This process is repeated twice. Our initial image is passed through a convolution operation, then ReLU, and that result is passed through another round of convolution and activation functions. Next, we arrive at the downsampling step.
+<p align="center" width="100%">
+  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="60%"
+</p>
 
+To downsample our matrix output, we perform a 2x2 max pooling operation. Max pooling maintains the most essential features of our images while diminishing our total information for faster computations. Preserving the most important features regardless of our matrix size builds robustness in the network to any scale and orientation changes in images. We can take our previous matrix as an example. At each 2x2 step, we highlight the most relevant value and pass it on to our output matrix. By highlighting the most relevant features in our image, we are also diminishing the less important features. The network becomes less concerned in discoloration or lighting of an image and focused on the objects contained within the image.
+<p align="center" width="100%">
+  <img src="/UNet/Images/max_pooling.png" alt="Example of a max pooling operation transforming a 4x4 matrix into a 2x2 matrix" width="60%"
+</p>
+
+Following the convolution, ReLU, and now max pooling operation, the most relevant features of the image have been highlighted for the network to learn. It has also arrived at a much more compact representation of the image, highlighting the efficiency of the U-Net architecture. Distlling our higher-dimension image to a lower-dimension representation allows for easier and faster computations, especially when our images aren't 6x6 as in the example, but 572x572. With each max pooling operation, we decrease our total number of pixels by 75% as we half the number of rows **and** columns in our matrix. 
 
 ## Bridge
+We would repeat the above stages thrice more (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) before arriving at the bridge. 
 
 ## Expansive Path
 Words. 
@@ -79,6 +91,8 @@ Words about concatenation b/t contracting path and expansive path images. Images
 
 ### Final Layer (1x1 Convolution)
 
+## Other
+
 ### Error Function (Cross-Entropy)
 We've done it. We've practiced setting our feet coming around the screen, we've practiced our hand positioning, we've practiced our follow-through. We've spent time practicing each part of the technique separately and now it's time to put it all together. You run around the screen, catch the ball, shoot, and... CLANGGGG! Off front-rim. What happened? Somewhere in the process, something went wrong. Despite all the time and energy you've put into practicing your technique, something is still a little bit off. It's okay though! Maybe it was the positioning of your feet, maybe it was your release point, maybe you hadn't practiced enough with a defender and that threw off your shot. Whatever the reason, it's okay. This is a learning process and with time, you'll be able to adjust your shot as you learn more and more about what a good shot looks like and take fewer and fewer bad shots. That's exactly what happens with neural networks!
 
@@ -86,11 +100,12 @@ Backpropagation is key to the success of any neural network. It spends its time 
 
 Cross-Entropy functions 
 
-## Other
-
 ### Data Augmentation
 
 ### Batch Normalization
 The original paper does not include batch normalization, but it has become very common in subsequent architectures. Given a wide potential range of values included in the output matrix, we may want to take some action to stabilize the network and prevent it from being too affected by outlier values. One option is batch normalization. Batch normalization reduces the covariance, or joint variability of two variables. It is used to minimize the influence singular values may have on other values in the matrix. [Its PyTorch implementation can be found here](https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html). After performing our convolution operations, we can pass our output matrix through a batch normalization layer to concentrate our values and bring them closer to a uniform distribution. Uniform distributions become a lot easier to optimize for, than distributions spanning a wide range of values with outliers, which is what we had before. For this reason, batch normalization layers can aid in "simplifying" our values and bringing them closer to a standard distribution before feeding them to our activation layer. 
 
 ### Dropout
+
+### Disclaimer: Additional Details
+Image set is actually 512x512 pixels, converted to 572x572 by mirroring 30 pixels on either end of image. This concept is known as padding where an image size is slightly increased with placeholder values for ease of computation. Additionally, when performing convolution or max pooling, we are using strides to determine how much we move each filter along our input matrix. With a stride of 1, as in convolution, we only shift the matrix by one pixel when done with our operations. Max pooling will often use a stride of 2 and subsequently move the filter to values that were unseen in the previous operation. Think about it, if we have a 2x2 max pooling operation and then shift the filter over by 2, the next 2x2 matrix subset will be values that were not viewed in the previous operation.
