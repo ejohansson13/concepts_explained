@@ -90,7 +90,7 @@ Throughout our encoder process, we performed multiple sequential operations. Con
 ### Up-Sampling
 Two main approaches exist to upsampling: nearest neighbor interpolation or transpose convolution. Nearest neighbor interpolation is intuitive. We convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value.
 <p align="center" width="100%">
-  <img src="/UNet/Images/simple_upsampling.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%"
+  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="55%"
 </p>
 
 We duplicate every instance of our previous value to double the number of rows and columns for our matrix. There are no learned values here, it is simple and easily done. This was the method used in the original research paper and offers a quick path towards upsampling our compressed image representations. 
@@ -100,12 +100,23 @@ Transpose convolution offers an alternative. It offers a learnable kernel to inc
 Imagine you have the perfect recipe for chicken wings. Unfortunately it only applies to five chicken wings and is enough to feed yourself for dinner every night, but you're having nine friends over and want to increase the recipe to accomodate everyone. You could multiply the recipe by 10 to have enough food for yourself and your guests. This would be nearest neighbor interpolation. Alternatively, you could practice multiple times, changing the ingredients and playing with the spice levels until you arrive at a recipe you enjoy for 10 people. This would require multiple stages of practicing, tasting the wings, and rewriting the recipe until you're happy with the final product. This would be transpose convolution and has the associated time cost as well.
 
 ### Skip Connections
-As we ascend the expansive path, we notice a significant change in the architecture from the contracting path. Skip connections or connecting paths offer an opportunity for our network to learn at once from the stage it's in in the ascending path while also receiving information from the corresponding stage in the descending path. The connecting paths link similar dimension images across the architecture to augment our learning process. Images from the contracting path are concatenated on to our expansive path stages. Imagine stacking cheese for a cheeseburger. You'd want each cheese slice to be the same size. Images taken from the contracting path can be seen in the image to be cropped so that they fit the size of the same stage in the expansive path. Continuing with our cheese analogy, we'd be cutting the sizes of different cheese slices so they can be evenly stacked atop each other.
+As we ascend the expansive path, we notice a significant change in the architecture from the contracting path. Skip connections or connecting paths offer an opportunity for our network to learn at once from its stage in the ascending path while also receiving information from the corresponding stage in the descending path. The connecting paths link similar dimension images across the architecture to augment our learning process. Images from the contracting path are concatenated on to our expansive path stages. Imagine stacking cheese for a cheeseburger. You'd want each cheese slice to be the same size. We'd be cutting the sizes of different cheese slices so they can be evenly stacked atop each other. Images taken from the contracting path can be seen in the image to be cropped so that they fit the size of the same stage in the expansive path. 
 <p align="center" width="100%">
   <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="60%"
 </p>
 
-
+The benefit here is that by combining the features present at the encoder stage with those present at the decoder stage, we obtain a more complete understanding of the image. Our current decoder stage image representation has been so distilled that it might have the general idea of an object's location, but not know what the object is. By combining the two representations, we can gain an understanding of both where the object is and what object lies in the segmented portion of the image, boosting our network's overall understanding of the image. An example is given below, taken from [this video](https://www.youtube.com/watch?v=NhdzGfB1q74) which does a phenomenal job explaining the overall architecture for those with a background in ML.
+<div class="row">
+  <div class="column">
+    <img src="encoder_stage_sc.png" width="40%">
+  </div>
+  <div class="column">
+    <img src="decoder_stage_sc.png" width="40%">
+  </div>
+  <div class="column">
+    <img src="combined_stage_sc.png" width="40%">
+  </div>
+</div>
 
 ### Convolution and ReLU
 
