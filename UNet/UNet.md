@@ -7,7 +7,7 @@ The U-Net! Released in 2015, [the original literature covering the U-Net archite
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 # Architecture
 
-## Contracting Path
+## Contracting Path (Encoder)
 
 As you can see in the above image, the U-Net derives its name from its signature U shape. Descending the U, we downsample our input image to a more condensed representation before upsampling it as we ascend the U-shaped structure. Think of it like learning to play basketball: before you can hope to catch-and-shoot running around a screen, you first have to learn the fundamentals. How do you set your feet for your shot? How do you keep the ball at head height to prevent it from getting blocked? How do you release the ball when shooting? Distilling a complex operation into smaller, more manageable areas of learning allows you to focus on the truly important features. Rather than trying to learn all of these techniques at once, at every step of the process we can learn a portion of the bigger picture and then put these steps together for a finished product at the end. We follow this practice with the U-Net. The input image enters the network. For this purpose, we will be considering a 572x572 image as those are the dimensions considered in the above illustration. The image is passed through two sequential 3x3 convolution layers followed by a ReLU activation function applied element-wise. For those of you not from an ML background, it might seem like I slipped into a different language. I'll explain what each of these concepts mean.  
 
@@ -40,7 +40,7 @@ We take the 3x3 kernel given above and perform convolution between the kernel an
 Now imagine we've only been looking at the topmost of the kaleidoscope image. And so we shift the lens down slightly to the next stage. A lot of the image will still look the same but we've lost the topmost row of the image and gained another row instead. Here, we're simply performing the same elementwise multiplication between the kernel and our matrix subset and summing the products. ![Second row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_second_row.png) We shift down another row and perform the same operations. ![Third row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_third_row.png) And another, where we've arrived at all the information our kaleidoscope has to offer and correspondingly all the information our kernel has chosen to highlight from our input matrix. ![Fourth row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_fourth_row.png) 
 As you can see in the example, our input matrix is 6x6 while our output is 4x4. The reason for this decrease in size is that as we move the kernel around the input matrix, we lose out on the edgemost matrix elements. This is intended for the U-Net architecture. The authors refer to it as the overlap-tile strategy, important for biomedical image segmentation as we only utilize pixels of the image where the full context is available in the input image. Here's an example: 
 <p align="center" width="100%">
-  <img src="/UNet/Images/biomed_convolution_example.png" alt="Biomedical image segmentation example of convolution operation from U-Net research paper released in 2015" width="50%"
+  <img src="/UNet/Images/biomed_convolution_example.png" alt="Biomedical image segmentation example of convolution operation from U-Net research paper released in 2015" width="40%"
 </p>
 
 With training, the network was able to extract the important features from the image. The convolution operation also discarded the edges of the image due to the incomplete context around those pixels, similar to our example.
@@ -48,43 +48,48 @@ With training, the network was able to extract the important features from the i
 ### Rectified Linear Unit
 Now that we have our output matrix, we apply an element-wise activation function. An activation function takes in a value and acts like a security checkpoint at the airport. At the airport, if you have a bottle with liquid over a certain amount, you must empty it before continuing. Rules are in place and if you fall short of those rules, you alter your input before proceeding. Depending on the value input to the activation function, it may allow it to pass unaffected, apply a sinusoidal function, or reject the value and replace it with 0. The rectified linear unit (ReLU) activation function allows all nonnegative values to pass, and rejects negative values, setting them to 0.
 <p align="center" width="100%">
-  <img src="/UNet/Images/relu_activation_function.png" alt="A graph demonstrating the Rectified Linear Unit activation function" width="35%">
+  <img src="/UNet/Images/relu_activation_function.png" alt="A graph demonstrating the Rectified Linear Unit activation function" width="25%">
 </p>
 
 After passing our output matrix through the ReLU activation function, we have the following output.
 <p align="center" width="100%">
-  <img src="/UNet/Images/matrix_after_activation.png" width="75%">
+  <img src="/UNet/Images/matrix_after_activation.png" width="55%">
 </p>
 
 By passing our output matrix through this activation function, we are zeroing all negative values. This is important. Activation functions take on the nonlinear responsibility of our network. For those of you with an ML background, this is intuitive. For others, I'll give a brief overview and attach some resources for further reading. Without introducing any nonlinearity, we are bounding our network to linear representations. Regardless of our architecture or number of layers, a combination of linear operations will always result in a linear output and fail to capture a more complex relationship.
 <p align="center" width="100%">
-  <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="40%"
+  <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="30%"
 </p>
   
 Expressing this idea in 2-dimensions might seem reductive, but we can see that regardless of the complexity of our linear relationship, we fail to adequately represent the quadratic curve. Non-linear activation functions allow us to express more complex relationships for the network to better understand the data. [Here's a video of Andrew Ng on nonlinear activation functions](https://www.youtube.com/watch?v=NkOv_k7r6no). [And a blog post covering the functions with some code examples](https://machinelearningmastery.com/using-activation-functions-in-neural-networks/).
 
-### Max Pooling
+### Down-sampling (Max Pooling)
 This process is repeated twice. Our initial image is passed through a convolution operation, then ReLU, and that result is passed through another round of convolution and activation functions. Next, we arrive at the downsampling step.
 <p align="center" width="100%">
-  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="60%"
+  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="10%"
 </p>
 
 To downsample our matrix output, we perform a 2x2 max pooling operation. Max pooling maintains the most essential features of our images while diminishing our total information for faster computations. Preserving the most important features regardless of our matrix size builds robustness in the network to any scale and orientation changes in images. We can take our previous matrix as an example. At each 2x2 step, we highlight the most relevant value and pass it on to our output matrix. By highlighting the most relevant features in our image, we are also diminishing the less important features. The network becomes less concerned in discoloration or lighting of an image and focused on the objects contained within the image.
 <p align="center" width="100%">
-  <img src="/UNet/Images/max_pooling.png" alt="Example of a max pooling operation transforming a 4x4 matrix into a 2x2 matrix" width="60%"
+  <img src="/UNet/Images/max_pooling.png" alt="Example of a max pooling operation transforming a 4x4 matrix into a 2x2 matrix" width="35%"
 </p>
 
 Following the convolution, ReLU, and now max pooling operation, the most relevant features of the image have been highlighted for the network to learn. It has also arrived at a much more compact representation of the image, highlighting the efficiency of the U-Net architecture. Distlling our higher-dimension image to a lower-dimension representation allows for easier and faster computations, especially when our images aren't 6x6 as in the example, but 572x572. With each max pooling operation, we decrease our total number of pixels by 75% as we half the number of rows **and** columns in our matrix. 
 
-## Bridge
-We would repeat the above stages thrice more (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) before arriving at the bridge. 
+### Bridge
+We would repeat the above stages thrice more (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we've descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572 matrix, we have arrived at a 32x32 representation. Here, we receive the output of the final max pooling operation as our input.
+<p align="center" width="100%">
+  <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%"
+</p>
 
-## Expansive Path
-Words. 
+We repeat the process from throughout our contractive path descension. 3x3 convolution, followed by the elementwise ReLU activation function is performed twice, taking our image size down to 28x28. Since we've arrived at the bottom of the U, rather than downsample again, we upsample and begin our ascent up the expansive path of the architecture. At some point, no matter how much you practice shooting from a stationary position, the only way to increase your proficiency with shooting coming off of a screen is to incorporate your improved technique into shooting off a screen. That's what we're doing here. We've distilled our task into its multiple separate techniques and now it's time to start putting it all together again and see how we've improved. 
 
-### Up-Convolution
+## Expansive Path (Decoder)
+Throughout our encoder process, we performed multiple sequential operations. Convolutions were followed by an activation function, and multiple convolution-to-activation-functions occurred before we downsampled our matrix. We will follow the same process with our decoder section with some notable differences. We're now putting our techniques together in hopes of getting the perfect shot coming around a screen. Rather than practicing catching the ball, setting our feet, and raising the ball to shoot individually, we'll be practicing these skills together. At each stage instead of breaking techniques down to their smallest representations, we'll be adding these representations together. Rather than downsampling, we'll be upsampling. Additionally, we'll be augmenting our learning with [skip connections](#skip-connections). I'll cover these topics more below. 
 
-## Skip Connections
+### Up-Sampling (or Transpose Convolution)
+
+### Skip Connections
 Words about concatenation b/t contracting path and expansive path images. Images from contracting path must be cropped because of pixels lost from convolution for expansive path. 
 
 ### Convolution and ReLU
