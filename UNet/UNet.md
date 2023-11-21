@@ -16,7 +16,7 @@ Convolution is the application of a filter to an input matrix for the purpose of
 
 ![An end-to-end convolution example of convolution between a 6x6 matrix and a 3x3 convolutional layer](/UNet/Images/convolution_with_calculations.png)
 
-We take the 3x3 kernel given above and perform convolution between the kernel and the portion of the matrix it is above at a given moment. All we are doing here is multiplying one element of our matrix subset with the corresponding kernel element. Here, it's -1(1) + 2(2) + -3(3) + 4(0) + 5(1) + -6(0) + 7(1) + -8(2) + 9(3) = 37. We add up each product and the sum for this matrix subset becomes the first element in our output matrix. Here, that's 37. We repeat this thoughout our input matrix until we have a complete output. Think of a kaleidoscope. We have an optical instrument which can be rotated to produce changing optical effects until we have the complete picture. Our input matrix is the colored glass at the bottom. Our kernel takes the role of the mirrors within the kaleidoscope that we rotate to better understand the glass we're looking at. 
+It's important to mention that the kernel values will be learned through training of the network and will be updated throughout the learning process. We can initialize the kernel values, but the network will take responsibility itself to learn the best values that allow it to best learn important features in the training data. We take the 3x3 kernel given above and perform convolution between the kernel and the portion of the matrix it is above at a given moment. All we are doing here is multiplying one element of our matrix subset with the corresponding kernel element. Here, it's -1(1) + 2(2) + -3(3) + 4(0) + 5(1) + -6(0) + 7(1) + -8(2) + 9(3) = 37. We add up each product and the sum for this matrix subset becomes the first element in our output matrix. Here, that's 37. We repeat this thoughout our input matrix until we have a complete output. Think of a kaleidoscope. We have an optical instrument which can be rotated to produce changing optical effects until we have the complete picture. Our input matrix is the colored glass at the bottom. Our kernel takes the role of the mirrors within the kaleidoscope that we rotate to better understand the glass we're looking at. 
 <p align="center" width="100%">
   Initially, we see one stage of the picture. <br>
   <img src="/UNet/Images/cwc_first_stage.png" alt="First stage of a convolution operation between a matrix and a kernel" width="25%">
@@ -87,10 +87,25 @@ We repeat the process from throughout our contractive path descension. 3x3 convo
 ## Expansive Path (Decoder)
 Throughout our encoder process, we performed multiple sequential operations. Convolutions were followed by an activation function, and multiple convolution-to-activation-functions occurred before we downsampled our matrix. We will follow the same process with our decoder section with some notable differences. We're now putting our techniques together in hopes of getting the perfect shot coming around a screen. Rather than practicing catching the ball, setting our feet, and raising the ball to shoot individually, we'll be practicing these skills together. At each stage instead of breaking techniques down to their smallest representations, we'll be adding these representations together. Rather than downsampling, we'll be upsampling. Additionally, we'll be augmenting our learning with [skip connections](#skip-connections). I'll cover these topics more below. 
 
-### Up-Sampling (or Transpose Convolution)
+### Up-Sampling
+Two main approaches exist to upsampling: nearest neighbor interpolation or transpose convolution. Nearest neighbor interpolation is intuitive. We convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value.
+<p align="center" width="100%">
+  <img src="/UNet/Images/simple_upsampling.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%"
+</p>
+
+We duplicate every instance of our previous value to double the number of rows and columns for our matrix. There are no learned values here, it is simple and easily done. This was the method used in the original research paper and offers a quick path towards upsampling our compressed image representations. 
+
+Transpose convolution offers an alternative. It offers a learnable kernel to increase our spatial resolution to the desired dimensions. A brilliant illustration [can be found here](https://towardsdatascience.com/types-of-convolutions-in-deep-learning-717013397f4d) or videos approaching it from different perspectives can be found [here](https://www.youtube.com/watch?v=fMwti6zFcYY) and [here](https://www.youtube.com/watch?v=xoAv6D05j7g). We are creating a learnable kernel which pads our smaller matrix with zeros and performs convolution for an upsampled representation. Transpose convolution is a more complex operation and slightly more expensive in terms of both time and speed as a result. 
+
+Imagine you have the perfect recipe for chicken wings. Unfortunately it only applies to five chicken wings and is enough to feed yourself for dinner every night, but you're having nine friends over and want to increase the recipe to accomodate everyone. You could multiply the recipe by 10 to have enough food for yourself and your guests. This would be nearest neighbor interpolation. Alternatively, you could practice multiple times, changing the ingredients and playing with the spice levels until you arrive at a recipe you enjoy for 10 people. This would require multiple stages of practicing, tasting the wings, and rewriting the recipe until you're happy with the final product. This would be transpose convolution and has the associated time cost as well.
 
 ### Skip Connections
-Words about concatenation b/t contracting path and expansive path images. Images from contracting path must be cropped because of pixels lost from convolution for expansive path. 
+As we ascend the expansive path, we notice a significant change in the architecture from the contracting path. Skip connections or connecting paths offer an opportunity for our network to learn at once from the stage it's in in the ascending path while also receiving information from the corresponding stage in the descending path. The connecting paths link similar dimension images across the architecture to augment our learning process. Images from the contracting path are concatenated on to our expansive path stages. Imagine stacking cheese for a cheeseburger. You'd want each cheese slice to be the same size. Images taken from the contracting path can be seen in the image to be cropped so that they fit the size of the same stage in the expansive path. Continuing with our cheese analogy, we'd be cutting the sizes of different cheese slices so they can be evenly stacked atop each other.
+<p align="center" width="100%">
+  <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="60%"
+</p>
+
+
 
 ### Convolution and ReLU
 
