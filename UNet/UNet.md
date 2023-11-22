@@ -106,23 +106,18 @@ As we ascend the expansive path, we notice a significant change in the architect
 </p>
 
 The benefit here is that by combining the features present at the encoder stage with those present at the decoder stage, we obtain a more complete understanding of the image. Our current decoder stage image representation has been so distilled that it might have the general idea of an object's location, but not know what the object is. By combining the two representations, we can gain an understanding of both where the object is and what object lies in the segmented portion of the image, boosting our network's overall understanding of the image. An example is given below, taken from [this video](https://www.youtube.com/watch?v=NhdzGfB1q74) which does a phenomenal job explaining the overall architecture for those with a background in ML.
-<div class="row">
-  <div class="column">
-    <img src="encoder_stage_sc.png" width="40%">
-  </div>
-  <div class="column">
-    <img src="decoder_stage_sc.png" width="40%">
-  </div>
-  <div class="column">
-    <img src="combined_stage_sc.png" width="40%">
-  </div>
-</div>
 
-### Convolution and ReLU
+<img src="/UNet/Images/decoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/encoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/combined_stage_sc.png" width="33%" />
+
+### Convolution, ReLU, and Up-Sampling
+Immediately after the skip connection has concatenated our images atop one another, doubling our number of channels, we repeat the same process as in our contracting path. We pass the new image with multiple channels through a 3x3 convolution followed by an element-wise ReLU operation. This first convolution stage halves our number of channels, absorbing the information gained from the concatenating stage of the skip connection. We then repeat our convolution operation, followed by our activation function before upsampling to double our image resolution. Upsampling can be performed using either of the methods described above: nearest neighbor interpolation or transpose convolution. When upsampling, we also half our number of channels to make space for the channels we will add through the connecting paths. We half our channels through upsampling, concatenate our images together, half our channels again through convolution, then perform convolution with the same number of channels, and feed into the next stage of upsampling. Concurrently, we double our image resolution through upsampling, keep it the same through our activation functions, then feed into the next stage of upsampling. This continues until we reach the final layer and output of our network.
 
 ### Final Layer (1x1 Convolution)
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_architecture.png" alt="A screenshot of the UNet architecture from its corresponding 2015 research paper" width="50%"
+</p>
 
-## Other
+After having performed the many associated concatenation, convolution, activation function, and upsampling operations, we arrive at the final stage of our architecture. A 1x1 convolution operation is performed here to map the multiple channels for each image pixel to the desired number of channels for our output image. As seen in the image of the architecture, this could involve taking our 64 channels and performing convolution to result in an image with 2 associated channels.
 
 ### Error Function (Cross-Entropy)
 We've done it. We've practiced setting our feet coming around the screen, we've practiced our hand positioning, we've practiced our follow-through. We've spent time practicing each part of the technique separately and now it's time to put it all together. You run around the screen, catch the ball, shoot, and... CLANGGGG! Off front-rim. What happened? Somewhere in the process, something went wrong. Despite all the time and energy you've put into practicing your technique, something is still a little bit off. It's okay though! Maybe it was the positioning of your feet, maybe it was your release point, maybe you hadn't practiced enough with a defender and that threw off your shot. Whatever the reason, it's okay. This is a learning process and with time, you'll be able to adjust your shot as you learn more and more about what a good shot looks like and take fewer and fewer bad shots. That's exactly what happens with neural networks!
@@ -130,6 +125,8 @@ We've done it. We've practiced setting our feet coming around the screen, we've 
 Backpropagation is key to the success of any neural network. It spends its time practicing and learning its task, and adjusts its predicted value to the true value provided by the training data. In this case, the U-Net predicts its segmentations and finds out how good of a job it did. If it did a great job, it might go back and only slightly adjust its follow-through. If it did a really bad job, it might go back and do a serious rewrite of setting its feet and practice bringing the ball up to head height again. How good of a job the network did is decided by its loss function. For the U-Net, that loss function is Cross-Entropy. 
 
 Cross-Entropy functions 
+
+## Other
 
 ### Data Augmentation
 
