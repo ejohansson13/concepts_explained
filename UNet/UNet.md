@@ -63,7 +63,7 @@ By passing our output matrix through this activation function, we are zeroing al
   <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="30%"
 </p>
   
-Expressing this idea in 2-dimensions might seem reductive, but we can see that regardless of the complexity of our linear relationship, we fail to adequately represent the quadratic curve. Non-linear activation functions allow us to express more complex relationships for the network to better model and understand the data. [Here's a video of Andrew Ng on nonlinear activation functions](https://www.youtube.com/watch?v=NkOv_k7r6no). [And a blog post covering some activation functions with code examples](https://machinelearningmastery.com/using-activation-functions-in-neural-networks/).
+Expressing this idea in 2-dimensions might seem reductive, but we can see that regardless of the number of operations in our linear relationship, we fail to adequately represent the quadratic curve. We can better capture it at a single instance, but linear operations will always fail to correctly model nonlinear relationships. Nonlinear activation functions allow us to express more complex relationships for the network to better model and understand the data. [Here's a video of Andrew Ng on nonlinear activation functions](https://www.youtube.com/watch?v=NkOv_k7r6no). [And a blog post covering some activation functions with code examples](https://machinelearningmastery.com/using-activation-functions-in-neural-networks/).
 
 ### Down-sampling (Max Pooling)
 This process is repeated twice. Our initial image is passed through a convolution operation, then ReLU, and that result is passed through another round of convolution and activation functions. Next, we arrive at the downsampling step.
@@ -77,6 +77,9 @@ To downsample our matrix output, we perform a 2x2 max pooling operation. Max poo
 </p>
 
 Following the convolution, ReLU, and now max pooling operation, the most relevant features of the image have been highlighted for the network to learn. It has also arrived at a much more compact representation of the image, highlighting the efficiency of the U-Net architecture. Distlling our higher-dimension image to a lower-dimension representation allows for easier and faster computations, especially when our images aren't 6x6 as in the example, but 572x572. With each max pooling operation, we decrease our total number of pixels by 75% as we half the number of rows **and** columns in our matrix. 
+
+### Channels
+Let's take a step back and revisit convolution. There's an important aspect that I neglected to mention.
 
 ### Bridge
 We would repeat the above stages thrice more (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we've descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572 matrix, we have arrived at a 32x32 representation. Here, we receive the output of the final max pooling operation as our input.
