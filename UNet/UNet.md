@@ -110,12 +110,12 @@ Throughout our encoder process, we performed multiple sequential operations. Con
 ### Up-Sampling
 Two main approaches exist to upsampling: nearest neighbor interpolation and transpose convolution. I'll cover nearest neighbor interpolation here and transpose convolution in a later section of the document, as it is a more complex operation and not used in the original implementation of the network. Nearest neighbor interpolation is intuitive. We quadruple our matrix size by doubling the number of rows and doubling the number of columns in our data. We can convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value horizontally and vertically.
 <p align="center" width="100%">
-  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="55%"
+  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="65%"
 </p>
 
 We quadruple every instance of our previous values to double the number of rows and columns for our matrix. There are no kernels, learned values, or nonlinearity. This was the method used in the research paper and offers a quick path towards upsampling our compressed image representations. After descending the contractive path, and minimizing our image size, ascending our expansive path is focused on restoring the image to its original dimensions, while maintaining the features discovered through our descent of the network. Nearest neighbor interpolation offers a cheap upsampling operation without affecting our learned features.
 <p align="center" width="100%">
-  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="10%"
+  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="30%"
 </p>
 
 Directly following our upsampling operation, we perform 2x2 convolution. This can be seen in the diagram above as the number of channels remains the same between upsampling and concatenating the encoder stage images with the decoder stage images. Two steps are performed sequentially here. First, the nearest neighbor interpolation upsampling as described above, immediately followed by convolution with a 2x2 filter to make space for the cropped concatenated images. We could have a 196x196x128 matrix for our image, upsample to 392x392x128, convolve to 392x392x64, then double our channels through concatenation and arrive at a 392x392x128 representation of our data. Those operations are performed sequentially in the green upsampling arrow illustrated above. Concatenations are covered in more detail in the next section.
@@ -145,7 +145,13 @@ We've done it. We've practiced setting our feet coming around the screen, we've 
 
 Backpropagation is key to the success of any neural network. It spends its time practicing and learning its task, and adjusts its predicted value to the true value provided by the training data. In this case, the U-Net predicts its segmentations and finds out how good of a job it did. If it did a great job, it might go back and only slightly adjust its follow-through. If it did a really bad job, it might go back and do a serious rewrite of setting its feet and practice bringing the ball up to head height again. The success of the network is decided by its loss function. For the U-Net, those loss functions are Softmax and Cross-Entropy. 
 
+Softmax measures the activation of every pixel in our image across all our output channels. The channel with the most activation is then compared to the ground-truth probability distribution through cross-entropy. We measure the confidence of our network's output to the true result and backpropagate the correctness through our network. If the network was close to the true result, the model will only slightly change its convolution values. If the prediction was far off from the correct result, the model may take more drastic efforts to update its weights for more accurate future predictions.
 
+Softmax can be thought of as the network weighing the probability of each pixel belonging to a certain label. Here the probability can be thought of as the network's confidence. The label or class is the potential category to associate with our output. If our end goal is segmentation and identifying objects, we could only have two classes: either an object is there or it isn't. We then take our confidence of an object being there across all channels and compare this to the probability distribution of our correct image segmentation. 
+
+**here goes softmax equation**
+
+**here goes cross-entropy equation**
 
 ## Other
 
