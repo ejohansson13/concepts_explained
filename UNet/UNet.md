@@ -128,11 +128,22 @@ It's the same for the U-Net. We've identified the most important features, but w
 ### Convolution, ReLU, and Up-Sampling
 Immediately after the skip connection has concatenated our images atop one another, doubling our number of channels, we pass them through a series of convolution and activation function operations. The first convolution stage receives as input our concatenation of decoder and encoder stage images. It halves the number of channels, absorbing the information gained from the skip connections. This output matrix is passed through an elementwise ReLU, before we repeat another stage of convolution and activation function operations.
 
-The purpose of these blocks is similar to their purpose in the contracting path. The convolution emphasizes our important features and the activation function implements nonlinearity for modeling complexity. Let's reexamine our convolution example from before. Even in this simplified example, we can see the effect of convolution. 
+The purpose of these blocks is similar to their purpose in the contracting path. The convolution emphasizes our important features and the activation function implements nonlinearity for modeling complexity. Let's reexamine our convolution and activation function example from before. Even in this simplified example, the operations have a notable impact. Our initial matrix with no value greater than 6 has jumped to contain a much larger range of values, even with ReLU limiting the nonnegative values.
 <p align="center" width="100%">
-  <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="60%"
+  <img src="/UNet/Images/convolution_result_revisited.png" width="30%"
 </p>
 
+If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater impact on the matrix's values. Our matrix values jump to triple digits. Even with this random example, we can see how convolution may emphasize certain features and devalue others. 
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_next_step.png" width="30%"
+</p>
+
+After passing the convolution result through an activation function, we arrive at the below matrix. Our activation function has set the bottom-left negative value to 0. In this example and this channel of our matrix, this might indicate there is little information for our network to care about in this region. We've arrived at a more compact representaton of our image with important regions emphasized and regions with little information devalued.
+<p align="center" width="100%">
+  <img src="/UNet/Images/activation_function_next_step.png" alt="Effect of ReLU activation function on simplified matrix example" width="30%"
+</p>
+
+There are a couple details to stress here. It's unlikely convolution filters would have the exact same values. The network operates on a much larger scale. Matrices are not 6x6, 4x4 or 2x2, they are anywhere from 28x28 to 572x572. Filter values may vary depending on the image dimensions it receives as input and no two stages in the architecture have the same image dimensions. Convolution is also one of the most important stages of our network. It allows a way to determine the most important features of our image, regardless of its dimensionality. It 
 This is really the meat of our operation, and why neural networks have been found to be so valuable. The network determines the values of our convolution kernels, and their optimal implementation to interact with the activation functions. Throughout training, these values are updated as the network realizes what produces the best results. 
 
 ### Up-Sampling
