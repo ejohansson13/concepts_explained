@@ -133,17 +133,19 @@ The purpose of these blocks is similar to their purpose in the contracting path.
   <img src="/UNet/Images/convolution_result_revisited.png" width="30%"
 </p>
 
-If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater impact on the matrix's values. Our matrix values jump to triple digits. Even with this random example, we can see how convolution may emphasize certain features and devalue others. 
+If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater activation of the matrix values, with some jumping to triple digits. Even with this toy example, we can see how convolution may emphasize certain features and devalue others. 
 <p align="center" width="100%">
   <img src="/UNet/Images/convolution_next_step.png" width="30%"
 </p>
 
-After passing the convolution result through an activation function, we arrive at the below matrix. Our activation function has set the bottom-left negative value to 0. In this example and this channel of our matrix, this might indicate there is little information for our network to care about in this region. We've arrived at a more compact representaton of our image with important regions emphasized and regions with little information devalued.
+After passing the convolution result through an activation function, we arrive at the below matrix. Our activation function has set the bottom-left negative value to 0. In this example, this might indicate there is little information for our network to care about in this region. We've arrived at a more compact representaton of our image with important regions emphasized and regions with little information devalued.
 <p align="center" width="100%">
   <img src="/UNet/Images/activation_function_next_step.png" alt="Effect of ReLU activation function on simplified matrix example" width="30%"
 </p>
 
-There are a couple details to stress here. It's unlikely convolution filters would have the exact same values. The network operates on a much larger scale. Matrices are not 6x6, 4x4 or 2x2, they are anywhere from 28x28 to 572x572. Filter values may vary depending on the image dimensions it receives as input and no two stages in the architecture have the same image dimensions. Convolution is also one of the most important stages of our network. It allows a way to determine the most important features of our image, regardless of its dimensionality. It 
+This example is only meant to reiterate how convolutional operations work. It's unlikely for two filters to have the same values. Each filter's values are optimized by the network to highlight significant details of our image and devalue insignificant features. Convolution is the proof in our pudding. As the network is trained on a multitude of images, it receives feedback on its performance and updates the values of its convolutional filters to produce better results going forward. It works in concert with the activation functions, skip connections, upsampling and downsampling operations to serve as the network's decision-makers on the important features in an image. 
+
+Lastly, a reminder that the network operates on a much larger scale. Matrices are not 6x6, 4x4 or 2x2, they are anywhere from 28x28 to 572x572. This is why our encoder path condenses each image to a much smaller representation. It allows a way to determine the most important features of our image, regardless of its dimensionality. It 
 This is really the meat of our operation, and why neural networks have been found to be so valuable. The network determines the values of our convolution kernels, and their optimal implementation to interact with the activation functions. Throughout training, these values are updated as the network realizes what produces the best results. 
 
 ### Up-Sampling
