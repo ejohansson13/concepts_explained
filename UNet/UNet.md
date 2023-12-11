@@ -81,12 +81,12 @@ Following the convolution, ReLU, and now max pooling operation, the most relevan
 ### Channels
 Let's take a step back and revisit convolution. They have an important feature I didn't touch on, channels. Channels are the third dimension for our image matrices. Similar to how images have a height and width, they also have channels. Channels represent the number of distinct spaces where our image offers information. The easiest way to think of this is through the RGB color space. RGB images are stored with three channels: red, green, and blue. Each channel contains information on its associated intensity. We can look at the image of a lake separated to its respective red, green, and blue channels.
 <p align="center" width="100%">
-  <img src="/UNet/Images/image_channels.png" alt="An example image broken down to its respective red, green, and blue channels." width="85%"
+  <img src="/UNet/Images/image_channels.png" alt="An example image broken down to its respective red, green, and blue channels." width="75%"
 </p>
 
 Each image channel is made up of the associated per-pixel intensity values. These matrices have the exact same height, width, and number of pixels. Each channel is a matrix whose values contain information on the specific pixel's intensity. In the example below, these values range from 0-1 and represent the intensity of that color in the associated pixel. The first pixel in the image appears to be fairly distributed between red and blue with a slight green influence. The bottom-left pixel appears to have a heavy red influence, but both green and blue coloring are also apparent in the pixel.
 <p align="center" width="100%">
-  <img src="/UNet/Images/channels.png" alt="An image matrix with pixel values corresponding to its red, green, and blue channels." width="35%"
+  <img src="/UNet/Images/channels.png" alt="An image matrix with pixel values corresponding to its red, green, and blue channels." width="25%"
 </p>
 
 However, channels don't have to be restricted to the color space. They can represent information on saturation, lighting, and many other visual effects we take for granted when seeing an image, but are crucial to a computer's comprehension. If the image only had one channel, it would lack information on color or other effects. This is known as grayscale. Instead of RGB coloring, the channel would contain information on the intensity of gray shading. One extreme of the intensity spectrum would be white, and the other would be black. Thus, grayscale images only need one channel for information.
@@ -125,8 +125,21 @@ Similarly for the U-Net, we've identified the most important features, but when 
 
 <img src="/UNet/Images/decoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/encoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/combined_stage_sc.png" width="33%" />
 
-### Convolution, ReLU, and Up-Sampling
-Immediately after the skip connection has concatenated our images atop one another, doubling our number of channels, we pass them through a series of convolution and activation function operations. The first convolution stage receives as input our concatenation of decoder and encoder stage images. It halves the number of channels, absorbing the information gained from the skip connections. This output matrix is passed through an elementwise ReLU, before we repeat another stage of convolution and activation function operations with no further effect to our number of channels.
+### Up-Sampling
+Two main approaches exist to upsampling: nearest neighbor interpolation and transpose convolution. Nearest neighbor interpolation is the original implementation covered in the research paper. Transpose convolution is another alternative, [summarized below](#transpose-convolution). Nearest neighbor interpolation is intuitive. We quadruple our matrix size by doubling the number of rows and doubling the number of columns in our data. We can convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value horizontally and vertically.
+<p align="center" width="100%">
+  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="45%"
+</p>
+
+We quadruple every instance of our previous values to double our matrix's rows and columns. There are no kernels, learned values, or nonlinearity, which offers a quick path to upsampling our compressed images. After descending the contractive path, and minimizing our image size, ascending our expansive path is focused on restoring the image to its original dimensions, while maintaining the features discovered through our descent. Nearest neighbor interpolation offers a cheap upsampling operation without affecting our learned features.
+<p align="center" width="100%">
+  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="30%"
+</p>
+
+Directly following our nearest neighbor operation, we perform 2x2 convolution. In the diagram above, the number of channels remains the same between upsampling and concatenating the encoder stage images with the decoder stage images. Two steps are performed sequentially in the green arrow illustrated above. First, the nearest neighbor interpolation upsampling as described above, immediately followed by convolution with a 2x2 filter to halve the number of channels. This is necessary as the cropped images arriving via skip connection will double the number of channels again through concatenation. Using the example in the diagram, we could have a 196x196x128 matrix for our image, upsample to 392x392x128, then immediately convolve to 392x392x64. The image's number of channels is then doubled through concatenation and we arrive at a 392x392x128 representation of our image. These image dimensions then proceed to the next convolution operation.
+
+### Convolution and ReLU
+After upsampling and skip connection have concatenated our images to one another, we pass them through a series of convolution and activation function operations. The first convolution stage receives as input our consolidated decoder and encoder stage images. It halves the number of channels, absorbing the information gained from the skip connections. This output matrix is passed through an elementwise ReLU, before we repeat another stage of convolution and activation function operations with no further effect to our number of channels.
 
 The purpose of these blocks is similar to their purpose in the contracting path. The convolution emphasizes our important features and the activation function implements nonlinearity for modeling complexity. Let's reexamine our earlier convolution and activation function example. Even in this simplified example, the operations have a notable impact. Our initial matrix with no value greater than 6 has jumped to contain a much larger range of values, even with ReLU limiting any negatives.
 <p align="center" width="100%">
@@ -141,19 +154,6 @@ If we pass the matrix through another stage with the same convolutional kernel, 
 What we're doing here is akin to sifting for gold. Gold panners will find lucrative riverbeds and pan through sediment to find their gold. The repeated agitation of sediment in the pan leads to gold settling at the bottom. With convolution, we know there's value in our image. The repeated application of our convolutional filters lets the dust and sediment separate itself from our gold: the important features that our network analyzes to make its decision. Convolution and the other network operations are our pans and brushes. The network determines the values of our convolution kernels, and their optimal implementation to interact with the other network operations. It works in concert with activation functions, skip connections, upsampling and downsampling operations to serve as the network's decision-makers on the important features in an image. Throughout training, these values are updated as the network realizes what produces the best results. It receives feedback on its performance and updates the values of its convolutional filters to improve future results. 
 
 This example is only meant to reiterate how convolutional operations work. It's unlikely for any two filters to have the same values. Each filter's values are optimized by the network to highlight significant details of our image and devalue insignificant features. Additionally, the network operates on a much larger scale. Matrices are not 6x6, 4x4 or 2x2, they are anywhere from 28x28 to 572x572. This is why our encoder path condenses each image to a much smaller representation. It provides an efficient method to determine the most important features of our image, regardless of its dimensionality.
-
-### Up-Sampling
-Two main approaches exist to upsampling: nearest neighbor interpolation and transpose convolution. Nearest neighbor interpolation is the original implementation covered in the research paper. Transpose convolution is another alternative, [summarized below](#transpose-convolution). Nearest neighbor interpolation is intuitive. We quadruple our matrix size by doubling the number of rows and doubling the number of columns in our data. We can convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value horizontally and vertically.
-<p align="center" width="100%">
-  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="45%"
-</p>
-
-We quadruple every instance of our previous values to double our matrix's rows and columns. There are no kernels, learned values, or nonlinearity, which offers a quick path to upsampling our compressed image representations. After descending the contractive path, and minimizing our image size, ascending our expansive path is focused on restoring the image to its original dimensions, while maintaining the features discovered through our descent of the network. Nearest neighbor interpolation offers a cheap upsampling operation without affecting our learned features.
-<p align="center" width="100%">
-  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="30%"
-</p>
-
-Directly following our upsampling operation, we perform 2x2 convolution. This can be seen in the diagram above as the number of channels remains the same between upsampling and concatenating the encoder stage images with the decoder stage images. Two steps are performed sequentially here. First, the nearest neighbor interpolation upsampling as described above, immediately followed by convolution with a 2x2 filter to make space for the cropped concatenated images. We could have a 196x196x128 matrix for our image, upsample to 392x392x128, convolve to 392x392x64, then double our channels through concatenation and arrive at a 392x392x128 representation of our data. Those operations are performed sequentially in the green upsampling arrow illustrated above. Concatenations are covered in more detail in the next section.
 
 ### Final Layer (1x1 Convolution)
 <p align="center" width="100%">
