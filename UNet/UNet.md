@@ -133,14 +133,9 @@ The purpose of these blocks is similar to their purpose in the contracting path.
   <img src="/UNet/Images/convolution_result_revisited.png" width="30%"
 </p>
 
-If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater activation of the matrix values, with some jumping to triple digits. Even with this toy example, we can see how convolution may emphasize certain features and devalue others. 
+If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater activation of the matrix values, with some jumping to triple digits. Even with this toy example, we can see how convolution may emphasize certain features and devalue others. Passing it through our activation function, we arrive at our final matrix. Our activation function has set the bottom-left negative value to 0. This might indicate there is little important information for our network in this region. We've emphasized important regions of our image and devalued regions with minimal information.
 <p align="center" width="100%">
   <img src="/UNet/Images/convolution_next_step.png" width="30%"
-</p>
-
-After passing the convolution result through an activation function, we arrive at the below matrix. Our activation function has set the bottom-left negative value to 0. In this example, this might indicate there is little information for our network to care about in this region. We've arrived at a more compact representaton of our image with important regions emphasized and regions with little information devalued.
-<p align="center" width="100%">
-  <img src="/UNet/Images/activation_function_next_step.png" alt="Effect of ReLU activation function on simplified matrix example" width="30%"
 </p>
 
 This example is only meant to reiterate how convolutional operations work. It's unlikely for two filters to have the same values. Each filter's values are optimized by the network to highlight significant details of our image and devalue insignificant features. Convolution is the proof in our pudding. As the network is trained on a multitude of images, it receives feedback on its performance and updates the values of its convolutional filters to produce better results going forward. It works in concert with the activation functions, skip connections, upsampling and downsampling operations to serve as the network's decision-makers on the important features in an image. 
