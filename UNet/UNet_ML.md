@@ -1,1 +1,1 @@
-Here, I'll write the UNet in more technical details with a focus on cleanly explaining the ML details.
+The U-Net is an encoder-decoder architecture. Its greatest success is derived from 
