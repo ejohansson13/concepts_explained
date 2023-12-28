@@ -34,3 +34,7 @@ Stable Diffusion models are trained on a wide variety of images pulled from the 
 Empty conditioning - important
 
 ### Decoder
+
+# Future Steps
+
+Already seen that increasing size of U-Net leads to improved results (SDXL). Can also add refiner/superresolution U-Net to upsample to more detailed image dimensions. LM performance can have significant effect on downstream image generation performance (Imagen). What other future directions can image synthesis take / what can be done to further improve performance?
