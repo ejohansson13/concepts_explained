@@ -19,6 +19,8 @@ Stable Diffusion models are trained on a wide variety of images pulled from the 
 
 ### Conditioning
 
+#### CLIP
+
 ### Decoder
 
 ### Metric
