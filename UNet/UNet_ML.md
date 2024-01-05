@@ -8,11 +8,24 @@ The U-Net is an encoder-decoder architecture, deriving its name from the signatu
 
 ### Downsampling
 
-We can consider the encoder path as consisting of a sequence of blocks. This sequence continues until we arrive at the end of the encoding path at the bottleneck. The blocks have the same composition: a convolution with a 3x3 kernel of stride 1 and 0 padding, followed by an elementwise ReLU activation function, another convolution layer with the same parameters as the first, another ReLU function, followed by a 2x2 max pooling operation to downsample the image for the next block of operations. Our initial convolution in the block also dictates the number of channels used for the remainder of the block. For the first block, this takes our number of channels from the input image's default to 64. For every other block of operations, the number of channels is doubled after the first convolution operation.
+We can consider the encoder path as consisting of a sequence of blocks. This sequence continues until we arrive at the end of the encoding path at the bottleneck. The blocks have the same composition: a convolution with a 3x3 kernel of stride 1 and 0 padding, followed by an elementwise ReLU activation function, another convolution layer with the same parameters as the first, another ReLU function, followed by a 2x2 max pooling operation to downsample the image for the next block of operations. Our initial convolution in the block also dictates the number of channels used for the remainder of the block. For the first block, this takes our number of channels from the input image's default to 64. For every other block of operations, the number of channels is doubled after the first convolution operation. 
 
-### Bottleneck
+Overall purpose of downsampling: efficiency and emphasis of important features.
+ Something about how increasing channels preserves contextual information.
+ Maybe something about how convolution weights are decided through training?
+ Mention of stride for max pooling?
+
+#### Bottleneck
+
+The bottleneck, or bridge, of our architecture serves as a path between our encoder and decoder stages. It follows the same process as the descending path: repeated convolution and activation functions
 
 ### Upsampling
+
+Description of upsampling process.
+
+Skip connections. Own section?
+
+Importance of upsampling: reversing compression of encoder stage
 
 #### Final Layer
 
