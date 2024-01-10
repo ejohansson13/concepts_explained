@@ -8,21 +8,17 @@ The U-Net is an encoder-decoder architecture, deriving its name from the signatu
 
 ### Downsampling
 
-We can consider the encoder path as consisting of a sequence of blocks. These blocks have the same composition: a convolution with a 3x3 kernel of stride 1 and 0 padding, followed by an elementwise ReLU activation function, another convolution layer with the same parameters as the first, another ReLU function, then a 2x2 max pooling operation with stride 2 to downsample the image for the next operation block. This sequence continues until we arrive at the end of the encoding path at the bottleneck. At each convolutional operation, we control the number of channels our image contains going forward. In the first block, the image's number of channels is set to 64. After this, every block doubles the number of image channels. 
+We can consider the encoder path as consisting of a sequence of blocks. These blocks have the same composition: a convolution with a 3x3 kernel of stride 1 and 0 padding, followed by an elementwise ReLU activation function, another convolution layer with the same parameters as the first, another ReLU function, then a 2x2 max pooling operation with stride 2 to downsample the image for the next operation block. This sequence continues until we arrive at the end of the encoding path at the bottleneck. At each convolutional operation, we control the number of channels our image contains going forward. In the first block, the image's number of channels is set to 64. After this, every block doubles the number of image channels. Controlling the number of image channels provides control over the image's information beyond its condensed representation. Every channel for the image offers a new perspective on the encoded features and preserves information for the upsampling operation.
 
-Doubling the number of image channels secures the image from losing too much information as it is continually condensed through the encoding path.
-Overall purpose of downsampling: efficiency and emphasis of important features.
- Something about how increasing channels preserves contextual information.
- Maybe something about how convolution weights are decided through training?
- Mention of stride for max pooling?
+Overall, downsampling provides an efficient encoding for images, allowing network operation on lower dimensions. Additionally, each max pooling operation ensures that only the most important features are propagated through the encoding path, especially useful for semantic segmentation. 
 
 #### Bottleneck
 
-The bottleneck, or bridge, of our architecture serves as a path between our encoder and decoder stages. It follows the same process as the descending path: repeated convolution and activation functions
+The bottleneck, or bridge, of our architecture serves as a path between our encoder and decoder stages. It follows the same process as the descending path: repeated convolution and activation functions to emphasize our encoded features prior to their upsampling. 
 
 ### Upsampling
 
-Description of upsampling process.
+Decoding our encoded features involves a similar process to the contracting path, in reverse. We have encoded our image to its most important features and now are solely intent on expanding their representation to resemble our original image dimensions. To decode our image representation, we perform transpose convolutions to upsample our representation before passing the features through another block of convolution and activation operations. The parameters for these operations are the exact same as for the encoding blocks (3x3 convolution, ReLU, repeat). At every decoding block, we are continuing to sweep our magnifying glass over the image, highlighting every 
 
 Skip connections. Own section?
 
@@ -32,4 +28,13 @@ Importance of upsampling: reversing compression of encoder stage
 
 ## Training
 
-## Implementations
+## Impact
+- image segmentation
+
+- image classification
+
+- image synthesis
+
+- image restoration
+
+- image superresolution
