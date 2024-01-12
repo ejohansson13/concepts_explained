@@ -1,5 +1,7 @@
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 
+# U-Net
+
 The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency and performance with a small dataset announced its efficacy as a tool for computer vision tasks. In this page, we'll discuss the U-Net, its architecture, training process, and various implementations. This page assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of machine learning experience.
 
 ## Architecture
@@ -23,20 +25,15 @@ For custom architectural purposes, the location of the bridge offers an exercise
 SAVED COPIES OF ENCODED FEATURES ARE CONCATENATED ON TO DECODER FEATURES VIA CONNECTING PATHS. 
 Skip connections offer another framework for linking the encoder and decoder. Unlike the bridge, it operates on respective steps, connecting corresponding stages symmetrically across the architecture. After passing through an encoding stage (prior to being downsampled), image features are transmitted and concatenated on to the equivalent decoding stage. The original research paper accomplished this by cropping the encoder stage image to satisfy the dimensions of the decoder stage image. Newer implementations avoid this extra step by implementing padding in the convolutional operations. 
 
-Skip connections concatenate decoder features with saved copies of encoded features. Each stage in the architecture may focus on different feature attributes. Decoded features often contain the image's semantic information, while encoded features will highlight spatial information. By concatenating the representations atop one another, the network benefits from both contexts. Skip connections also provide another opportunity for features that were previously discarded by the network. Reproducing discarded information offers another opportunity for the network to determine the feature's merits. Any details initially considered uninformative 
-
-Decoded features often contain semantic information. Encoded features contain spatial information. Provides another opportuntity for features that would otherwise have been lost in forward propagation of expanding path. Help with gradient vanishing. Information won't be lost if there's direct connection linking it to decoder stage.
-Factoring skip connections into backpropagation. Indirectly aids upsampling convolution blocks?
+Skip connections concatenate decoder features with saved copies of encoded features. Each stage in the architecture may focus on different feature attributes. Decoded features often contain the image's semantic information, while encoded features will highlight spatial information. By concatenating the representations atop one another, the network benefits from both contexts. Skip connections also provide another opportunity for features that were previously discarded by the network. Reproducing discarded information offers another opportunity for the network to determine the feature's merits. Details initially considered uninformative can still benefit the network's understanding of the image.
 
 ### Upsampling
 
-Decoding our encoded features involves a similar process to the contracting path, in reverse. We have encoded our image to its most important features and now are solely intent on expanding their representation to resemble our original image dimensions. To decode our image representation, we perform transpose convolutions to upsample our representation before passing the features through another block of convolution and activation operations. The parameters for these operations are the exact same as for the encoding blocks (3x3 convolution, ReLU, repeat). At every decoding block, we are continuing to sweep our magnifying glass over the image, highlighting every 
+Decoding our encoded features involves a similar process to the contracting path, in reverse. We have encoded our image to its most important features and now are intent on expanding their representation to resemble our original image dimensions. To decode our image representation, we perform transpose convolutions to upsample our representation before passing the features through another block of convolution and activation operations. The parameters for these operations are the exact same as for the encoding blocks (3x3 convolution, ReLU, repeat). At every decoding block, we are sweeping a magnifying glass over the image, highlighting and preserving the most important features for the final output.
 
-Importance of upsampling: reversing compression of encoder stage
+Compressing our image to a compact representation emphasizes the most important image features while allowing a more efficient computational space. For a functioning model, we need to reassemble these features for an understandable output. The decoder reassembles our images, augmenting the features at every stage via skip connections and the multiple contexts provided through the image's channels. It performs a careful reconstruction of the original image while performing its specific computer vision task.
 
 #### Final Layer
-
-## Training
 
 ## Impact
 - image segmentation
