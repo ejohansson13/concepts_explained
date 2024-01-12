@@ -35,6 +35,8 @@ Compressing our image to a compact representation emphasizes the most important 
 
 #### Final Layer
 
+Similar to many other models, it has a final layer for output formatting.
+
 ## Impact
 - image segmentation
 
