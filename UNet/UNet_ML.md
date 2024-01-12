@@ -23,7 +23,10 @@ For custom architectural purposes, the location of the bridge offers an exercise
 SAVED COPIES OF ENCODED FEATURES ARE CONCATENATED ON TO DECODER FEATURES VIA CONNECTING PATHS. 
 Skip connections offer another framework for linking the encoder and decoder. Unlike the bridge, it operates on respective steps, connecting corresponding stages symmetrically across the architecture. After passing through an encoding stage (prior to being downsampled), image features are transmitted and concatenated on to the equivalent decoding stage. The original research paper accomplished this by cropping the encoder stage image to satisfy the dimensions of the decoder stage image. Newer implementations avoid this extra step by implementing padding in the convolutional operations. 
 
-purpose
+Skip connections concatenate decoder features with saved copies of encoded features. Decoded features will often contain 
+
+Decoded features often contain semantic information. Encoded features contain spatial information. Provides another opportuntity for features that would otherwise have been lost in forward propagation of expanding path. Help with gradient vanishing. Information won't be lost if there's direct connection linking it to decoder stage.
+Factoring skip connections into backpropagation. Indirectly aids upsampling convolution blocks?
 
 ### Upsampling
 
