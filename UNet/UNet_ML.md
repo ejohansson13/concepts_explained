@@ -34,7 +34,7 @@ Compressing our image to a compact representation emphasizes the most important 
 
 #### Final Layer
 
-After having trained on its myriad of images, the network needs to output its information to a familiar medium for evaluation. Employing a 1x1 convolutional layer at the end of the architecture, the network can control the number of output channels.
+After having trained on its myriad of images, the network needs to output its information to a familiar medium for evaluation. Employing a 1x1 convolutional layer at the end of the architecture, the network can control the number of output channels. This final layer is ultimately responsible for the image's computer vision task success.
 
 ## Impact
 - image segmentation
