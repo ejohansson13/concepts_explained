@@ -2,7 +2,7 @@
 
 # U-Net
 
-The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency and performance with a small dataset announced its efficacy as a tool for computer vision tasks. In this page, we'll discuss the U-Net and its architecture. This page assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of machine learning experience.
+The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency and performance with a small dataset announced its efficacy as a tool for computer vision tasks. In this page, we'll discuss the U-Net and its architecture. This page assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of any machine learning background.
 
 ## Architecture
 
@@ -11,7 +11,7 @@ The U-Net is a fully convolutional network following an encoder-decoder architec
 ### Downsampling
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="10%"
+  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="20%"
 </p>
 
 We can consider the encoder path as consisting of a sequence of stages. These stages have the same composition: convolution with a 3x3 kernel of stride 1, ReLU activation function applied elementwise, another convolution mimicking the first, another ReLU function, then a 2x2 max pooling operation with stride 2 for image downsampling. This sequence continues until we arrive at the bridge marking the end of the encoding path. With every stage, we halve the image dimension's while doubling the number of channels. Duplicating the channels of an image offers additional perspectives on the features advanced by the network. From another perspective, we trust the network to select the most important image features. We then double the observational environments for the network to monitor these features.
@@ -21,7 +21,7 @@ The U-Net architecture is predicated on two core tenets: efficiency and efficacy
 ### Bridge
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%"
+  <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="35%"
 </p>
 
 The bridge, or bottleneck, of our architecture serves a nominal responsibility. Connecting the encoder and decoder stages of the network, it performs the same convolution and activation function sequence as encountered in the encoding stage. One of two connection structures between the encoding and decoding paths, it reduces our image to its most concentrated representation before passing the features to the expanding path.
@@ -31,7 +31,7 @@ For custom architectural purposes, the location of the bridge offers an exercise
 ### Skip connections
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="60%"
+  <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="75%"
 </p>
 
 Skip connections offer another framework for linking the encoder and decoder. Unlike the bridge, it operates on respective steps, connecting corresponding stages symmetrically across the architecture. After passing through an encoding stage (prior to being downsampled), image features are transmitted and concatenated on to the equivalent decoding stage. The original research paper accomplished this by cropping the encoder stage image to satisfy the dimensions of the decoder stage image. Newer implementations avoid this extra step by implementing padding in all convolutional operations. 
@@ -41,7 +41,7 @@ Skip connections concatenate decoder features with saved copies of encoded featu
 ### Upsampling
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="30%"
+  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="40%"
 </p>
 
 Decoding our encoded features involves a similar process to the contracting path, in reverse. We have encoded our image to its most important features and now require their expansion to resemble our original image dimensions. To decode our image representation, we perform transpose convolutions to upsample our representation before passing the features through another block of convolution and activation operations. The specifications for these operations are equivalent to the encoding blocks (3x3 convolution, ReLU, repeat). At every decoding block, we are sweeping a magnifying glass over the image, highlighting and preserving the most important features for the final output.
