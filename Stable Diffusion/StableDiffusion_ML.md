@@ -2,9 +2,8 @@ Stable Diffusion was one of multiple text-to-image generation models to generate
 
 # Architecure
 
-The latent diffusion network follows an encoder-decoder architecure. Between these blocks, there are three main stages: a diffusion model, the denoising u-net, and the custom conditioner (written, image, or audio prompt for multimodal capabilities). The encoder is responsible for encoding images to their more compact latent representation. The diffusion process is repsonsible for taking images apart, adding Gaussian noise at sequential timesteps. **read research papers on schedulers** 
-Scheduler is responsible for picking out a latent representation from the Gaussian noise cesspit that is created from our diffusion model. **read research papers on schedulers**
-Our U-Net is responsible for taking the noisy, latent representation from the scheduler and denoising it. The U-Net carries the bulk of the responsibility during training.
+The latent diffusion network follows an encoder-decoder architecure. Between these blocks, there are three main stages: a diffusion model, the denoising u-net, and the custom conditioner (text, image, or audio prompt for multimodal capabilities). The encoder is responsible for encoding images to their more compact latent representation. The diffusion process is repsonsible for taking images apart, adding Gaussian noise at sequential timesteps. 
+
 such that our image can quickly be generated with some further conditioning. The conditioning comes via our prompt. Considering the text-to-image synthesis example, we feed in an empty prompt for classifier-free guidance of our model before feeding in our wanted textual prompt. The empty and textual prompts are concatenated together and combined with our U-Net result via the cross-attention mechanism popularized from the Transformer architecture. This gives us our latent end-product. This latent space matrix is then passed through our decoder, upsampled, etc. etc. etc. to become a legitimate pixel-space image. Following that, you can pass it through super-resolution networks or whatever else you want to do.
 
 ## Training
