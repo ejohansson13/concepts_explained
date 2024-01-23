@@ -14,11 +14,9 @@ The above equation contains comparisons between Gaussians via [KL divergences](h
 
 Some other important insights from the DDPM paper include the highlighting of semantic vs perceptual compression, a phenomenon referred to in previous literature as conceptual compression. The below graphs may look familiar. The original (left), taken from the DDPM paper, highlighted the rate-distortion tradeoff when training on the CIFAR-10 test set, with the majority of bits exhausted on imperceptible distortions. It was also used in the [Latent Diffusion Models paper](https://arxiv.org/pdf/2112.10752.pdf) (right) to emphasize the almost segmented learning process of image synthesis models, supporting the utilization of autoencoders in concert with diffusion models. Additionally, the authors' progressive lossy decompression scheme was considered a generalized application of autoregressive decoding, which ultimately became a key component of the [original Dall-E](https://arxiv.org/pdf/2102.12092.pdf) and [Parti](https://arxiv.org/pdf/2206.10789.pdf) research papers.
 
-<img src="/Stable Diffusion/Images/DDPM_graph.png" width="50%" /> <img src="/Stable Diffusion/Images/LDM_graph.png" width="50%" />
+<img src="/Stable Diffusion/Images/DDPM_graph.png" width="45%" /> <img src="/Stable Diffusion/Images/LDM_graph.png" width="45%" />
 
-Recognized semantic vs perceptual compression tradeoff. Graph from SD paper originally came from DDPM paper (include here). Progressive lossy decompression scheme resembles autoregressive decoding which became backbone of Dall-E 1 (and Imagen or Parti?). 
-
-Drawbacks. Impractically large number of inference steps. Must be performed sequentially, can't be performed in parallel. Cannot encode samples from latent code due to stochastic sampling. No separation of scheduling algorithm from remainder of architecture. 
+Unfortunately, like all novel discoveries, it came with flaws. DDPMs relied on an impractically large number of inference steps, with the paper only demonstrating satisfactory image quality and diversity after about 1000 steps. These steps followed the reversal of the diffusion process and were required to be performed sequentially, negating the computational power of GPUs in performing operations in parallel. Lastly, the model was unable to encode samples from the latent space for a visualization of the generation process due to the stochastic sampling of its diffusion process.
 
 ## DDIM
 
