@@ -18,7 +18,7 @@ Some other important insights from the DDPM paper include the highlighting of se
 
 Unfortunately, like all novel discoveries, it came with flaws. DDPMs relied on an impractically large number of inference steps, with the paper only demonstrating satisfactory image quality and diversity after about 1000 steps. These steps followed the reversal of the diffusion process and were required to be performed sequentially, negating the computational power of GPUs in performing operations in parallel. Lastly, the model was unable to encode samples from the latent space for a visualization of the generation process due to the stochastic sampling of its diffusion process.
 
-Interpolate near image space due to stochastic generative process.
+Interpolate near image space due to stochastic generative process. Latent variables are relatively high dimensional.
 
 ## DDIM
 
