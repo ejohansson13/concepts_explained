@@ -4,7 +4,7 @@ This page is intended to cover schedulers and the more popular scheduling algori
 
 ## DDPM
 
-Every scheduling algorithm we will look at today was derived from the original [DDPM paper](https://arxiv.org/abs/2006.11239), which examined diffusion models as Markov chains with Gaussian elements. When training, the paper optimized across the variational bound of the negative log likelihood. The reordering of the negative log likelihood provided the below equation. 
+Every scheduling algorithm we will look at today was derived from the original [Denoising Diffusion Probabilistic Models (DDPM) paper](https://arxiv.org/abs/2006.11239), which examined diffusion models as Markov chains with Gaussian elements. When training, the paper optimized across the variational bound of the negative log likelihood. The reordering of the negative log likelihood provided the below equation. 
 
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/ddpm_nll_optimized.png" alt="Optimized negative log likehood equation for DDPM" width="100%">
@@ -22,7 +22,12 @@ Also not deterministic because of stochasticity. Interpolate near image space du
 
 ## DDIM
 
-[DDIM](https://arxiv.org/abs/2010.02502?ref=blog.segmind.com)
+Summary.
+[Denoising Diffusion Implicit Models (DDIM)](https://arxiv.org/abs/2010.02502?ref=blog.segmind.com) were directly inspired by DDPMs and referenced the DDPM framework multiple times in its corresponding research paper
+
+Benefits.
+
+Drawbacks.
 
 ## Euler
 
