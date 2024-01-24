@@ -23,7 +23,15 @@ Also not deterministic because of stochasticity. Interpolate near image space du
 ## DDIM
 
 Summary.
-[Denoising Diffusion Implicit Models (DDIM)](https://arxiv.org/abs/2010.02502?ref=blog.segmind.com) were directly inspired by DDPMs and referenced the DDPM framework multiple times in its corresponding research paper
+[Denoising Diffusion Implicit Models (DDIM)](https://arxiv.org/abs/2010.02502?ref=blog.segmind.com) were directly inspired by DDPMs. Their main goal was to achieve a faster inference time than DDPMs without sacrificing sample quality, proving that diffusion models could be competitive with GANs and other image generation architectures. Their key insight was examining non-Markovian inference processes with an equivalent surrogate objective function to DDPMs. 
+<Graph of non-Markovian inference process>
+
+Researchers found that the DDPM objective focused on the marginal probability distribution and not directly on the joint probability distribution. Multiple joint probability distributions can exist with equivalent marginal probability distributions. This takeaway expanded the possible generative processes that could be implemented. They then proved that DDPMs were a specific case of this family of non-Markovian generative processes. 
+
+Setting sigma controls your generative process: In fact, they broadened their findings to a "family of generative processes" indexed by magnitude sigma and demonstrated that DDPMs were a special case of this family. If sigma was instead set to 0, you could arrive at an entirely deterministic image generation process. 
+
+Controlling steps by traversing subsets of steps at each moment.
+<Insert graph of somewhat faded out non-Markovian inference process>
 
 Benefits.
 
