@@ -37,10 +37,9 @@ The new family of generative processes include the DDPM process as a special cas
   <img src="/Stable Diffusion/Images/accelerated_non_Markovian_inference.png" alt="Image of accelerated non-Markovian inference process taken from DDIM research paper" width="60%">
 </p>
 
-
+Researchers also observed that there was still a general trend between inference speed and quality. The larger number of inference steps allowed for a generated image tended to correlate to the quality of that image. This allowed for a tradeoff between inference speed and image quality, granting greater customization and flexibility for implementation. Figure out how to conenct to separation of algorithm from model and put a bow on conclusion.
 
 Allowed for separation of scheduling algorithm from model architecture. "From the definition of Jσ, it would appear that a different model has to be trained for every choice of σ, since it corresponds to a different variational objective (and a different generative process). However, Jσ is equivalent to Lγ for certain weights γ, as we show below... With L1 as the objective, we are not only learning a generative process for the Markovian inference process considered in Sohl-Dickstein et al. (2015) and Ho et al. (2020), but also generative processes for many non-Markovian forward processes parametrized by σ that we have described. Therefore, we can essentially use pretrained DDPM models as the solutions to the new objectives, and focus on finding a generative process that is better at producing samples subject to our needs by changing σ."
-Significantly improved inference time. Allowed tradeoff between inference speed and quality. 
 
 ## Euler
 
