@@ -22,22 +22,28 @@ Also not deterministic because of stochasticity. Interpolate near image space du
 
 ## DDIM
 
-Summary.
-[Denoising Diffusion Implicit Models (DDIM)](https://arxiv.org/abs/2010.02502?ref=blog.segmind.com) were directly inspired by DDPMs. Their main goal was to achieve a faster inference time than DDPMs without sacrificing sample quality, proving that diffusion models could be competitive with GANs and other image generation architectures. Their key insight was examining non-Markovian inference processes with an equivalent surrogate objective function to DDPMs. 
+[Denoising Diffusion Implicit Models (DDIM)](https://arxiv.org/abs/2010.02502?ref=blog.segmind.com) were directly inspired by DDPMs. Their main goal was to achieve a faster inference time than DDPMs without sacrificing sample quality, proving that diffusion models could be competitive with GANs and other image generation architectures. Their key insight was examining non-Markovian inference processes with an equivalent surrogate objective function to DDPMs. DDPMs depended on a Markov-like chain of denoising reversing the learned addition of noise to image. To prevent this sequential dependence on the previous step for inference, researchers posited a non-Markovian generation process for decreased latency.
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/non_Markovian_inference.png" alt="Image of non-Markovian inference process taken from DDIM research paper" width="60%">
+  <img src="/Stable Diffusion/Images/Markovian_vs_non_Markovian_inference.png" alt="Graphical illustrations of Markovian and non-Markovian inference processes taken from DDIM research paper" width="60%">
 </p>
 
-Researchers found that the DDPM objective focused on the marginal probability distribution and not directly on the joint probability distribution. Multiple joint probability distributions can exist with equivalent marginal probability distributions. This takeaway expanded the possible generative processes that could be implemented. They then proved that DDPMs were a specific case of this family of non-Markovian generative processes. 
+Researchers found that the DDPM objective focused on the marginal probability distribution of a noisy image given the denoised image, and not directly on the joint probability distribution of all noisy images given the denoised image. Multiple joint probability distributions can exist with equivalent marginal probability distributions. This takeaway expanded the possible generative processes that could be implemented. Authors of the DDPM paper had already leveraged the Gaussian nature of the added noise probability distribution to minimize the KL-divergence between the added noise probability distribution and the denoising distribution. By fixing the variance of these distributions, they had expressed a relationship between the means of each distribution such that each addition of noise to the image was solely dependent on the previous image's level of noise. This made reversing the noise process simplistic, albeit slow. The DDIM paper actually expanded the additive noise process and introduced a vector sigma (still maintained its Gaussian properties, but this is dismissable and an aside in the research paper). Regardless of the sigma value, the training objective remains the same. In fact, the same substitution utilized in the DDPM paper for sampling can be employed here to give our new sampling equation for denoising images.
 
-Setting sigma controls your generative process: In fact, they broadened their findings to a "family of generative processes" indexed by magnitude sigma and demonstrated that DDPMs were a special case of this family. If sigma was instead set to 0, you could arrive at an entirely deterministic image generation process. 
+The new "family of generative processes" are indexed by a vector sigma, and actually include the DDPM inference process as a special case. The vector sigma controls the stochasticity of the inference process. With sigma set to 0, researchers arrived at an entirely deterministic image generation process.
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/DDIM_sampling_process.png" width="50%">
+</p>
 
+
+Now, cover inference speed up with DDIMs in comparison to DDPMs.
 Controlling steps by traversing subsets of steps at each moment.
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/accelerated_non_Markovian_inference.png" alt="Image of accelerated non-Markovian inference process taken from DDIM research paper" width="60%">
 </p>
 
 Benefits.
+Deterministic image output -> same latent will give you same image. Allowed for separation of scheduling algorithm from model architecture. "From the definition of Jσ, it would appear that a different model has to be trained for every choice of σ, since it corresponds to a different variational objective (and a different generative process). However, Jσ is equivalent to Lγ for certain weights γ, as we show below... With L1 as the objective, we are not only learning a generative process for the Markovian inference process considered in Sohl-Dickstein et al. (2015) and Ho et al. (2020), but also generative processes for many non-Markovian forward processes parametrized by σ that we have described. Therefore, we can essentially use pretrained DDPM models as the solutions to the new objectives, and focus on finding a generative process that is better at producing samples subject to our needs by changing σ."
+Significantly improved inference time. Allowed tradeoff between inference speed and quality. Alteration of noise in latent space could controllably alter output of image in pixel space. 
 
 Drawbacks.
 
