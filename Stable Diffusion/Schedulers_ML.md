@@ -43,7 +43,7 @@ Allowed for separation of scheduling algorithm from model architecture. "From th
 
 ## Euler
 
-If DDIMs laxly negotiated the loosening of the constraints accompanying DDPM theory, the [Euler](https://arxiv.org/abs/2206.00364?ref=blog.segmind.com) paper arrived with a bang and a demand for further liberation. The first sentence announced the authors' intent: "We argue that the theory and practice of diffusion-based generative models are currently unnecessarily convoluted and seek to remedy the situation by presenting a design space that clearly separates the concrete design choices". They certainly presented a design space alternative design choices. Over a third of the schedulers currently available on Hugging Face for Stable Diffusion implementation owe their theoretical background to this literature[2]. 
+If DDIMs laxly negotiated the loosening of constraints accompanying the DDPM theory, [Elucidating the Design Space of Diffusion-Based Generative Models](https://arxiv.org/abs/2206.00364?ref=blog.segmind.com) arrived with a bang and a demand for further liberation from said constraints. The first sentence announced the authors' intent: "We argue that the theory and practice of diffusion-based generative models are currently unnecessarily convoluted and seek to remedy the situation by presenting a design space that clearly separates the concrete design choices". They succeeded. Over a third of the schedulers currently available (as of January 2024) on Hugging Face for Stable Diffusion implementation owe their theoretical background to this literature[2]. 
 
 ## PLMS
 
