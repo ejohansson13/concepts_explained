@@ -43,7 +43,10 @@ Allowed for separation of scheduling algorithm from model architecture. "From th
 
 ## Euler
 
-If DDIMs laxly negotiated the loosening of constraints accompanying the DDPM theory, [Elucidating the Design Space of Diffusion-Based Generative Models](https://arxiv.org/abs/2206.00364?ref=blog.segmind.com) arrived with a bang and a demand for further liberation from said constraints. The first sentence announced the authors' intent: "We argue that the theory and practice of diffusion-based generative models are currently unnecessarily convoluted and seek to remedy the situation by presenting a design space that clearly separates the concrete design choices". They succeeded. Over a third of the schedulers currently available (as of January 2024) on Hugging Face for Stable Diffusion implementation owe their theoretical background to this literature[2]. 
+If DDIMs laxly negotiated the loosening of constraints accompanying the DDPM theory, [Elucidating the Design Space of Diffusion-Based Generative Models](https://arxiv.org/abs/2206.00364?ref=blog.segmind.com) arrived with a bang and a demand for further liberation from said constraints. The first sentence announced the authors' intent: "We argue that the theory and practice of diffusion-based generative models are currently unnecessarily convoluted and seek to remedy the situation by presenting a design space that clearly separates the concrete design choices". They succeeded. Over a third of the schedulers currently available (as of January 2024) on Hugging Face for Stable Diffusion implementation owe their theoretical background to this literature[2]. Unlike the other schedulers covered so far, I'll also be heavily borrowing concepts and ideas from the accompanying video presentation of their research paper[3]. If you haven't had a chance yet to check it out, I urge you to do so.
+
+Talk about everything they covered in Euler paper: ability to walk away from previous differential equation constraints, belief that Langevin's was great to initially approximate diffusion but led to multiple constraints, every facet of additive noise and denoising process, different formulas, ancestral sampling by stochastic addition of noise, Heun's sampling believed to best approximate gradient, modular design and separability of model components, 
+Talk about avoiding connection directly between noisy input to network and direct output from denoised image to final network layer. Backbone of LDMs! Instead have VAE overarching with diffusion model in the middle.
 
 ## PLMS
 
@@ -56,3 +59,5 @@ If DDIMs laxly negotiated the loosening of constraints accompanying the DDPM the
 [1] https://www.youtube.com/watch?v=IVcl0bW3C70&t=903s
 
 [2] https://huggingface.co/docs/diffusers/v0.14.0/en/api/schedulers/euler
+
+[3] https://www.youtube.com/watch?v=T0Qxzf0eaio
