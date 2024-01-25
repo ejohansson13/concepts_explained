@@ -30,7 +30,7 @@ Researchers observed that the DDPM objective focused on the marginal probability
   <img src="/Stable Diffusion/Images/DDIM_sampling_process.png" width="50%">
 </p>
 
-The new family of generative processes include the DDPM process as a special case. With sigma set to $`\sqrt{(1-α_{t-1}) / (1-α_{t})} \sqrt{1-(α_t / α_{t-1})}`$ for all t, researchers arrive at the DDPM process. With sigma set to 0, researchers arrived at an entirely deterministic image generation process. Previous image generation models often seemed to 
+The new family of generative processes include the DDPM process as a special case. With sigma set to $`\sqrt{(1-α_{t-1}) / (1-α_{t})} \sqrt{1-(α_t / α_{t-1})}`$ for all t, researchers arrive at the DDPM process. With sigma set to 0, researchers arrived at an entirely deterministic image generation process. Previous image generation models often illustrated to their hearts' content with no guarantee of image replicability. DDIMs offered consistency. Images synthesized from the same latent variable would inevitably share high-level features. This replicability in the latent space also lended itself to image interpolation. Linear combinations of latent variables would lead to a blend of each image in the final output.
 
 Now, cover inference speed up with DDIMs in comparison to DDPMs.
 Controlling steps by traversing subsets of steps at each moment.
@@ -38,9 +38,8 @@ Controlling steps by traversing subsets of steps at each moment.
   <img src="/Stable Diffusion/Images/accelerated_non_Markovian_inference.png" alt="Image of accelerated non-Markovian inference process taken from DDIM research paper" width="60%">
 </p>
 
-Benefits.
 Allowed for separation of scheduling algorithm from model architecture. "From the definition of Jσ, it would appear that a different model has to be trained for every choice of σ, since it corresponds to a different variational objective (and a different generative process). However, Jσ is equivalent to Lγ for certain weights γ, as we show below... With L1 as the objective, we are not only learning a generative process for the Markovian inference process considered in Sohl-Dickstein et al. (2015) and Ho et al. (2020), but also generative processes for many non-Markovian forward processes parametrized by σ that we have described. Therefore, we can essentially use pretrained DDPM models as the solutions to the new objectives, and focus on finding a generative process that is better at producing samples subject to our needs by changing σ."
-Significantly improved inference time. Allowed tradeoff between inference speed and quality. Alteration of noise in latent space could controllably alter output of image in pixel space. 
+Significantly improved inference time. Allowed tradeoff between inference speed and quality. 
 
 ## Euler
 
