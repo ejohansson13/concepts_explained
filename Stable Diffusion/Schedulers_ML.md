@@ -54,13 +54,6 @@ The authors also argue that selecting a solver is often over-valued. Many compon
 
 Next, the authors turned to the role of stochasticity in latent variable denoising. Ostensibly, ODEs and [Stochastic Differential Equations (SDEs)](https://en.wikipedia.org/wiki/Stochastic_differential_equation) covered the same distribution, but there appeared to be a difference in the generated image dependent on the employed algorithm. Intuitively, they reasoned that a stochastic approach to denoising inevitably introduced new noise at every timestep it was responsible for removing noise. Sometimes, this stochastic behavior would nudge a generated image to better approximate the denoising trajectory, in other instances it would head away from the optimal trajectory and lead to a lower-quality image. Ultimately, the researchers observed the "optimal amount of stochasticity should be determined empirically". This examination of stochastic behavior and its' working in concert with ODE solutions led to the creation of ancestral schedulers for Stable Diffusion models. Ancestral schedulers balance the solution trajectory navigation with forays into alternative branches of the image denoising probability distribution. They walk away from the purely deterministic approach of ODEs, and often generate new and unexplored image generation possibilities from the same latent noise selection.
 
-
-
-3 contributions:
-- Intuitive examination of neural network components used in modeling noise level dependent marginal distribution of training data corrupted by Gaussian noise (denoising score matching)
-- Identify best-performing time-discretization for sampling, apply Runge-Kutta method, and evaluate multiple sampling schedulers; also analyze usefulness of stochasticity and its role in scheduling algorithms
-- Analysis of training environment for denoising score neural network; analysis on preconditioning and best practices for training environment
-
 Talk about avoiding connection directly between noisy input to network and direct output from denoised image to final network layer. Backbone of LDMs! Instead have VAE overarching with diffusion model in the middle.
 
 ## PLMS
