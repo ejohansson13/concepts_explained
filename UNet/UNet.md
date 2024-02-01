@@ -106,7 +106,19 @@ A 572x572x1 image is input and broadened to 570x570x64. Our input image only hol
 
 ### Convolution with Multiple Channels
 
-WORDS.
+<img src="/UNet/Images/unet_kernel1.png" width="30%" /> <img src="/UNet/Images/unet_kernel2.png" width="30%" /> <img src="/UNet/Images/unet_kernel3.png" width="30%" />
+
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_conv_kernel1.png" width="50%"
+</p>
+
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_conv_kernel2.png" width="50%"
+</p>
+
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_conv_kernel3.png" width="50%"
+</p>
 
 ## Bridge
 The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation and serves as our input to the bridge.
