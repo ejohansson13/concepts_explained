@@ -106,18 +106,20 @@ A 572x572x1 image is input and broadened to 570x570x64. Our input image only hol
 
 ### Convolution with Multiple Channels
 
-<img src="/UNet/Images/unet_kernel1.png" width="30%" /> <img src="/UNet/Images/unet_kernel2.png" width="30%" /> <img src="/UNet/Images/unet_kernel3.png" width="30%" />
-
-<p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel1.png" width="50%"
+<p align="center">
+  <img src="/UNet/Images/unet_kernel1.png" width="10%" /> <img src="/UNet/Images/unet_kernel2.png" width="10%" /> <img src="/UNet/Images/unet_kernel3.png" width="10%" />
 </p>
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel2.png" width="50%"
+  <img src="/UNet/Images/unet_conv_kernel1.png" width="30%"
 </p>
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel3.png" width="50%"
+  <img src="/UNet/Images/unet_conv_kernel2.png" width="30%"
+</p>
+
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_conv_kernel3.png" width="30%"
 </p>
 
 ## Bridge
