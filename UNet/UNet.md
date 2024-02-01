@@ -106,21 +106,29 @@ A 572x572x1 image is input and broadened to 570x570x64. Our input image only hol
 
 ### Convolution with Multiple Channels
 
+In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with a unique kernel for each input channel. When increasing the number of channels in an output image through convolution, one filter exists for each output channel. Let’s first examine the multi-filter example where we expand the number of output channels, before considering an input image with multiple channels.
+
+Revisiting our earlier convolution example, we treated a 6x6 matrix as a grayscale image. If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. Each filter would have one kernel for each channel of our input image. Our input image only has one channel, so in this case, we would have one kernel for each convolutional filter. We can see the kernels below.
 <p align="center">
   <img src="/UNet/Images/unet_kernel1.png" width="10%" /> <img src="/UNet/Images/unet_kernel2.png" width="10%" /> <img src="/UNet/Images/unet_kernel3.png" width="10%" />
 </p>
 
+Next, let’s perform convolution with these three filters, each containing one kernel. Feeding in our input matrix, we repeat the same convolutional process as described above, and arrive at the same result. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_conv_kernel1.png" width="30%"
 </p>
 
+We move on to the second convolutional filter and apply its kernel across our input matrix, generating another channel for our output image.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_conv_kernel2.png" width="30%"
 </p>
 
+Finally, we apply our third filter with its convolutional kernel for the third and final channel of our output image.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_conv_kernel3.png" width="30%"
 </p>
+
+We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution
 
 ## Bridge
 The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation and serves as our input to the bridge.
