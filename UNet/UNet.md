@@ -106,9 +106,9 @@ A 572x572x1 image is input and broadened to 570x570x64. Our input image only hol
 
 ### Convolution with Multiple Channels
 
-In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with a unique kernel for each input channel. When increasing the number of channels in an output image through convolution, one filter exists for each output channel. Let’s first examine the multi-filter example where we expand the number of output channels, before considering an input image with multiple channels.
+In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with one kernel for each input channel. When changing the number of channels in an output image through convolution, one filter exists for each output channel. Let’s first examine the multi-filter example where we expand the number of output channels, before considering the multi-kernel example for an image input with multiple channels.
 
-Revisiting our earlier convolution example, we treated a 6x6 matrix as a grayscale image. If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. Each filter would have one kernel for each channel of our input image. Our input image only has one channel, so in this case, we would have one kernel for each convolutional filter. We can see the kernels below.
+Revisiting our convolution example, we treated a 6x6 matrix as a grayscale image. If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. Each filter would have one kernel for each channel of our input image. Our input image only has one channel, so in this case, we would have one kernel for each convolutional filter. We can see the filters below.
 <p align="center">
   <img src="/UNet/Images/unet_kernel1.png" width="10%" /> <img src="/UNet/Images/unet_kernel2.png" width="10%" /> <img src="/UNet/Images/unet_kernel3.png" width="10%" />
 </p>
@@ -118,7 +118,7 @@ Next, let’s perform convolution with these three filters, each containing one 
   <img src="/UNet/Images/unet_conv_kernel1.png" width="30%"
 </p>
 
-We move on to the second convolutional filter and apply its kernel across our input matrix, generating another channel for our output image.
+We move on to the second convolutional filter and apply its solitary kernel across our input matrix, generating another channel for our output image.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_conv_kernel2.png" width="30%"
 </p>
@@ -128,7 +128,17 @@ Finally, we apply our third filter with its convolutional kernel for the third a
   <img src="/UNet/Images/unet_conv_kernel3.png" width="30%"
 </p>
 
-We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution
+We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution allowed the broadening of our one-channel image into multiple channels, offering additional perspectives for the network to better understand our image. Let's consider a slightly more complex example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB 572x572x3 convolved to 570x570x64.
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_first_conv.png" width="30%"
+</p>
+
+Again, we'd have one 3x3 kernel for each input channel. That gives us 3 kernels per filter. We'd need 64 filters, one for each output channel. This gives us 64 filters, each with 3 3x3 kernels. Each kernel perform convolutions with its associated channel, following the same operation we've demonstrated above. The output of every kernel-channel pairing is summed together. This means that, although each filter has three kernels, only one matrix is output per filter. Repeating this for each of the 64 filters would give our expected output of 64 channels for our image and allows for the transformation of a 572x572x3 image to 570x570x64. 
+
+Convolution gives our network total control over the number of input and output channels.
+Something about how convolution allows total control of channels.
+
+In the first stage, our first convolution operation gives us 64 channels. In the next stage, following our max pooling, we perform our first convolution operation and increase the channels to 128. This continues, doubling our number of channels in the first convolution operation of each stage until we arrive at the bottom of our U-shape and the bridge in our architecture. Reiterate why doubling channels for every downsampling operation is important.
 
 ## Bridge
 The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation and serves as our input to the bridge.
