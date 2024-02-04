@@ -11,12 +11,16 @@ SD - Stable Diffusion; a popularized text-to-image synthesis framework
 
 # Definitions
 
-Computer Vision - comprehension of a program in response to visual stimulus; includes image detection, image segmentation, image synthesis, and other areas of machine learning related to the understanding of visible information
+Computer Vision - comprehension or analysis of a program in response to visual stimulus; includes image classification, image detection, image segmentation, and other areas of machine learning or artificial intelligence related to the understanding of information presented in a visible medium
 
-Image Detection - 
+Image Classification - successful categorization of relevant objects in an image
 
-Image Segmentation - defintion
+Image Detection - location and identification of relevant objects in an image
 
-Image Synthesis - 
+Image Generation - formation of a visually coherent image from previous incoherent noise
 
-Natural Language Processing - 
+Image Segmentation - isolation and partition of relevant objects in an image; often accompanied by a box demonstrating the boundaries of the specified object
+
+Image Synthesis - see Image Generation
+
+Natural Language Processing - comprehension or analysis of a program in response to information presented in a texual medium; includes sentiment analysis, text generation, text summarization, and other areas of machine learning or artificial intelligence related to the understanding of text
