@@ -2,11 +2,9 @@ Stable Diffusion was one of multiple text-to-image generation models to generate
 
 # Architecure
 
-The latent diffusion network follows an encoder-decoder architecure. Between these blocks, there are three main stages: a diffusion model, the denoising u-net, and the custom conditioner (text, image, or audio prompt for multimodal capabilities). The encoder is responsible for encoding images to their more compact latent representation. The diffusion process is repsonsible for taking images apart, adding Gaussian noise at sequential timesteps. 
+The latent diffusion network follows an encoder-decoder architecure. Between these blocks, there are three main stages: the scheduler, the denoising U-Net and the custom conditioner (text, image, or audio prompt for multimodal capabilities). The encoder is responsible for encoding images to their  latent representation. The U-Net is the vehicle carrying the latent representation through the latent space. The prompt suggests the latent space destination, and the scheduler is ultimately responsible for guiding the vehicle (U-Net) through the latent space to the preferred destination. This destination, decided by the U-Net, scheduler, and prompt is the closest latent space representation to the ultimate image. This destination latent is then decoded by the decoder section of the architecture and transformed to a pixel-space image hopefully in accordance with the preferred characteristics described in the prompt.
 
-**schedulers**
-
-such that our image can quickly be generated with some further conditioning. The conditioning comes via our prompt. Considering the text-to-image synthesis example, we feed in an empty prompt for classifier-free guidance of our model before feeding in our wanted textual prompt. The empty and textual prompts are concatenated together and combined with our U-Net result via the cross-attention mechanism popularized from the Transformer architecture. This gives us our latent end-product. This latent space matrix is then passed through our decoder, upsampled, etc. etc. etc. to become a legitimate pixel-space image. Following that, you can pass it through super-resolution networks or whatever else you want to do.
+Each of these stages will be covered in more detail below, and I've split the architecture details in two. [Training](#training) covers each stage's role throughout the training process. [Inference](#inference) offers the same details for the inference process, describing how user input is synthesized to a 512x512 pixelated image.
 
 ## Training
 
