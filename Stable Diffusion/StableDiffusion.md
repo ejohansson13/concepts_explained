@@ -20,6 +20,10 @@ Encoder: Stacks of convolution (3x3 kernels!!), activation function, downsamplin
 
 Decoder: Stacks of convolution, activation functions, Resnet Blocks, upsampling, exactly what you'd find in U-Net.
 
+Perceptual loss: Compare pre-trained VGG16 network latent representations (multiple) of your encoded-decoded images to the original via MSE. Comparing semantic information captured as opposed to perceptual information which can contain uncooperative high-frequency details.
+
+Patch-based adversarial loss: Intuitive patch-based approach, scalars on patches of matrices tell you whether that patch is real or not. Latent-based patches? Read Pix2Pix to double check.
+
 Downsampling factor f = 1,2 results in slow training progress. Leaves most of perceptual compression responsibility to diffusion model. f > 16 causes stagnating fidelity quickly after training. Exaggerated initial compression results in information loss. Significant FID gap between pixel-based diffusion and LDM-8 after 2M training steps.
 
 #### Metric
