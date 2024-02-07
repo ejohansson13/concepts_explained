@@ -14,13 +14,21 @@ Stable Diffusion models are trained on a wide variety of images pulled from the 
 
 ### Autoencoder 15:00 in Aleksa' LDM paper review
 
+#### Encoder
+
 Pre-trained autoencoders. 
 
-Encoder: Stacks of convolution (3x3 kernels!!), activation function, downsampling blocks, exactly what you'd find in a U-Net. Downsampling is by predefined factor f! Double check what Resnet blocks are.
+Encoder: Stacks of convolution (3x3 kernels!!), activation function, downsampling blocks, exactly what you'd find in a U-Net. Downsampling is by predefined factor f! Double check what Resnet blocks are. In latent space of encoder, image features are actually self-attended to. Latent representations are "unrolled" as feature embeddings, then self-attention is performed. "Every token attends to every other token".
+
+Conv -> ResNet blocks -> self-attention -> Normalization -> downsampling
+
+#### Decoder
 
 Decoder: Stacks of convolution, activation functions, Resnet Blocks, upsampling, exactly what you'd find in U-Net.
 
-Perceptual loss: Compare pre-trained VGG16 network latent representations (multiple) of your encoded-decoded images to the original via MSE. Comparing semantic information captured as opposed to perceptual information which can contain uncooperative high-frequency details.
+Conv -> ResNet blocks -> self-attention -> Normalization -> upsampling
+
+Perceptual loss: Compare pre-trained VGG16 network latent representations (multiple (5)) of your encoded-decoded images to the original via MSE. Comparing semantic information captured as opposed to perceptual information which can contain uncooperative high-frequency details.
 
 Patch-based adversarial loss: Intuitive patch-based approach, scalars on patches of matrices tell you whether that patch is real or not. Latent-based patches? Read Pix2Pix to double check.
 
@@ -28,7 +36,21 @@ Downsampling factor f = 1,2 results in slow training progress. Leaves most of pe
 
 #### Metric
 
+For first x (50k or so) steps, only perceptual loss is trained. This allows autoencoder to build up some robustness in its encoding prior to adversarial training. No guarantee of successful output if it was immediately trained with adversarial loss (also would be almost reducing it to a GAN).
+
+Initial training of adversarial loss: you're telling the discriminator one image is real, one image is fake. Then, you're passing in a generated image and seeing if the discriminator can STILL discern whether it's real or fake. This allows the discriminator to get better at discerning fake images, and the autoencoder to ensure that image reconstruction has high fidelity, enough to fool the discriminator. Two-player game.
+
 Trained by combination of perceptual loss and patch-based adversarial objective. Avoids blurriness introduced by relying solely on pixel-space based losses. All training images in RGB space (HxWx3). Experiment with two kinds of regularizations: Previously popularized VQ and KL. SD models would ultimately use KL-regularization.
+
+KL-regularization is applied to latent space of autoencoder. "Smooths" out these latent representations (depresses pockets of high variance). Ensures that we have faithful latent encodings for our latent space. Remember, all diffusion and denoising takes place in latent space. For that reason, we want to make sure our autoencoder has capable latent encodings.
+
+Have to read https://proceedings.neurips.cc/paper/2020/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf, 
+We are getting posteriors - encoded latents
+Get moments from posterior (mean, variance, std. dev?)
+"Create" Gaussian distribution from those moments (posterior)
+Compute KL divergence of these posteriors
+Regularize towards "normal" Gaussian distribution according to KL-divergence.
+Keep in mind this is only a slight KL-divergence loss.
 
 ### Diffusion (Scheduler)
 
