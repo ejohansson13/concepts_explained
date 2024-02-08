@@ -14,6 +14,8 @@ Stable Diffusion models are trained on a wide variety of images pulled from the 
 
 ### Autoencoder 15:00 in Aleksa' LDM paper review
 
+
+
 #### Encoder
 
 Pre-trained autoencoders. 
