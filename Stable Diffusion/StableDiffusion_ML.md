@@ -29,7 +29,7 @@ Encoder: Stacks of convolution (3x3 kernels!!), activation function, downsamplin
 
 #### Decoder
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/LDM_decoder_architecture.png" alt="Illustration of LDM encoder" width="100%"
+  <img src="/Stable Diffusion/Images/SD_Images/LDM_decoder_architecture.png" alt="Illustration of LDM decoder" width="100%"
 </p>
 
 Decoder: Stacks of convolution, activation functions, Resnet Blocks, upsampling, exactly what you'd find in U-Net.
