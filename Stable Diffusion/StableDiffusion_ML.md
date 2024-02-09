@@ -22,7 +22,7 @@ Encoding to a latent space requires decisions on the size of the latent space. T
 
 #### Encoder
 <p align="center" width="100%">
-  <img src="/Stable\ Diffusion/Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="20%"
+  <img src="/Stable Diffusion/Images/SD_Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="20%"
 </p>
 
 Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. I've included an illustration above, and we'll examine each operation in more detail below.
