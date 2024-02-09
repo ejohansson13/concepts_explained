@@ -20,10 +20,10 @@ Encoding to a latent space requires decisions on the size of the latent space. T
 
 #### Encoder
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="80%"
+  <img src="/Stable Diffusion/Images/SD_Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="100%"
 </p>
 
-Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. I've included an illustration above, and we'll examine each operation in more detail below.
+Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. 
 
 Encoder: Stacks of convolution (3x3 kernels!!), activation function, downsampling blocks, exactly what you'd find in a U-Net. Downsampling is by predefined factor f! Double check what Resnet blocks are. In latent space of encoder, image features are actually self-attended to. Latent representations are "unrolled" as feature embeddings, then self-attention is performed. "Every token attends to every other token".
 
