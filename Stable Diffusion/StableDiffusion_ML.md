@@ -23,24 +23,32 @@ Encoding to a latent space requires decisions on the size of the latent space. T
   <img src="/Stable Diffusion/Images/SD_Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="100%"
 </p>
 
-Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. 
+Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. [One Stable Diffusion implementation](https://github.com/CompVis/stable-diffusion/tree/main) is illustrated above. Through every step of the encoder operation, the aim is to effectively and efficiently condense image features. This is accomplished through an initial convolution, broadening the channels to 128, where pixel-space values are converted to feature embeddings. Immediately after this convolution are a pair of ResNet and attention blocks, providing propagation and self-attention of all image features. This continues to a loop of ResNet, attention blocks, and downsampling. In this loop, a pair of ResNet and attention blocks are applied twice to ensure feature propagation. Downsampling reduces the height and width of the data by half, until we have compacted our data to the expected latent dimension size. Since each downsampling operation halves the height and width, we would repeat the loop log<sub>2</sub>f times. For LDM-4, downsampling would be performed twice, LDM-8 would perform this loop three times. After exiting this loop, a sequence of ResNet-attention-ResNet blocks ensures analysis of the condensed image features before normalization stabilizes the data across all channels. A nonlinear activation function is applied elementwise through the Sigmoid function before another convolution operation controls our number of output channels. 
 
-Encoder: Stacks of convolution (3x3 kernels!!), activation function, downsampling blocks, exactly what you'd find in a U-Net. Downsampling is by predefined factor f! Double check what Resnet blocks are. In latent space of encoder, image features are actually self-attended to. Latent representations are "unrolled" as feature embeddings, then self-attention is performed. "Every token attends to every other token".
+Something about the role of encoder to ENCODE image data
+
+#### KL-regularization
+
+To stabilize the latent space and prevent any pockets of high variance, we apply a low-penalty KL-regularization scheme. This serves to push the latent space to an approximation of a Gaussian distribution, smoothing out what could otherwise be an unpredictable and high-variance encoding space. Unlike other encoder-decoder architectures, like the U-Net, the autoencoder is not the final product. It serves as an avenue to a latent space for more efficient calculations. All diffusion, generation, and denoising at inference time take place in this latent space; ensuring an approximate Gaussian distribution for sampling greatly simplifies that process.
+
+[KL-regularization has been shown to effectively](https://proceedings.neurips.cc/paper/2020/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf)...
 
 #### Decoder
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/SD_Images/LDM_decoder_architecture.png" alt="Illustration of LDM decoder" width="100%"
 </p>
 
+
+
 Decoder: Stacks of convolution, activation functions, Resnet Blocks, upsampling, exactly what you'd find in U-Net.
 
 Conv -> ResNet blocks -> self-attention -> Normalization -> upsampling
 
+#### Metric
+
 Perceptual loss: Compare pre-trained VGG16 network latent representations (multiple (5)) of your encoded-decoded images to the original via MSE. Comparing semantic information captured as opposed to perceptual information which can contain uncooperative high-frequency details.
 
 Patch-based adversarial loss: Intuitive patch-based approach, scalars on patches of matrices tell you whether that patch is real or not. Latent-based patches? Read Pix2Pix to double check.
-
-#### Metric
 
 For first x (50k or so) steps, only perceptual loss is trained. This allows autoencoder to build up some robustness in its encoding prior to adversarial training. No guarantee of successful output if it was immediately trained with adversarial loss (also would be almost reducing it to a GAN). Mention the intuitive explanation for perceptual loss, but also why later literature demonstrated a diminished appetite for it. 
 
@@ -48,19 +56,9 @@ Initial training of adversarial loss: you're telling the discriminator one image
 
 Trained by combination of perceptual loss and patch-based adversarial objective. Avoids blurriness introduced by relying solely on pixel-space based losses. All training images in RGB space (HxWx3). Experiment with two kinds of regularizations: Previously popularized VQ and KL. SD models would ultimately use KL-regularization.
 
-KL-regularization is applied to latent space of autoencoder. "Smooths" out these latent representations (depresses pockets of high variance). Ensures that we have faithful latent encodings for our latent space. Remember, all diffusion and denoising takes place in latent space. For that reason, we want to make sure our autoencoder has capable latent encodings.
-
-Have to read https://proceedings.neurips.cc/paper/2020/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf, 
-We are getting posteriors - encoded latents
-Get moments from posterior (mean, variance, std. dev?)
-"Create" Gaussian distribution from those moments (posterior)
-Compute KL divergence of these posteriors
-Regularize towards "normal" Gaussian distribution according to KL-divergence.
-Keep in mind this is only a slight KL-divergence loss.
-
 ### Diffusion (Scheduler)
 
-Refer to schedulers.md
+For more information, I recommend reading the page I wrote focusing on [schedulers](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). The objective of schedulers is to best approximate the denoising score function of an image. In training, they ...
 
 ### U-Net
 
