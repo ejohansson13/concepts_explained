@@ -29,6 +29,8 @@ Constituting the encoder are a variety of convolution operations, ResNet blocks,
 
 To stabilize the latent space and prevent any pockets of high variance, we apply a low-penalty KL-regularization scheme. [KL-regularization has been shown to be very effective](https://proceedings.neurips.cc/paper/2020/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf) in efficiently unifying diverging distributions. This serves to push the latent space to an approximation of a Gaussian distribution, smoothing out an otherwise unpredictable and high-variance encoding space. Unlike other encoder-decoder architectures, like the U-Net, the latent space for LDMs serves as more than an avenue to image reconstruction. The latent space of LDMs is a legitimate destination in its own right. All diffusion, generation, and denoising at inference time take place in this latent space; stabilizing this space affords a steadier venue for these operations. KL-regularization accomplishes this target, pushing the latent space distribution to an approximate Gaussian, and balancing our latent space.
 
+The original paper also included VQ-GAN regularization, but ultimately KL was determined to provide better results. Include literature supporting this fact.
+
 #### Decoder
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/SD_Images/LDM_decoder_architecture.png" alt="Illustration of LDM decoder" width="100%"
@@ -42,7 +44,9 @@ Also, initial ResNet in every loop is controlling number of channels. Also, touc
 
 #### Metric
 
-Two metrics are used to measure the success of our encoder-decoder in compressing images then reconstructing them.
+Two metrics are used to determine the autoencoder's success. First, perceptual loss measures the semantic understanding of the reconstructed image in comparison to the original. Both the original and reconstructed images are passed through a [pre-trained VGG16](https://www.mygreatlearning.com/blog/introduction-to-vgg16/) convolutional neural network. There are 5 ReLU output locations following a convolutional block in the VGG16 network. The original and reconstructed images' encodings are compared at each of these locations. 
+
+MSE between each of these representations. Summed up to determine total perceptual loss. Intuitively preferred to L2 loss because pixel-space based losses can encourage blurriness (https://arxiv.org/pdf/1801.03924.pdf).
 
 Trained by combination of perceptual loss and patch-based adversarial objective. Avoids blurriness introduced by relying solely on pixel-space based losses. This is because Euclidean distance is minimized by averaging all plausible outputs, which causes blurring. All training images in RGB space (HxWx3). Experiment with two kinds of regularizations: Previously popularized VQ and KL. SD models would ultimately use KL-regularization.
 
