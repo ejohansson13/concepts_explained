@@ -25,6 +25,8 @@ Encoding to a latent space requires decisions on the size of the latent space. T
 
 Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. [One Stable Diffusion implementation](https://github.com/CompVis/stable-diffusion/tree/main) is illustrated above. Through every step of the encoder operation, the aim is to efficiently condense image features. This is accomplished through an initial convolution, broadening the channels to 128, where pixel-space values are converted to feature embeddings. Immediately after this convolution are a pair of ResNet and attention blocks, providing propagation and self-attention of all image features. This continues to a loop of ResNet, attention blocks, and downsampling. In this loop, a pair of ResNet and attention blocks are applied twice to ensure feature propagation before downsampling. Downsampling reduces the height and width of the data by half, until we have compacted our data to the expected latent dimension size. Since each loop halves the height and width, we repeat the loop log<sub>2</sub>f times. For LDM-4, downsampling would be performed twice, LDM-8 would perform this loop three times. After exiting the loop, a sequence of ResNet-attention-ResNet blocks inspects the condensed image features before normalization stabilizes the data across all channels. A nonlinear activation function is applied elementwise through the Sigmoid function before another convolution operation controls our number of output channels. 
 
+Mention encoder's responsibility in finding perceptually-equivalent lower-dimensional space. First stage of autoencoder is perceptual compression, then comes semantic compression and learning in latent space.
+
 #### KL-regularization
 
 To stabilize the latent space and prevent any pockets of high variance, we apply a low-penalty KL-regularization scheme. [KL-regularization has been shown to be very effective](https://proceedings.neurips.cc/paper/2020/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf) in efficiently unifying diverging distributions. This serves to push the latent space to an approximation of a Gaussian distribution, smoothing out an otherwise unpredictable and high-variance encoding space. Unlike other encoder-decoder architectures, like the U-Net, the latent space for LDMs serves as more than an avenue to image reconstruction. The latent space of LDMs is a legitimate destination in its own right. All diffusion, generation, and denoising at inference time take place in this latent space; stabilizing this space affords a steadier venue for these operations. KL-regularization accomplishes this target, pushing the latent space distribution to an approximate Gaussian, and balancing our latent space.
@@ -44,7 +46,9 @@ Also, initial ResNet in every loop is controlling number of channels. Also, touc
 
 #### Metric
 
-Two metrics are used to determine the autoencoder's success. First, perceptual loss measures the semantic understanding of the reconstructed image in comparison to the original. Both the original and reconstructed images are passed through a [pre-trained VGG16](https://www.mygreatlearning.com/blog/introduction-to-vgg16/) convolutional neural network. There are 5 ReLU output locations following a convolutional block in the VGG16 network. The original and reconstructed images' encodings are compared at each of these locations. 
+Two metrics are used to determine the autoencoder's success: perceptual loss and patch-based adversarial loss. 
+
+Perceptual loss measures the semantic understanding of the reconstructed image in comparison to the original. Both the original and reconstructed images are passed through a [pre-trained VGG16](https://www.mygreatlearning.com/blog/introduction-to-vgg16/) convolutional neural network. There are 5 ReLU output locations following a convolutional block in the VGG16 network (highlighted in red in the image above). The original and reconstructed images' encodings are compared at each of these locations via mean-squared error (MSE). The total MSE is summed across the five output locations to determine the perceptual loss of the reconstructed image. MSE is preferred to typical Euclidean-space losses, such as L2, which depend on pixel-wise comparison. These metrics assume pixel-wise independence and [encourage blurring](https://arxiv.org/pdf/1801.03924.pdf), as minimizing the pixel-space distance between two images draws one to an average perceptual approximation of the other.
 
 MSE between each of these representations. Summed up to determine total perceptual loss. Intuitively preferred to L2 loss because pixel-space based losses can encourage blurriness (https://arxiv.org/pdf/1801.03924.pdf).
 
@@ -87,3 +91,13 @@ Empty conditioning - important
 # Future Steps
 
 Already seen that increasing size of U-Net leads to improved results (SDXL). Can also add refiner/superresolution U-Net to upsample to more detailed image dimensions. LM performance can have significant effect on downstream image generation performance (Imagen). What other future directions can image synthesis take / what can be done to further improve performance?
+
+
+
+
+
+# Citations
+
+VGG16 architecture image - https://pub.towardsai.net/the-architecture-and-implementation-of-vgg-16-b050e5a5920b
+
+Patch-based adversarial loss training image - Rao, S., Stutz, D., Schiele, B. (2020). Adversarial Training Against Location-Optimized Adversarial Patches. In: Bartoli, A., Fusiello, A. (eds) Computer Vision – ECCV 2020 Workshops. ECCV 2020. Lecture Notes in Computer Science(), vol 12539. Springer, Cham. https://doi.org/10.1007/978-3-030-68238-5_32
