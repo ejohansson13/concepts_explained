@@ -48,13 +48,19 @@ Also, initial ResNet in every loop is controlling number of channels. Also, touc
 
 Two metrics are used to determine the autoencoder's success: perceptual loss and patch-based adversarial loss. 
 
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/vgg16_architecture.png" alt="Illustration of a VGG16 convolutional neural network" width="100%"
+</p>
+  
 Perceptual loss measures the semantic understanding of the reconstructed image in comparison to the original. Both the original and reconstructed images are passed through a pre-trained [VGG16](https://www.mygreatlearning.com/blog/introduction-to-vgg16/) convolutional neural network. There are 5 ReLU output locations following a convolutional block in the VGG16 network (highlighted in red in the image above). The original and reconstructed images' encodings are compared at each of these locations via mean-squared error (MSE). The total MSE is summed across the five output locations to determine the perceptual loss of the reconstructed image. MSE is preferred to typical Euclidean-space losses, such as L2, which depend on pixel-wise comparison. These metrics assume pixel-wise independence and [encourage blurring](https://arxiv.org/pdf/1801.03924.pdf). Minimizing the Euclidean distance between two images averages all plausible outputs of the reconstructed image, pushing it to an average perceptual approximation of the original image. Although perceptual loss is fairly intuitive (measuring semantic representation across two images via a pre-trained network), its success as a loss metric can be [dependent on the network](https://arxiv.org/pdf/2302.04032.pdf) employed for image embeddings. [Later literature](https://arxiv.org/pdf/2307.01952.pdf) would demonstrate a decreased emphasis on perceptual loss.
 
-Patch-based adversarial loss borrows from GAN theory, introducing controlled patches of noise to reconstructed images
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/patch_based_adversarial_loss.jpeg" alt="Example of patch-based adversarial loss" width="100%"
+</p>
 
-For first x (50k or so) steps, only perceptual loss is trained. This allows autoencoder to build up some robustness in its encoding prior to adversarial training. No guarantee of successful output if it was immediately trained with adversarial loss (also would be almost reducing it to a GAN). Mention the intuitive explanation for perceptual loss, but also why later literature demonstrated a diminished appetite for it. 
+Patch-based adversarial loss borrows from GAN theory, introducing controlled patches of noise to reconstructed images, and training a discriminator to detect the added noise. 
 
-Patch-based adversarial loss: Intuitive patch-based approach, scalars on patches of matrices tell you whether that patch is real or not, functions on pxiel-space reconstructions.
+For first x (50k or so) steps, only perceptual loss is trained. This allows autoencoder to build up some robustness in its encoding prior to adversarial training. No guarantee of successful output if it was immediately trained with adversarial loss (also would be almost reducing it to a GAN). Patch-based adversarial loss: Intuitive patch-based approach, scalars on patches of matrices tell you whether that patch is real or not, functions on pixel-space reconstructions.
 
 Initial training of adversarial loss: you're telling the discriminator one image is real, one image is fake. Then, you're passing in a generated image and seeing if the discriminator can STILL discern whether it's real or fake. This allows the discriminator to get better at discerning fake images, and the autoencoder to ensure that image reconstruction has high fidelity, enough to fool the discriminator. Two-player game.
 
