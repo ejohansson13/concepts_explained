@@ -60,9 +60,10 @@ Perceptual loss measures the semantic understanding of the reconstructed image i
 
 [Patch-based adversarial loss](https://arxiv.org/pdf/1611.07004.pdf) borrows from GAN theory, introducing controlled patches of noise to reconstructed images while training a discriminator to detect the noisy patches. Introducing localized patches [enforces pixel-space realism](https://arxiv.org/pdf/2012.09841.pdf). Aiding a discriminator in the detection of artificial images by introducing scalar patches of noise encourages the decoder to maintain perceptually important high-frequency details while decoding from the latent space. The patch-based loss is not utilized for an initial chunk of training (50k or so steps), allowing the autoencoder to establish robustness in its encoding-decoding paradigm. Immediately training with both the perceptual and adversarial losses would lead to an overly powerful discriminator and a weaker autoencoder.
 
-### Diffusion (Scheduler)
+### Scheduler
 
-For more information, I recommend reading the page I wrote focusing on [schedulers](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). The objective of schedulers is to best approximate the denoising score function of an image. In training, they ...
+For more information, I recommend reading the page I wrote focusing on [schedulers](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). Schedulers serve to  t
+The objective of schedulers is to best approximate the denoising score function of an image. In training, they ...
 
 ### U-Net
 
