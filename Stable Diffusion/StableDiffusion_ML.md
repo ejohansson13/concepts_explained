@@ -62,12 +62,11 @@ Perceptual loss measures the semantic understanding of the reconstructed image i
 
 ### Scheduler
 
-For more information, I recommend reading the page I wrote focusing on [schedulers](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). Schedulers serve to  t
-The objective of schedulers is to best approximate the denoising score function of an image. In training, they ...
+Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
 
 ### U-Net
 
-Does in fact operate on the latent space, see reweighted bound in LDM paper. Latent representations can be quickly obtained from Encoder through training, and latent representations can be quickly passed through Decoder in a single pass.
+Words.
 
 ### Conditioning
 
