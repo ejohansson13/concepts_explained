@@ -64,6 +64,20 @@ Perceptual loss measures the semantic understanding of the reconstructed image i
 
 Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
 
+SD does not learn schedules while training, uses plethora of pre-researched scheduling algorithms for sampling. When training model holistically -> intializes previously trained autoencoder. Train autoencoder -> freeze it -> utilize its latent space to train U-Net and conditional model?. Pass latent, conditioning information, and timesteps to compute loss.
+
+Sample noise from normal distribution
+Q-sample (additive noise process; add noise to) start latent
+  Add t timesteps of noise to start latent
+Pass noisy latent, t (telling U-Net how many timesteps of noise were added), and conditioning information to U-Net
+U-Net predicts NOISE that was added to latent -> MSE loss between predicted added noise and ground-truth added noise
+OR predicts original latent 
+
+I don't actually think you're learning the schedule when training holistically. You're just implementing the learned schedules from previous literature. The U-Net is the only thing actually learning throug training. The U-Net is learning how to implement the scheduling algorithms in predicting noise from images.
+
+Scheduling theory holds up when drawing from perfectly normalized distributions. As much as we regularize and penalize the latent space between our encoder and decoder, it will not be a perfect Gaussian distribution. We use the U-Net to learn how to remove added noise from latents to the best of its ability. When sampling at inference time, we will not be drawing from a perfect distribution, and we will not know the amount of noise added. The U-Net learns, during the holistic training, how best to apply its learned denoising algorithms in the removal of noise from sampled latents. 
+Additionally, during training the U-Net is learning how different conditioning prompts result in certain latent space destinations. We're given a picture of a red truck, we add noise to it, we predict how much noise to remove, we're penalized by MSE for how much our predicted denoised latent resembles the original latent, but we're also learning that all latents of red trucks have this constitution. All latents of blue trucks have a similar constitution. Purple monkeys have a completely different latent space destination. U-Net is concurrently learning navigation of latent space denoising through scheduler, while learning latent space destinations through conditioning.
+
 ### U-Net
 
 The U-Net is an encoder-decoder architecture popularized through its performance in image segmentation with limited datasets before being recognized as a successful architecture for most computer vision tasks. In LDMs, the U-Net is responsible for the repetitive denoising of the latent. 
@@ -84,7 +98,8 @@ Classifier-free diffusion guidance greatly improves sample quality (not really s
 
 ### Conditioning (Prompt)
 
-Empty conditioning - important
+Empty conditioning - classifier free guidance, passed through CLIP, used to condition U-Net
+
 
 ### Decoder
 
