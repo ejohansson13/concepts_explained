@@ -66,7 +66,9 @@ Schedulers are algorithmic guides to the denoising process implemented through t
 
 ### U-Net
 
-Words.
+The U-Net is an encoder-decoder architecture popularized through its performance in image segmentation with limited datasets before being recognized as a successful architecture for most computer vision tasks. In LDMs, the U-Net is responsible for the repetitive denoising of the latent. 
+
+Ostensibly doesn't have to be U-Net architecture, quickly became ubiquitous for image generation models. U-Net does seem to downsample latents or at least in DDPM it did.
 
 ### Conditioning
 
