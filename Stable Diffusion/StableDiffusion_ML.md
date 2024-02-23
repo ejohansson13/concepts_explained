@@ -12,11 +12,15 @@ Each of these stages will be covered in more detail below, and I've split the ar
 
 Stable Diffusion models are trained on a wide variety of images pulled from the web. We pump in a large dataset of images for our network to learn a variety of visual themes and configurations. These images are taken apart through the time-controlled, sequential addition of noise before being reconstructed. The repetitive dismantling teaches the network how to construct coherent and cohesive images, reversing the diffusion process. Importantly, LDMs were not the first network architecture to operate under the diffusion theory. The idea that models can learn to rebuild images from noise by decomposing training images can be found as early as [2015](https://arxiv.org/pdf/1503.03585.pdf). However, previous architectures operated on the pixel-space of images, reserving their utility for entities who could accomodate the resource-intensive training process. The distinction of latent diffusion models is autological. Rather than operate on the pixel-space, they first compact each image representation, encoding them to a latent space. For that, we need an encoder.
 
+Mention two-stage training process. Autoencoder is for perceptual compression. U-Net and everything operating in latent space is for semantic compression. Put graph illustration here.
+
 ### Autoencoder
 
 Autoencoders have become ubiquitous across machine learning architecture. Their purpose is to receive an input and encode that input to a compressed representation with minimal information loss. The original LDM paper allowed for a pretrained autoencoder to accomplish this task. In practice, most implementations actually trained new autoencoders from scratch to adhere to the paper's loss functions. If you haven't already, I suggest you check out my page [explaining the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet_ML.md). It gives a broad overview of the typical encoder-decoder architecture. Autoencoders for LDMs offer more complexity than the U-Net, but maintain the same principles. 
 
 Encoding to a latent space requires decisions on the size of the latent space. The authors experimented with multiple downsampling factors, ultimately determining that downsampling factors of 4 or 8 offered the best performance. Downsampling factors of 1 or 2 were considered prohibitively expensive, operating near pixel-space, and greatly slowing the training rate. Downsampling by a factor of 16 or more was determined to cause excessive information loss and low fidelity. We'll be focusing on downsampling by a factor of 4 which has more referrals in the original research paper than the factor of 8 model. We'll refer to this specific model as LDM-4 for the remainder of the page.
+
+Make sure we emphasize that the role of the autoencoder is perceptual compression.
 
 #### Encoder
 <p align="center" width="100%">
@@ -31,7 +35,7 @@ Mention encoder's responsibility in finding perceptually-equivalent lower-dimens
 
 To stabilize the latent space and prevent any pockets of high variance, we apply a low-penalty KL-regularization scheme. [KL-regularization has been shown to be very effective](https://proceedings.neurips.cc/paper/2020/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf) in efficiently unifying diverging distributions. This serves to push the latent space to an approximation of a Gaussian distribution, smoothing out an otherwise unpredictable and high-variance encoding space. Unlike other encoder-decoder architectures, like the U-Net, the latent space for LDMs serves as more than an avenue to image reconstruction. The latent space of LDMs is a legitimate destination in its own right. All diffusion, generation, and denoising at inference time take place in this latent space; stabilizing this space affords a steadier venue for these operations. KL-regularization accomplishes this target, pushing the latent space distribution to an approximate Gaussian, and balancing our latent space.
 
-The original paper also included VQ-GAN regularization, but ultimately KL was determined to provide better results. Include literature supporting this fact.
+The original paper also included VQ-GAN regularization, but ultimately KL was determined to provide better results. Include literature supporting this fact. Mention that the entire purpose of the autoencoder is to construct a computationally-friendly latent space that is perceptually equivalent.
 
 #### Decoder
 <p align="center" width="100%">
@@ -62,9 +66,11 @@ Perceptual loss measures the semantic understanding of the reconstructed image i
 
 ### Scheduler
 
-Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
+Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). Schedulers are unique in that, they are isolated from the training of LDMs. 
 
 SD does not learn schedules while training, uses plethora of pre-researched scheduling algorithms for sampling. When training model holistically -> intializes previously trained autoencoder. Train autoencoder -> freeze it -> utilize its latent space to train U-Net and conditional model?. Pass latent, conditioning information, and timesteps to compute loss.
+
+Smoothing and regularization of latent space is incredibly important -> we want to approach unit variance and approximation of overall normal distribution as referenced in video explaining Euler research paper. Important to control magnitude of noise levels.
 
 Sample noise from normal distribution
 Q-sample (additive noise process; add noise to) start latent
@@ -90,15 +96,17 @@ Just about any kind of encoder for text/audio/image. Pretrained domain-specific 
 
 ## Inference
 
-Classifier-free diffusion guidance greatly improves sample quality (not really sure where to put this, probably in training section, right?)
-
 ### Scheduler
+
+Inference time schedulers are determined by pre-defined algorithms through previous literature. They are just initialized and applied to latent denoising to determine the amount of noise to be removed.
 
 ### U-Net
 
+Pass in two of everything to U-Net for classifier-free guidance. Concatenated x (latent (sampled noise)) with itself, t (number of timesteps to remove noise) with itself, and conditioning c (empty prompt concatenated on to actual text prompt).
+
 ### Conditioning (Prompt)
 
-Empty conditioning - classifier free guidance, passed through CLIP, used to condition U-Net
+Empty conditioning - classifier free guidance, passed through CLIP, used to condition U-Net. Classifier-free diffusion guidance greatly improves sample quality. 
 
 
 ### Decoder
