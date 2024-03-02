@@ -18,7 +18,7 @@ Stable Diffusion models are trained on a wide variety of images pulled from the 
 The above graph demonstrates that the majority of bits constituting a digital image correspond to high-frequency, perceptual details. In contrast, relatively few bits comprise the semantic information of the image. 
 
 The distinction of latent diffusion models is autological. Rather than operate on the pixel-space, they first compact each image representation, encoding them to a latent space.
-Mention two-stage training process. Autoencoder is for perceptual compression. U-Net and everything operating in latent space is for semantic compression. Put graph illustration here.
+Mention two-stage training process. Autoencoder is for perceptual compression. U-Net and everything operating in latent space is for semantic compression. Put graph illustration here. Another benefit of two-stage training process is no need to weight autoencoding and generative training at the same time. You train to optimize your encoding space THEN you can train to optimize your generative space. Another benefit is once you've trained your autoencoder, you can utilize it for whatever latent-based generative task you'd like.
 
 ### Autoencoder
 
@@ -72,7 +72,9 @@ Perceptual loss measures the semantic understanding of the reconstructed image i
 
 ### Scheduler
 
-Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). Schedulers are unique in that, they are isolated from the training of LDMs. 
+Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). 
+Scheduling algorithms were initially the entire dictator of image generation models.
+Thanks to [a 2022 paper](https://arxiv.org/pdf/2206.00364.pdf), the scheduling algorithm 
 
 SD does not learn schedules while training, uses plethora of pre-researched scheduling algorithms for sampling. When training model holistically -> intializes previously trained autoencoder. Train autoencoder -> freeze it -> utilize its latent space to train U-Net and conditional model?. Pass latent, conditioning information, and timesteps to compute loss.
 
