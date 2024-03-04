@@ -72,35 +72,23 @@ Perceptual loss measures the semantic understanding of the reconstructed image i
 
 ### Scheduler
 
-Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and implementation evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md). 
-Scheduling algorithms were initially the entire dictator of image generation models.
-Thanks to [a 2022 paper](https://arxiv.org/pdf/2206.00364.pdf), the scheduling algorithm 
-
-SD does not learn schedules while training, uses plethora of pre-researched scheduling algorithms for sampling. When training model holistically -> intializes previously trained autoencoder. Train autoencoder -> freeze it -> utilize its latent space to train U-Net and conditional model?. Pass latent, conditioning information, and timesteps to compute loss.
-
-Smoothing and regularization of latent space is incredibly important -> we want to approach unit variance and approximation of overall normal distribution as referenced in video explaining Euler research paper. Important to control magnitude of noise levels.
-
-Sample noise from normal distribution
-Q-sample (additive noise process; add noise to) start latent
-  Add t timesteps of noise to start latent
-Pass noisy latent, t (telling U-Net how many timesteps of noise were added), and conditioning information to U-Net
-U-Net predicts NOISE that was added to latent -> MSE loss between predicted added noise and ground-truth added noise
-OR predicts original latent 
-
-I don't actually think you're learning the schedule when training holistically. You're just implementing the learned schedules from previous literature. The U-Net is the only thing actually learning throug training. The U-Net is learning how to implement the scheduling algorithms in predicting noise from images.
-
-Scheduling theory holds up when drawing from perfectly normalized distributions. As much as we regularize and penalize the latent space between our encoder and decoder, it will not be a perfect Gaussian distribution. We use the U-Net to learn how to remove added noise from latents to the best of its ability. When sampling at inference time, we will not be drawing from a perfect distribution, and we will not know the amount of noise added. The U-Net learns, during the holistic training, how best to apply its learned denoising algorithms in the removal of noise from sampled latents. 
-Additionally, during training the U-Net is learning how different conditioning prompts result in certain latent space destinations. We're given a picture of a red truck, we add noise to it, we predict how much noise to remove, we're penalized by MSE for how much our predicted denoised latent resembles the original latent, but we're also learning that all latents of red trucks have this constitution. All latents of blue trucks have a similar constitution. Purple monkeys have a completely different latent space destination. U-Net is concurrently learning navigation of latent space denoising through scheduler, while learning latent space destinations through conditioning.
+Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. Many scheduling algorithms have been developed over the years and were [inextricably tied to the image generation model](https://arxiv.org/pdf/1503.03585.pdf) until a [2022 paper by Song et. al](https://arxiv.org/pdf/2010.02502.pdf) suggested pre-trained models could utilize different schedulers at inference time within the same family of generative modles, and [another paper by Karras et. al](https://arxiv.org/pdf/2206.00364.pdf) confirmed that scheduling algorithms could be entirely separated from the denoising architecture. Schedulers learn the Gaussian addition of noise to images to subsequently model the Gaussian removal of noise from images. The important parameters for their algorithms are a linear or cosine schedule and a vector linked to the timestep of the iterative noise removal process. We can treat these parameters as a purely mathematical function guiding the U-Net's denoising of latents, thanks to the years of literature that have examined these algorithms for image synthesis performance. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
 
 ### U-Net
 
-The U-Net is an encoder-decoder architecture popularized through its performance in image segmentation with limited datasets before being recognized as a successful architecture for most computer vision tasks. In LDMs, the U-Net is responsible for the repetitive denoising of the latent. 
+If you're looking for information on the U-Net architecture, check out [my page](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet_ML.md) offering a brief summarization of its application within image segmentation. The U-Net is an encoder-decoder architecture popularized through its performance in computer vision tasks. In LDMs, the U-Net is responsible for the repetitive denoising of the latent. Ostensibly, the denoising architecture for LDMs does not have to be a U-Net, but its [inductive bias for spatial data](https://arxiv.org/pdf/2105.05233.pdf) quickly led to the U-Net becoming ubiquitous for denoising purposes in diffusion models.
 
-Ostensibly doesn't have to be U-Net architecture, quickly became ubiquitous for image generation models. U-Net does seem to downsample latents or at least in DDPM it did.
+Within LDMs, U-Nets can be trained to either predict the denoised latent when passed a noisy latent or predict the amount of noise that needs to be removed from a latent to arrive at the denoised latent. This distinction can be toggled throughout
+
+Scheduler is used to add noise to latent (according to its schedule), U-Net then either denoises that noise or predicts denoised latent immediately.
+
+U-Net does seem to downsample latents or at least in DDPM it did.
 
 ### Conditioning
 
 Just about any kind of encoder for text/audio/image. Pretrained domain-specific encoder. LDM paper uses BERT encoder. Mention that future research demonstrated that more powerful text encoders often lead to better image generation results.
+
+Cross-attention mechanism in U-Net allows for conditioning to influence latent destination.
 
 ## Inference
 
