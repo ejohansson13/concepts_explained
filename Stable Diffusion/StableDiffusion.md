@@ -61,7 +61,13 @@ Does in fact operate on the latent space, see reweighted bound in LDM paper. Lat
 
 ### Conditioning
 
-Just about any kind of encoder for text/audio/image. Pretrained domain-specific encoder. LDM paper uses BERT encoder. Mention that future research demonstrated that more powerful text encoders often lead to better image generation results.
+Prompting our diffusion model requires the network's understanding of the prompt. We need an encoder to convert natural language text into vector embeddings which can interact with our latent embeddings in the U-Net. 
+
+First, let's talk about how we need something to encode prompt for it to interact with latent image representation. Just about any kind of encoder for text/audio/image. Pretrained domain-specific encoder. LDM paper uses BERT encoder. Mention that future research demonstrated that more powerful text encoders often lead to better image generation results.
+
+Talk about cross-attention mechanism's functionality within the U-Net, query, key, value interplay. Cross-attention mechanism in U-Net allows for conditioning to influence latent destination. We are training the weight matrices for query, key, and value when performing semantic training. "Holistic" training in this manner is really only training these weight matrices to ensure functional interplay between the query (network provided embedding of latent), key (encoder provided embedding of prompt), and value (encoder provided embedding of prompt). Same weight for query, key, value matrices across time. Different weight matrices at each layer in the U-Net.
+
+Cross-attention is performed at every layer, for every timestep, for every word. Every word is instantly attended to when cross-attention is performed. One embedding for every token. Linear projection to make it compatible with image embedding matrix size. Thanks to the dimensions of the weight matrices, we can instantly make our embeddings compatible with each other, even while downsampling our latent embeddings. This allows the U-Net to downsample and upsample while performing cross-attention.
 
 ## Inference
 
