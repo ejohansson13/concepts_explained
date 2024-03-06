@@ -1,10 +1,9 @@
-<p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/LDM_diagram.png" alt="LDM diagram taken from original research paper" width="100%"
-</p>
-
 Stable Diffusion was one of multiple text-to-image generation models to generate widespread public attention on the advancements of artificial intelligence and machine learning. Similar to the rise of the transformer architecture for natural language processing tasks, [Latent Diffusion Models (LDMs)](https://arxiv.org/pdf/2112.10752.pdf) quickly grew in popularity for conditional image generation. Previous image synthesis architectures included [GANs](https://arxiv.org/pdf/1605.05396.pdf), [RNNs](https://arxiv.org/pdf/1502.04623.pdf), and [autoregressive modeling](https://arxiv.org/pdf/1906.00446.pdf) which [multiple](https://arxiv.org/pdf/2102.12092.pdf) [companies](https://arxiv.org/pdf/2206.10789.pdf) favored. However, the performance of diffusion models in zero-shot applications as well as their efficiency operating in the latent space, led to LDMs becoming the eminent architecture for text-to-image generation tasks. Their compatibility with natural language, image, and audio prompts (thanks to cross-attention) accelerated the multimodality of machine learning applications. On this page, you'll find an overview of the Stable Diffusion architecture, its training procedure, and inference steps.
 
 We'll be focusing on the text-to-image case, but I urge you to check out the [original paper](https://arxiv.org/pdf/2112.10752.pdf) which described multiple other use cases, including image inpainting, conditioning on semantic maps, and layout-to-image, with image generation conditioned on annotated bounding boxes.
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/LDM_diagram.png" alt="LDM diagram taken from original research paper" width="100%"
+</p>
 
 # Architecure
 
@@ -78,6 +77,10 @@ The autoencoder solves the first stage of our training: perceptual compression. 
 Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. Many scheduling algorithms have been developed over the years, but were thought to be inextricable from the model architecture until a [2022 paper by Song et. al](https://arxiv.org/pdf/2010.02502.pdf) suggested pre-trained models could utilize different schedulers at inference time within the same family of generative models, and [another paper by Karras et. al](https://arxiv.org/pdf/2206.00364.pdf) confirmed that scheduling algorithms could be entirely separated from the denoising architecture. Schedulers learn the Gaussian addition of noise to images to subsequently model the Gaussian removal of noise from images. The important parameters for these algorithms are: a linear or cosine schedule and a vector linked to the timestep of the iterative noise removal process. We can treat these parameters as a purely mathematical function guiding the U-Net's denoising of latents, thanks to the years of literature that have examined these algorithms for image synthesis performance. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
 
 ### U-Net
+
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/Unet_architecture.png" alt="LDM diagram taken from original research paper" width="40%"
+</p>
 
 If you're looking for information on the U-Net architecture, check out [my page](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet_ML.md) offering a brief summarization of its application within image segmentation. The U-Net is an encoder-decoder architecture popularized through its performance in computer vision tasks. In LDMs, the U-Net is responsible for the repetitive denoising of the latent. Ostensibly, the denoising architecture for LDMs does not have to be a U-Net, but [the U-Net's inductive bias for spatial data](https://arxiv.org/pdf/2105.05233.pdf) quickly led to it becoming ubiquitous for denoising in diffusion models. The U-Net functions architecturally similar to its image segmentation application, downsampling its input and expanding the number of channels to determine the conceptually critical image features before upsampling and condensing the number of channels to preserve spatially relevant information.
 
