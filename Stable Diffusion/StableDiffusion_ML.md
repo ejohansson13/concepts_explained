@@ -90,9 +90,12 @@ Knowing the number of timesteps of noise that was added to our latent, the U-Net
 
 ### Conditioning
 
+
+
 Just about any kind of encoder for text/audio/image. Pretrained domain-specific encoder. LDM paper uses BERT encoder. Mention that future research demonstrated that more powerful text encoders often lead to better image generation results.
 
-Cross-attention mechanism in U-Net allows for conditioning to influence latent destination.
+Cross-attention mechanism in U-Net allows for conditioning to influence latent destination. We are training the weight matrices for query, key, and value when performing semantic training. "Holistic" training in this manner is really only training these weight matrices to ensure functional interplay between the query (network provided embedding of latent), key (encoder provided embedding of prompt), and value (encoder provided embedding of prompt). 
+Talk about cross-attention mechanism's functionality within the U-Net, query, key, value interplay. Cross-attention is performed at every layer, for every timestep, for every word. Intermediate score attention arrays are upscaled through bicubic interpolation before being summed over all heads, layers, and timesteps.
 
 ## Inference
 
@@ -106,8 +109,9 @@ Pass in two of everything to U-Net for classifier-free guidance. Concatenated x 
 
 ### Conditioning (Prompt)
 
-Empty conditioning - classifier free guidance, passed through CLIP, used to condition U-Net. Classifier-free diffusion guidance greatly improves sample quality. 
+Talk about the interpolation between the provided prompt and the guided denoising of the latent to ultimately result in a newly synthesized image.
 
+Empty conditioning - classifier free guidance, passed through CLIP, used to condition U-Net. Classifier-free diffusion guidance greatly improves sample quality. 
 
 ### Decoder
 
