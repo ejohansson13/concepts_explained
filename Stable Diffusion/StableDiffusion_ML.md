@@ -52,7 +52,7 @@ Our decoder is assembled from the same blocks as our encoder and performs simila
 
 Similar to the encoder, we perform fewer operations at the pixel-space dimensions. The intermediate stages have performed the necessary filtering of image features. Additional operations at higher dimensions could confuse our upsampling parameters and lead to a lower-fidelity reconstruction.
 
-Also, initial ResNet in every loop is controlling number of channels. Also, touch again on importance of ResNet and attention blocks.
+Also, initial ResNet in every loop is controlling number of channels. Also, touch again on importance of ResNet and attention blocks. DECODER HAS ONE EXTRA RESNET IN COMPARISON TO ENCODER!!!
 
 #### Metric
 
