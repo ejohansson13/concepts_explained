@@ -33,9 +33,19 @@ Encoding to a latent space requires decisions on the size of the latent space. T
   <img src="/Stable Diffusion/Images/SD_Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="100%"
 </p>
 
-Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. [One Stable Diffusion encoder implementation](https://github.com/CompVis/stable-diffusion/tree/main) is illustrated above. Through every step of the encoder operation, the aim is to efficiently condense image features. This is accomplished through an initial convolution, broadening the channels to 128, where pixel-space values are converted to feature embeddings. Following the initial convolution, a structure of two ResNet blocks preceding a downsampling operation appear. This structure is repeated until the feature embeddings are compressed to satisty the latent space dimensions. ResNet blocks function as
+Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. [One Stable Diffusion encoder implementation](https://github.com/CompVis/stable-diffusion/tree/main) is illustrated above. Through every step of the encoder operation, the aim is to efficiently condense image features. This is accomplished through an initial convolution, broadening the channels to 128, where pixel-space values are converted to feature embeddings. Following the initial convolution, a structure of two ResNet blocks preceding a downsampling operation appear. This structure is repeated until the feature embeddings are compressed to satisty the latent space dimensions. ResNet blocks function as the catalyst, activating the most important image features before downsampling funnels those features to lower-dimensional representations. 
+Something about downsampling.
+For LDM-4, this loop would occur twice, to quarter the image height and width. For LDM-8, this loop occurs three times to bring the latent dimensions to 1/8 of the original image dimensions. 
+Something about the function of ResNet blocks.
 
-Immediately after this convolution are a pair of ResNet and attention blocks, providing propagation and self-attention of all image features. This continues to a loop of ResNet, attention blocks, and downsampling. In this loop, a pair of ResNet and attention blocks are applied twice to ensure feature propagation before downsampling. Downsampling reduces the height and width of the data by half, until we have compacted our data to the expected latent dimension size. Since each loop halves the height and width, we repeat the loop log<sub>2</sub>f times. For LDM-4, downsampling would be performed twice, LDM-8 would perform this loop three times. After exiting the loop, a sequence of ResNet-attention-ResNet blocks inspects the condensed image features before normalization stabilizes the data across all channels. A nonlinear activation function is applied elementwise through the Sigmoid function before another convolution operation controls our number of output channels. 
+Outside of loop: three ResNet blocks, again highlight their function.
+
+Self-attention block: self-attending to ALL feature embeddings, as opposed to convolution which focuses on 3x3 window.
+
+Another ResNet block, should have described operations above.
+
+GroupNormalization -> Nonlinearity, in this case SiLU -> outwards convolution
+ 
 
 Talk about role of self-attention with image embeddings. Mention encoder's responsibility in finding perceptually-equivalent lower-dimensional space. First stage of autoencoder is perceptual compression, then comes semantic compression and learning in latent space.
 
