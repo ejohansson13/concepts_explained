@@ -39,8 +39,12 @@ These ResNet blocks contain the following sequence of operations: group normaliz
 
 Outside of the ResNet->ResNet->downsampling loop, we find another grouping of ResNet blocks. These blocks follow the same constitution and perform equivalent functions to the blocks inside the loop. They serve to highlight relevant image features, propagate those features, and abstract superficial details superfluous to the semantic information of the image. With repeated normalizations, they also serve to stabilize the image data as it propagates through the network, preventing gradient instability from cascading through the network.
 
+Something about this block of resnet blocks preparing encoder for self-attention.
+
 Self-attention block: self-attending to ALL feature embeddings, as opposed to convolution which focuses on 3x3 window.
-Convolution is the bread and butter of a variety of image classification neural networks. For 
+Convolution offers a number of benefits in detecting proximal image features. Holistic understanding of the image can require a different approach.  Similar to self-attention in text, applying self-attention to image features enables the understanding of longer interdependencies between features and broadens the network's understanding of the overall image. 
+
+Self-attention blocks offer an overall understanding of the image and interdependencies of the image features.
 
 Another ResNet block, should have described operations above.
 
@@ -61,6 +65,8 @@ The original paper also included VQ-GAN regularization, but ultimately KL was de
 </p>
 
 Our decoder is assembled from the same blocks as our encoder and performs similar functions. Every step of the decoder serves to reconstruct our latent encoding to its pixel-space reconstruction. In the training stage, these operations are focused on refining their weights to offer the most accurate mapping of a lower-dimensional encoding to the higher-dimensional image. Similar to the encoder, our first step is through a convolution block. Broadening the number of channels offers more environments to preserve information while upsampling. The broadened encoding is then passed through a ResNet-attention-ResNet sandwich, self-attending every encoded feature. The filtered representation is then passed through the same loop as our encoder, upsampling rather than downsampling. We upsample log<sub>2</sub>f times to expand our features to their original dimensions. For LDM-4, the features pass through the loop twice. Reaching pixel-space at the end of our loop, we normalize our image before applying the sigmoid function elementwise. Lastly, we pass it through a 3x3 convolution and arrive at our reconstructed image. 
+
+Self-attention is especially important in lower-dimensional space close to latent to ensure no information loss.
 
 Similar to the encoder, we perform fewer operations at the pixel-space dimensions. The intermediate stages have performed the necessary filtering of image features. Additional operations at higher dimensions could confuse our upsampling parameters and lead to a lower-fidelity reconstruction.
 
