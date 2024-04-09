@@ -21,6 +21,29 @@ We'll be focusing on downsampling by a factor of 4 which has more referrals in t
 
 Make sure we emphasize that the role of the autoencoder is perceptual compression.
 
+#### Encoder
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/LDM_encoder_architecture.png" alt="Illustration of LDM encoder" width="100%"
+</p>
+
+Constituting the encoder are a variety of convolution operations, ResNet blocks, attention operators, activation functions, and downsampling. [One Stable Diffusion encoder implementation](https://github.com/CompVis/stable-diffusion/tree/main) is illustrated above. Through every step of the encoder operation, the aim is to efficiently condense image features. This is accomplished through an initial convolution, broadening the channels to 128, where pixel-space values are converted to feature embeddings. Following the initial convolution, a structure of two ResNet blocks preceding a downsampling operation appear. This structure is repeated until the feature embeddings are compressed to satisty the latent space dimensions. ResNet blocks function as the catalyst, activating the most important image features before downsampling funnels those features to lower-dimensional representations. Each downsampling operation halves both the height and width of the image to obtain a more compressed representation of the data. For LDM-4, this loop would occur twice, to quarter the image height and width. For LDM-8, this loop occurs three times to bring the latent dimensions to 1/8 of the original image dimensions. 
+
+##### ResNet blocks
+Something about the function of ResNet blocks.
+
+Outside of loop: three ResNet blocks, again highlight their function.
+
+##### Self-Attention
+Self-attention block: self-attending to ALL feature embeddings, as opposed to convolution which focuses on 3x3 window.
+
+
+Another ResNet block, should have described operations above.
+
+GroupNormalization -> Nonlinearity, in this case SiLU -> outwards convolution
+ 
+
+Talk about role of self-attention with image embeddings. Mention encoder's responsibility in finding perceptually-equivalent lower-dimensional space. First stage of autoencoder is perceptual compression, then comes semantic compression and learning in latent space.
+
 #### Decoder
 
 Decoder: Stacks of convolution, activation functions, Resnet Blocks, upsampling, exactly what you'd find in U-Net.
