@@ -112,12 +112,11 @@ Classifier-free guidance.
 
 ## Inference
 
-At inference time, the LDM is applying its learned weights, progressive denoising, conditioning, and decoding to align randomly sampled noise with a user-provided natural language text prompt. The end product is expected to be a visually coherent generated image with high-frequency details. Inferring that product begins in the latent space. As mentioned above, Gaussian noise is randomly sampled to form our latent. If the perceptual compression training stage was successful, we will have arrived at an approximately Gaussian distribution in our latent space. This simplifies the sampling process and allows for easy access to a randomly generated noisy latent. We treat this latent equivalently to noisy latents utilized in the semantic compression training stage. Treating the latent as a meaningfully compressed image with added noise, we begin the denoising process.
+At inference time, the LDM is applying its learned weights through progressive denoising, conditioning, and decoding to align randomly sampled noise with a user-provided natural language text prompt. The end product is expected to be a visually coherent generated image with high-frequency details. Inferring the product begins in the latent space. As mentioned above, Gaussian noise is randomly sampled to form our latent. If the perceptual compression training stage was successful, we will have arrived at an approximately Gaussian distribution in our latent space. This simplifies the sampling process and allows for easy access to a noisy latent expected to follow Gaussian properties. We treat this latent equivalently to noisy latents utilized in the semantic compression training stage. Treating the latent as a meaningfully compressed image with added noise, we begin the denoising process.
 
 ### Scheduler
 
-The noisy latent is iteratively fed through the U-Net in conjunction with the provided prompt, progressively removing chunks of noise at every step. Dependent on the sampler schedule, this process may be deterministic or stochastic. 
-The goal here is that, through training, the U-Net has learned how to successfully remove noise from an image according to the denoising schedule and also that the text conditioning has been successfully trained with the images to guide a latent to the preferred destination. Within the latent space, our model believes that there is a lucid image buried underneath the repeated addition of Gaussian noise. Its only role is to strip away that noise according to the schedule it has previously used. 
+The noisy latent is iteratively fed through the U-Net in conjunction with the provided prompt, progressively removing chunks of noise at every step. Dependent on the sampler schedule, this process may be deterministic or stochastic. From the training process, the U-Net is expected to successfully remove predictable amounts of noise in accordance to the provided timestep. During inference, we provide the U-Net with sequential chunks of timesteps such that the U-Net removes noise proportional to those chunks during each iteration. Given a randomly sampled noisy latent, the sequential denoising process could theoretically lead to any non-deterministic output. By providing conditioning during the semantic training process, the U-Net learns both the successful denoising of a latent and the navigation to a destination latent provided from a conditioning input. The navigation through latent space provided by our conditioning input is 
 
 Inference time schedulers are determined by pre-defined algorithms through previous literature. They are just initialized and applied to latent denoising to determine the amount of noise to be removed.
 
@@ -133,10 +132,7 @@ Empty conditioning - classifier free guidance, passed through CLIP, used to cond
 
 ### Decoder
 
-# Future Steps
-
-Already seen that increasing size of U-Net leads to improved results (SDXL). Can also add refiner/superresolution U-Net to upsample to more detailed image dimensions. LM performance can have significant effect on downstream image generation performance (Imagen). What other future directions can image synthesis take / what can be done to further improve performance?
-
+Role in decoding destination latent without introducing any errors. Also mention that due to the patch-based adversarial loss learning, it should be responsible for adding further high-frequency details to our image (polishing image up).
 
 
 
