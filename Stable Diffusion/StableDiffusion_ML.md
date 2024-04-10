@@ -53,6 +53,8 @@ The original paper also included VQ-GAN regularization, but ultimately KL was de
   <img src="/Stable Diffusion/Images/SD_Images/LDM_decoder_architecture.png" alt="Illustration of LDM decoder" width="100%"
 </p>
 
+Our decoder consists of the exact same blocks as our encoder in reverse order. Rather than downsampling, we'll now be upsampling. The fundamental goal of the decoder is to preserve the learned semantic information from our compressed image while 
+
 Our decoder is assembled from the same blocks as our encoder and performs similar functions. Every step of the decoder serves to reconstruct our latent encoding to its pixel-space reconstruction. In the training stage, these operations are focused on refining their weights to offer the most accurate mapping of a lower-dimensional encoding to the higher-dimensional image. Similar to the encoder, our first step is through a convolution block. Broadening the number of channels offers more environments to preserve information while upsampling. The broadened encoding is then passed through a ResNet-attention-ResNet sandwich, self-attending every encoded feature. The filtered representation is then passed through the same loop as our encoder, upsampling rather than downsampling. We upsample log<sub>2</sub>f times to expand our features to their original dimensions. For LDM-4, the features pass through the loop twice. Reaching pixel-space at the end of our loop, we normalize our image before applying the sigmoid function elementwise. Lastly, we pass it through a 3x3 convolution and arrive at our reconstructed image. 
 
 Self-attention is especially important in lower-dimensional space close to latent to ensure no information loss.
