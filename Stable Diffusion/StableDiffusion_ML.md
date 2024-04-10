@@ -59,7 +59,7 @@ Following the sequence of ResNet and attention blocks, we arrive at a loop of bl
 
 Exiting the loop of ResNet and upsampling blocks, we encounter three additional ResNet blocks stabilizing the higher-dimensional image feature representations. The 3x3 window of convolutional operations again serve to emphasize the adjacent relationships of image features. Image features have now reached the dimensions of pixel-space and stabilizing their values immediately prior to image conversion becomes very important. Affirming the need for pixel-space stabilization, we pass the image features through group normalization, an activation function, and an outward convolution to convert our high-dimensional image features to a legitimate pixel-space image representation. We have now successfully passed an image through our autoencoder, stabilized our latent space, and are ready to measure the success of our encoding and decoding neural network.
 
-Repeat decoder function and its importance. Maybe.
+Repeat decoder function and its importance. Decoder is important because at inference time, we are only employing it. Encoder is not utilized whatsoever at inference time.
 
 #### Metric
 
@@ -71,17 +71,24 @@ Two metrics are used to determine the autoencoder's success: perceptual loss and
   
 Perceptual loss measures the semantic understanding of the reconstructed image in comparison to the original. Both the original and reconstructed images are passed through a pre-trained [VGG16](https://www.mygreatlearning.com/blog/introduction-to-vgg16/) convolutional neural network. There are 5 max pooling locations in the VGG16 network (highlighted in red in the image above). The original and reconstructed images' encodings are compared at each of these locations via mean-squared error (MSE). The total MSE is summed across the five output locations to determine the perceptual loss of the reconstructed image. MSE is preferred to typical Euclidean-space losses, such as L2, which depend on pixel-wise comparison. Minimizing the Euclidean distance between two images assumes pixel-wise independence and averages all plausible outputs of the reconstructed image, [encouraging blurring](https://arxiv.org/pdf/1801.03924.pdf). The success of the perceptual loss metric can be [dependent on the network](https://arxiv.org/pdf/2302.04032.pdf) employed for semantic comparisons, and [later literature](https://arxiv.org/pdf/2307.01952.pdf) would demonstrate a decreased emphasis on perceptual loss.
 
+The fact that it says its comparing semantic understanding makes me think that we're comparing latents. Would also explain in Aleksa's walkthrough that the code is applying the scaling before comparing via VGG16. Unlikely, VGG16 is expecting inputs of certain dimensions which would be expected to be in-line with actual image dimensions.
+Actually compared at multiple ReLU outputs. Assuming final ReLU before max pooling? Read code to determine.
+
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/SD_Images/patch_based_adversarial_loss.jpeg" alt="Example of patch-based adversarial loss" width="40%"
 </p>
 
 [Patch-based adversarial loss](https://arxiv.org/pdf/1611.07004.pdf) borrows from GAN theory, introducing controlled patches of noise to reconstructed images while training a discriminator to detect the noisy patches. Introducing localized patches [enforces pixel-space realism](https://arxiv.org/pdf/2012.09841.pdf). Aiding a discriminator in the detection of artificial images by introducing scalar patches of noise encourages the decoder to maintain perceptually important high-frequency details while decoding from the latent space. The patch-based loss is not utilized for an initial chunk of training (50k or so steps), allowing the autoencoder to establish robustness in its encoding-decoding paradigm. Immediately training with both the perceptual and adversarial losses would lead to an overly powerful discriminator and a weaker autoencoder.
 
+Mention that entire purpose of autoencoder training is to create smaller perceptuall-equivalent latent space. We're trying to eliminate unnecessary bits containing high frequency, imperceptible details for most of our training. Here is where the model learns to reapply those high-frequency details to make the images look more realistic.
+
 ### Scheduler
 
 The autoencoder solves the first stage of our training: perceptual compression. We've now arrived at a perceptually equivalent and computationally cheaper latent space for our second stage: semantic compression. Here, we'll learn the conceptual composition of images to ensure high fidelity for image synthesis. The semantic learning stage centers on three core components: the scheduler, the U-Net, and the conditioner. Throughout the semantic training stage, the autoencoder is frozen to prevent any changes to its weights, and all learning takes place in the latent space.
 
 Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. Many scheduling algorithms have been developed over the years, but were thought to be inextricable from the model architecture until a [2022 paper by Song et. al](https://arxiv.org/pdf/2010.02502.pdf) suggested pre-trained models could utilize different schedulers at inference time within the same family of generative models, and [another paper by Karras et. al](https://arxiv.org/pdf/2206.00364.pdf) confirmed that scheduling algorithms could be entirely separated from the denoising architecture. Schedulers learn the schedule of Gaussian noise addition to images to subsequently model the removal of Gaussian noise from images. The important parameters for these algorithms are: a linear or cosine schedule and a vector linked to the timestep of the iterative noise removal process. We can treat these parameters as a purely mathematical function guiding the U-Net's denoising of latents, thanks to the years of literature that have examined these algorithms for image synthesis performance. For more information on schedulers, I recommend reading the page I wrote focusing on [their literature and evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
+
+Training: telling U-Net how many timesteps of noise to add (# of timesteps is randomly generated), we add that many timesteps of noise at once (we know mean and variance from scheduling algorithm). We then have the U-Net predict how much noise should be removed at each timestep, compare prediction to ground-truth via L2 norm.
 
 ### U-Net
 
@@ -101,9 +108,16 @@ Prompting our diffusion model requires the network's understanding of the prompt
 
 The conditioning plays a critical role in guiding the U-Net's denoising of the latent towards a definite destination at inference time. During training, we are afforded the luxury of a pre-determined destination with our provided clean latent. It's important to take advantage of that luxury so the network can correctly train its query, key, and value weight matrices for cross-attention. Latent embeddings serve as the query with textual embeddings providing the roles of key and value vectors. Performing cross-attention between these vectors emphasizes the relationship between the textual prompt and generated image. Cross-attention occurs at every layer for every timestep of the U-Net. Every token in the textual prompt has a thorough impact on the attention the network pays to the latent embeddings throughout the denoising process. By performing cross-attention at every layer, through every downsampling and upsampling operation, we ensure the uninterrupted propagation of information to every stage of the latent's progression through the network. The holistic training approach taken in the semantic training stage allows the U-Net to learn the successful denoising of latents while concurrently learning the conditioning impact on the ultimate latent destination.
 
+Classifier-free guidance.
+
 ## Inference
 
+At inference time, the LDM is applying its learned weights, progressive denoising, conditioning, and decoding to align randomly sampled noise with a user-provided natural language text prompt. The end product is expected to be a visually coherent generated image with high-frequency details. Inferring that product begins in the latent space. As mentioned above, Gaussian noise is randomly sampled to form our latent. If the perceptual compression training stage was successful, we will have arrived at an approximately Gaussian distribution in our latent space. This simplifies the sampling process and allows for easy access to a randomly generated noisy latent. We treat this latent equivalently to noisy latents utilized in the semantic compression training stage. Treating the latent as a meaningfully compressed image with added noise, we begin the denoising process.
+
 ### Scheduler
+
+The noisy latent is iteratively fed through the U-Net in conjunction with the provided prompt, progressively removing chunks of noise at every step. Dependent on the sampler schedule, this process may be deterministic or stochastic. 
+The goal here is that, through training, the U-Net has learned how to successfully remove noise from an image according to the denoising schedule and also that the text conditioning has been successfully trained with the images to guide a latent to the preferred destination. Within the latent space, our model believes that there is a lucid image buried underneath the repeated addition of Gaussian noise. Its only role is to strip away that noise according to the schedule it has previously used. 
 
 Inference time schedulers are determined by pre-defined algorithms through previous literature. They are just initialized and applied to latent denoising to determine the amount of noise to be removed.
 
