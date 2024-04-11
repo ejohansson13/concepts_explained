@@ -138,10 +138,7 @@ Empty conditioning - classifier free guidance, passed through CLIP, used to cond
 
 ### Decoder
 
-Denoising our latent to the suggested latent destination is the first stage of our inference process. Arriving at a successful pixel-space image from our latent is still dependent on the decoder. Only the decoding portion of our autoencoder is employed at inference time. Ideally, it performs successfully scaling the denoised latent to higher dimensions and translating the image's features to pixel values. **something about perceptual loss** The emphasis on patch-based adversarial loss should encourage the decoder to generate high-frequency details in the generated image.
-
-Role in decoding destination latent without introducing any errors. Also mention that due to the patch-based adversarial loss learning, it should be responsible for adding further high-frequency details to our image (polishing image up).
-
+Denoising our latent to the suggested latent destination is the first stage of our inference process. Arriving at a successful pixel-space image from our latent is still dependent on the decoder. Only the decoding portion of our autoencoder is employed at inference time. Ideally, it performs successfully scaling the denoised latent to higher dimensions and translating the image's features to pixel values. **something about perceptual loss** The role of the patch-based adversarial loss in the training stage encourages the decoder to ensure fidelity across the image and promotes the inclusion of high-frequency details in the final decoded product. Training a discriminator in partnership with the autoencoder pushes the decoder to ensure decoded images are as realistic and inclusive of superficial details as the real images to which they are compared. Luckily, this push towards realism and detailed images in training doubles as an insurance policy for the fidelity of generated images at inference time.
 
 
 
