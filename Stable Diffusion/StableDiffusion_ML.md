@@ -114,23 +114,31 @@ Classifier-free guidance.
 
 At inference time, the LDM is applying its learned weights through progressive denoising, conditioning, and decoding to align randomly sampled noise with a user-provided natural language text prompt. The end product is expected to be a visually coherent generated image with high-frequency details. Inferring the product begins in the latent space. As mentioned above, Gaussian noise is randomly sampled to form our latent. If the perceptual compression training stage was successful, we will have arrived at an approximately Gaussian distribution in our latent space. This simplifies the sampling process and allows for easy access to a noisy latent expected to follow Gaussian properties. We treat this latent equivalently to noisy latents utilized in the semantic compression training stage. Treating the latent as a meaningfully compressed image with added noise, we begin the denoising process.
 
-### Scheduler
+### Diffusion
 
-The noisy latent is iteratively fed through the U-Net in conjunction with the provided prompt, progressively removing chunks of noise at every step. Dependent on the sampler schedule, this process may be deterministic or stochastic. From the training process, the U-Net is expected to successfully remove predictable amounts of noise in accordance to the provided timestep. During inference, we provide the U-Net with sequential chunks of timesteps such that the U-Net removes noise proportional to those chunks during each iteration. Given a randomly sampled noisy latent, the sequential denoising process could theoretically lead to any non-deterministic output. By providing conditioning during the semantic training process, the U-Net learns both the successful denoising of a latent and the navigation to a destination latent provided from a conditioning input. The navigation through latent space provided by our conditioning input is 
+The noisy latent is iteratively fed through the U-Net in conjunction with the provided prompt, progressively removing chunks of noise at every step. Dependent on the sampler schedule, this process may be deterministic or stochastic. From the training process, the U-Net is expected to successfully remove predictable amounts of noise in accordance to the provided timestep. During inference, we provide the U-Net with sequential chunks of timesteps such that the U-Net removes noise proportional to those chunks during each iteration. Given a randomly sampled noisy latent, the sequential denoising process could theoretically lead to any non-deterministic output. By providing conditioning during the semantic training process, the U-Net learns both the successful denoising of a latent and the navigation to a destination latent provided from a conditioning input. The navigation through latent space provided by our conditioning input is finely tuned through the training of cross-attention weight matrices in the diffusion training section of our LDM. **Something about classifier-free guidance** 
+
+Reiterate relationship between regularized Gaussian latent space and ease of denoising.
+
+Iterative denoising of the latent to the provided number of inference steps work in concert with the user's provided conditioning to denoise the latent and navigate it to the preferred destination. The success in the inference stage will be dependent on the success of the training stage and complexity of the selected prompt. Models asked to generate images similar to their training data will perform better. Larger models with more parameters will often perform better at zero-shot tasks. Comprehensive language understanding tied to the performance of the conditioner can also have a significant impact on the success of the model at inference time.
+
+#### Scheduler
 
 Inference time schedulers are determined by pre-defined algorithms through previous literature. They are just initialized and applied to latent denoising to determine the amount of noise to be removed.
 
-### U-Net
+#### U-Net
 
 Pass in two of everything to U-Net for classifier-free guidance. Concatenated x (latent (sampled noise)) with itself, t (number of timesteps to remove noise) with itself, and conditioning c (empty prompt concatenated on to actual text prompt).
 
-### Conditioning (Prompt)
+#### Conditioning (Prompt)
 
 Talk about the interpolation between the provided prompt and the guided denoising of the latent to ultimately result in a newly synthesized image.
 
 Empty conditioning - classifier free guidance, passed through CLIP, used to condition U-Net. Classifier-free diffusion guidance greatly improves sample quality. 
 
 ### Decoder
+
+Denoising our latent to the suggested latent destination is the first stage of our inference process. Arriving at a successful pixel-space image from our latent is still dependent on the decoder. Only the decoding portion of our autoencoder is employed at inference time. Ideally, it performs successfully scaling the denoised latent to higher dimensions and translating the image's features to pixel values. **something about perceptual loss** The emphasis on patch-based adversarial loss should encourage the decoder to generate high-frequency details in the generated image.
 
 Role in decoding destination latent without introducing any errors. Also mention that due to the patch-based adversarial loss learning, it should be responsible for adding further high-frequency details to our image (polishing image up).
 
