@@ -167,7 +167,8 @@ Similarly for the U-Net, we've identified the most important features, but when 
 <img src="/UNet/Images/decoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/encoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/combined_stage_sc.png" width="33%" />
 
 ### Up-Sampling
-Two main approaches exist to upsampling: nearest neighbor interpolation and transpose convolution. Nearest neighbor interpolation is the original implementation covered in the research paper. Transposed convolutions are an alternative, [summarized below](#transposed-convolution). Nearest neighbor interpolation is intuitive. We quadruple our matrix size by doubling the number of rows and doubling the number of columns in our data. We can convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value horizontally and vertically.
+Two main approaches exist to upsampling: nearest neighbor interpolation and transpose convolution. Nearest neighbor interpolation is the original implementation covered in the research paper and offers a much simpler approach. 
+Transposed convolutions are an alternative, [summarized below](#transposed-convolution). Nearest neighbor interpolation is intuitive. We quadruple our matrix size by doubling the number of rows and doubling the number of columns in our data. We can convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value horizontally and vertically.
 <p align="center" width="100%">
   <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="45%"
 </p>
