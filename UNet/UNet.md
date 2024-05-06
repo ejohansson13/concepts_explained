@@ -240,8 +240,12 @@ Some details were abstracted through this explanation, including the size of our
 
 # Examples
 
-Below are some examples of the U-Net's functionality from a self-trained U-Net on the following [dataset]. More information can be found in the code subdirectory of the U-Net folder.
+Below are some examples of the U-Net's functionality from a self-trained U-Net on the following [dataset](https://molab.es/datasets-brain-metastasis-1/?type=metasrd). The dataset contains images of a metastasis in the brain from Patient 040102. More information can be found in the code subdirectory of the U-Net folder. The U-Net was provided high-resolution imaging of the patient's brain across multiple time points and slowly learned to segment the appropriate metastasis from the provided annotated segmentations before being evaluated on images it was not trained on.
 
-<img src="/UNet/Images/decoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/encoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/combined_stage_sc.png" width="33%" />
+<img src="/UNet/Images/0172_img.png" width="33%" /> <img src="/UNet/Images/0172_msk.png" width="33%" /> <img src="/UNet/Images/0172_pred.png" width="33%" />
+<img src="/UNet/Images/0185_img.png" width="33%" /> <img src="/UNet/Images/0185_msk.png" width="33%" /> <img src="/UNet/Images/0185_pred.png" width="33%" />
+<img src="/UNet/Images/0205_img.png" width="33%" /> <img src="/UNet/Images/0205_msk.png" width="33%" /> <img src="/UNet/Images/0205_pred.png" width="33%" />
+
+As you can see above, the model demonstrates some success in segmenting the larger instances in the brain. There is a lack of nuance in the U-Net's predictions. Generally the annotated area in the ground-truth examples mirror a coastline, accounting for the detail in the segmented area. 
 
 Thank you for reading! I hope you enjoyed this explanation of the U-Net, intended for readers without any background ML knowledge to understand the architecture and training process of the model. Feel free to check out some of my other model explanations in their respective folders!
