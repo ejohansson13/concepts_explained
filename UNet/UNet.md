@@ -238,4 +238,10 @@ Imagine you have the perfect recipe for chicken wings. Unfortunately it only app
 ### Disclaimer: Padding in Convolution
 Some details were abstracted through this explanation, including the size of our training set images. Our image set is actually 512x512 pixels, expanded to 572x572 by mirroring the last 30 pixels around the edge of the image. This method is known as padding where a matrix is extended to preserve the boundary information. Think about our approach to convolution. We lost the outer boundary of pixels for every convolution operation we performed. Only the pixels with surrounding context were passed through our convolutional filter. To ensure no edge information was lost in these calculations, we initially pad our 512x512 images to 572x572 by mirroring the 30 pixels around the edge of our image. Padding and stride are important details in convolution we didn't get a chance to explore while examining the U-Net. If you want to read more about them, I [suggest the following website](https://d2l.ai/chapter_convolutional-neural-networks/padding-and-strides.html).
 
+# Examples
+
+Below are some examples of the U-Net's functionality from a self-trained U-Net on the following [dataset]. More information can be found in the code subdirectory of the U-Net folder.
+
+<img src="/UNet/Images/decoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/encoder_stage_sc.png" width="33%" /> <img src="/UNet/Images/combined_stage_sc.png" width="33%" />
+
 Thank you for reading! I hope you enjoyed this explanation of the U-Net, intended for readers without any background ML knowledge to understand the architecture and training process of the model. Feel free to check out some of my other model explanations in their respective folders!
