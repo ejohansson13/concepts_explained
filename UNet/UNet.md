@@ -241,6 +241,7 @@ Some details were abstracted through this explanation, including the size of our
 # Examples
 
 Below are some examples of the U-Net's functionality from a self-trained U-Net on the following [dataset](https://molab.es/datasets-brain-metastasis-1/?type=metasrd). The dataset contains images of a metastasis in the brain from Patient 040102. More information can be found in the code subdirectory of the U-Net folder. The U-Net was provided high-resolution imaging of the patient's brain across multiple time points and slowly learned to segment the metastasis from the provided annotated segmentations before being evaluated on images it was not trained on.
+
 <img src="/UNet/Images/0172_img.png" width="33%" /> <img src="/UNet/Images/0172_msk.png" width="33%" /> <img src="/UNet/Images/0172_pred.png" width="33%" />
 
 <img src="/UNet/Images/0185_img.png" width="33%" /> <img src="/UNet/Images/0185_msk.png" width="33%" /> <img src="/UNet/Images/0185_pred.png" width="33%" />
@@ -248,6 +249,7 @@ Below are some examples of the U-Net's functionality from a self-trained U-Net o
 <img src="/UNet/Images/0205_img.png" width="33%" /> <img src="/UNet/Images/0205_msk.png" width="33%" /> <img src="/UNet/Images/0205_pred.png" width="33%" />
 
 As you can see above, the model demonstrates some success in segmenting the larger instances in the brain, but lacks nuance. The provided ground-truth examples mirror a coastline, accounting for minute details in the metastasis area. The U-Net predicitions lack this detail, and favor a circular segmentation, likely resulting from the loss metrics the model was trained on and the minimal resources put towards training this model. Let's look at how the model performs with smaller segmentation areas. Does the struggle to capture detail in the segmentation area result in an inability to segment smaller instances?
+
 <img src="/UNet/Images/0457_img.png" width="33%" /> <img src="/UNet/Images/0457_msk.png" width="33%" /> <img src="/UNet/Images/0457_pred.png" width="33%" />
 
 <img src="/UNet/Images/0530_img.png" width="33%" /> <img src="/UNet/Images/0530_msk.png" width="33%" /> <img src="/UNet/Images/0530_pred.png" width="33%" />
@@ -255,11 +257,13 @@ As you can see above, the model demonstrates some success in segmenting the larg
 <img src="/UNet/Images/0531_img.png" width="33%" /> <img src="/UNet/Images/0531_msk.png" width="33%" /> <img src="/UNet/Images/0531_pred.png" width="33%" />
 
 It's a mixed bag. Some smaller segmentation instances are captured well by the model, while it misses others entirely. The U-Net still favors a circular segmentation area, regardless of the size, for all predictions. The U-Net has demonstrated success with large and small segmentation areas. Its primary limitation seems to be its inability to capture the nuance of segmentation instances. Does the U-Net demonstrate any further issues in its segmentation predictions?
+
 <img src="/UNet/Images/0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
 
 <img src="/UNet/Images/0553_img.png" width="33%" /> <img src="/UNet/Images/0553_msk.png" width="33%" /> <img src="/UNet/Images/0553_pred.png" width="33%" />
 
 In both of the images above, the segmentation area is large. We might expect our model to provide an inadequate border of the area, similar to our previous examples. Instead, the model predicts a much smaller segmentation area. The model lacks confidence in predicting a larger segmentation area despite previously successful performances with similarly sized segmentation instances. Let's take a look through the lens of the U-Net and what the model receives as input to understand its decision-making. 
+
 <img src="/UNet/Images/z_0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
 
 <img src="/UNet/Images/z_0553_img.png" width="33%" /> <img src="/UNet/Images/0553_msk.png" width="33%" /> <img src="/UNet/Images/0553_pred.png" width="33%" />
