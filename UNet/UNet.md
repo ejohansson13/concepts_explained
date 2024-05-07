@@ -40,7 +40,7 @@ In the first stage, -1(1) + 2(2) + -3(3) + 4(0) + 5(1) + -6(0) + 7(1) + -8(2) + 
 So far, we have only been looking at the top row of the kaleidoscope image. And so we shift the lens down slightly to the next stage. A lot of the image will look the same but we have swapped the topmost row for another row further down. Here, we are performing the same elementwise multiplication between the kernel and our matrix subset and summing the products. ![Second row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_second_row.png) We complete the second row, shift down, and perform the same operations. ![Third row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_third_row.png) We shift down another row and arrive at all the information our kaleidoscope has to offer and correspondingly all the information our kernel has chosen to highlight from our input matrix. ![Fourth row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_fourth_row.png) 
 As you can see in the example, our input matrix is 6x6 while our output matrix is 4x4. The reason for this decrease in size is that as we move the kernel around the input matrix, we lose out on the edgemost matrix elements. This is intended for the U-Net architecture. The authors refer to it as the overlap-tile strategy, important for biomedical image segmentation as we only utilize pixels of the image where the full context is available in the input image. Here is an illustration from the research paper: 
 <p align="center" width="100%">
-  <img src="/UNet/Images/biomed_convolution_example.png" alt="Biomedical image segmentation example of convolution operation from U-Net research paper released in 2015" width="40%"
+  <img src="/UNet/Images/biomed_convolution_example.png" alt="Biomedical image segmentation example of convolution operation from U-Net research paper released in 2015" width="40%">
 </p>
 
 Convolution discards the edges of the image due to the incomplete context around those pixels, similar to our example.
@@ -58,7 +58,7 @@ After passing our output matrix through the ReLU activation function, we have th
 
 By passing our output matrix through this activation function, we are zeroing all negative values. This is important. Activation functions take on the nonlinear responsibility of our network. For those of you with an ML background, this is intuitive. For others, I'll give a brief overview and attach some resources for further reading. Without introducing any nonlinearity, we are bounding our network to linear representations. Regardless of our architecture or number of layers, a combination of linear operations will always result in a linear output and fail to capture a more complex relationship.
 <p align="center" width="100%">
-  <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="30%"
+  <img src="/UNet/Images/linear_vs_nonlinear.png" alt="A simple example of linear operations failing to capture more complex data relationships"               width="30%">
 </p>
   
 Expressing this idea in 2-dimensions might seem reductive, but we can see that regardless of the number of operations in our linear relationship, we fail to adequately represent the quadratic curve. We can better capture it at a single instance, but linear operations will always fail to correctly model nonlinear relationships. Nonlinear activation functions allow us to express more complex relationships for the network to better model and understand the data. [Here is a video of Andrew Ng on nonlinear activation functions](https://www.youtube.com/watch?v=NkOv_k7r6no). [And a blog post covering some activation functions with code examples](https://machinelearningmastery.com/using-activation-functions-in-neural-networks/).
@@ -66,12 +66,13 @@ Expressing this idea in 2-dimensions might seem reductive, but we can see that r
 ### Down-sampling (Max Pooling)
 The stages mentioned above are repeated twice. Our initial image is passed through a convolution operation, then ReLU, and that result is passed through another round of convolution and activation functions. Next, we arrive at the downsampling step, illustrated in the below diagram with a red arrow.
 <p align="center" width="100%">
-  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="10%"
+  <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" 
+        width="10%">
 </p>
 
 To downsample our matrix output, we perform a 2x2 max pooling operation. Max pooling maintains the most essential features of our image while diminishing our total information for faster computations. Preserving the most important features regardless of our matrix size builds robustness in the network to scale and orientation changes in images. We can take our previous matrix as an example. At each 2x2 matrix subset, we highlight the most relevant value and pass it on to our output matrix (highlighted in green).
 <p align="center" width="100%">
-  <img src="/UNet/Images/max_pooling.png" alt="Example of a max pooling operation transforming a 4x4 matrix into a 2x2 matrix" width="35%"
+  <img src="/UNet/Images/max_pooling.png" alt="Example of a max pooling operation transforming a 4x4 matrix into a 2x2 matrix" width="35%">
 </p>
 
 By emphasizing the most relevant features in our image, we are also diminishing the less important features. The network becomes less concerned with discoloration or lighting of an image and focuses on the critical features of the objects contained within the image.
@@ -83,12 +84,12 @@ Let's take a step back and revisit convolution. They have an important feature I
 
 One way to think of this is through the RGB color space. RGB images are stored with three channels: red, green, and blue. Each channel focuses on one color in the image. We can look at the below image of a lake separated to its respective red, green, and blue channels. One channel in our image of a lake focuses on the intensity of red in the image. Another focuses on the green in our image, while the third channel focuses on the blue.
 <p align="center" width="100%">
-  <img src="/UNet/Images/image_channels.png" alt="An example image broken down to its respective red, green, and blue channels." width="75%"
+  <img src="/UNet/Images/image_channels.png" alt="An example image broken down to its respective red, green, and blue channels." width="75%">
 </p>
 
 We can also examine this through the lens of a stack of matrices, with each matrix in our stack corresponding to one channel in our image. Similar to above, our image will have three channels, one for each of the RGB colors. Therefore, our stack will have three matrices. Each matrix will have the exact same height, width, and number of pixels, as they all represent the same image. Each cell in each of our matrices will correspond to one pixel of our image. The value of that cell illustrates the magnitude of the channel-specific color in that pixel of our image. These values will range from 0-1, with 0 demonstrating no magnitude and 1 representing absolute magnitude. As we can see, the upper-left pixel in our image appears to be fairly split between red and blue with a slight presence of green. The bottom-left pixel appears to have a heavy red influence, but green and blue are also readily apparent in that image pixel.
 <p align="center" width="100%">
-  <img src="/UNet/Images/channels.png" alt="An image matrix with pixel values corresponding to its red, green, and blue channels." width="25%"
+  <img src="/UNet/Images/channels.png" alt="An image matrix with pixel values corresponding to its red, green, and blue channels." width="25%">
 </p>
 
 The examples above explain the concept of image channels by tying each channel to one of the RGB colors. However, channels don’t have to be restricted to the color space. Channels can represent any information on an image, and often represent image information we take for granted visually, but are essential to a computer’s comprehension. Giving a computer more channels to view an image often leads to a better understanding of the image. These channels can include information on saturation, lighting, definition, or any knowledge that helps the computer perceive image details.
@@ -99,7 +100,7 @@ When performing convolution, we control the number of channels in our output, al
 
 Convolution allows us to take a grayscale image and broaden it to 64 channels, deepening the network's image comprehension. This is the example in the paper. Every rectangle indicating the image will have its height and width dimensions near the bottom of the rectangle and its number of channels above the rectangle.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_channels.png" width="10%"
+  <img src="/UNet/Images/unet_channels.png" width="10%">
 </p>
 
 A 572x572x1 image is input and broadened to 570x570x64. Our input image only holds one channel, as the biomedical images the network was trained on are all in grayscale. If we were training on RGB images, we could feed in images with 3 channels (572x572x3) and still have a 570x570x64 sized output. Convolution allows total control of the number of channels in an output image. Let's take a look at how that works.
@@ -115,22 +116,22 @@ Revisiting our convolution example, we treated a 6x6 matrix as a grayscale image
 
 Next, let’s perform convolution with these three filters, each containing one kernel. Feeding in our input matrix, we repeat the same convolutional process as described above, and arrive at the same result. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel1.png" width="30%"
+  <img src="/UNet/Images/unet_conv_kernel1.png" width="30%">
 </p>
 
 We move on to the second convolutional filter and apply its solitary kernel across our input matrix, generating another channel for our output image.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel2.png" width="30%"
+  <img src="/UNet/Images/unet_conv_kernel2.png" width="30%">
 </p>
 
 Finally, we apply our third filter with its convolutional kernel for the third and final channel of our output image.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel3.png" width="30%"
+  <img src="/UNet/Images/unet_conv_kernel3.png" width="30%">
 </p>
 
 We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution allowed the broadening of our one-channel image into multiple channels, offering additional perspectives for the network to better understand our image. Let's consider a slightly more complex example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB 572x572x3 convolved to 570x570x64.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_first_conv.png" width="10%"
+  <img src="/UNet/Images/unet_first_conv.png" width="10%">
 </p>
 
 Again, we'd have one 3x3 kernel for each input channel. That gives us 3 kernels per filter. We'd need 64 filters, one for each output channel. This gives us 64 filters, each with 3 3x3 kernels. Each kernel perform convolutions with its associated channel, following the same operation we've demonstrated above. The output of every kernel-channel pairing is summed together. This means that, although each filter has three kernels, only one matrix is output per filter. Repeating this for each of the 64 filters would give our expected output of 64 channels for our image and allows for the transformation of a 572x572x3 image to 570x570x64. 
@@ -142,7 +143,7 @@ In the first stage, our first convolution operation gives us 64 channels. In the
 ## Bridge
 The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation and serves as our input to the bridge.
 <p align="center" width="100%">
-  <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%"
+  <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%">
 </p>
 
 We repeat the process from throughout our contractive path descension. A 3x3 convolution doubles our number of channels, the ReLU function is applied elementwise, another 3x3 convolution, and another ReLU operation takes our image dimensions to 28x28x1024. Since we have arrived at the bottom of the U, rather than downsample again, we upsample and begin our ascent up the expansive path of the architecture. At some point, no matter how much you practice each technique individually, the only way to increase your proficiency with shooting coming off of a screen is to incorporate your improved individual techniques into the holistic movement of shooting off of a screen. That is what we are doing here. We've distilled our task into its multiple separate techniques and now it is time to start putting it all together again and see how we have improved. 
@@ -155,7 +156,7 @@ Throughout our encoder process, we performed multiple sequential operations. Con
 ### Skip Connections
 As we ascend the expansive path, we notice a significant change in the architecture from the contracting path. Skip connections, or connecting paths, offer an opportunity for our network to augment its learning at every decoding step through information from the corresponding encoding step. Skip connections link images at similar stages in their respective processes. These connections across the architecture boost our image understanding. Images from the contracting path are cropped and concatenated on to our expansive path images. Since images are taken from equivalent steps in their respective processes, they have an equal number of channels. Our expansive path images, immediately following upsampling, are augmented with their counterparts and the number of channels is doubled. In the illustration below, images from the contracting path are cropped so that they fit the size of their respective stage in the expansive path. The crop is denoted by the dotted blue lines and the connecting path is illustrated by the gray arrow in the image below. The concatenated contracting path image is depicted as a white rectangle extending the expansive path image.
 <p align="center" width="100%">
-  <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="60%"
+  <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="60%">
 </p>
 
 The benefit here is that by combining the features present at the encoder stage with those present at the decoder stage, we obtain a more complete understanding of the image. Every channel of our image contributes to the network's overall understanding and provides more context for the image we are reassembling. 
@@ -170,12 +171,12 @@ Similarly for the U-Net, we've identified the most important features, but when 
 Two main approaches exist to upsampling: nearest neighbor interpolation and transpose convolution. Nearest neighbor interpolation is the original implementation covered in the research paper and offers a much simpler approach. 
 Transposed convolutions are an alternative, [summarized below](#transposed-convolution). Nearest neighbor interpolation is intuitive. We quadruple our matrix size by doubling the number of rows and doubling the number of columns in our data. We can convert a 2x2 matrix to a 4x4 matrix by doubling the representation of each value horizontally and vertically.
 <p align="center" width="100%">
-  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="45%"
+  <img src="/UNet/Images/simple_upsampling.png" alt="Matrix example of simple upsampling operation" width="45%">
 </p>
 
 We quadruple every instance of our previous values to double our matrix's rows and columns. There are no kernels, learned values, or nonlinearity, which offers a quick path to upsampling our compressed image features. After descending the contractive path, and compressing our image information, ascending our expansive path is focused on restoring the image to its original dimensions, while maintaining the features discovered through our descent. Nearest neighbor interpolation offers a cheap upsampling operation without affecting our learned features.
 <p align="center" width="100%">
-  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="30%"
+  <img src="/UNet/Images/upsampling_step.png" alt="The last upsampling operation performed on the expanding path of the U-Net" width="30%">
 </p>
 
 Directly following our nearest neighbor operation, we perform 2x2 convolution. In the diagram above, the number of channels remains the same between upsampling and concatenating the encoder stage images with the decoder stage images. Two steps are performed sequentially in the green arrow illustrated above. First, the nearest neighbor interpolation upsampling as described above, immediately followed by convolution with 64 filters of 128 2x2 kernels to halve the number of channels. This is necessary as the cropped images arriving via skip connection will double the number of channels again through concatenation. Using the example in the diagram, we could have a 196x196x128 matrix for our image, upsample to 392x392x128, then immediately convolve to 392x392x64. The image's number of channels is then doubled through concatenation and we arrive at a 392x392x128 representation of our image. These image dimensions then proceed to the next convolution operation.
@@ -185,12 +186,12 @@ After upsampling and skip connections have concatenated our images on to one ano
 
 The purpose of these blocks is similar to their purpose in the contracting path. The convolution emphasizes our important features and the activation function implements nonlinearity for modeling complexity. Let's reexamine our single-channel convolution and activation function example and pass it through another series of convolution and activation function operations. Even in this simplified example, the operations have a notable impact. Our initial matrix with no value greater than 6 jumped to contain a much larger range of values, even with ReLU limiting any negatives.
 <p align="center" width="100%">
-  <img src="/UNet/Images/convolution_result_revisited.png" width="30%"
+  <img src="/UNet/Images/convolution_result_revisited.png" width="30%">
 </p>
 
 If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater activation of the matrix values, with some jumping to triple digits. Even in this example, we see how convolution might emphasize certain features and devalue others. Our activation function ties the negative value to 0, indicating little important information for our network in this region. We've emphasized critical regions of our image and devalued regions with minimal information.
 <p align="center" width="100%">
-  <img src="/UNet/Images/convolution_next_step.png" width="50%"
+  <img src="/UNet/Images/convolution_next_step.png" width="50%">
 </p>
 
 What we're doing here is akin to sifting for gold. Gold panners will find lucrative riverbeds and pan through sediment to find their gold. The repeated agitation of sediment in the pan leads to gold settling at the bottom. With convolution, we know there's value in our image. The repeated application of our convolutional filters lets the dust and sediment separate itself from our gold: the important features that our network analyzes to make its decision. Convolution and the other network operations are our pans and brushes. The network determines the values of our convolution kernels, and their optimal implementation to interact with the other network operations. It works in concert with activation functions, skip connections, upsampling and downsampling operations to serve as the network's decision-makers on the important features in an image. Throughout training, these values are updated as the network realizes what produces the best results. It receives feedback on its performance and updates the values of its convolutional filters to improve future results. 
@@ -199,12 +200,12 @@ This example is only meant to reiterate how convolutional operations work. It's 
 
 ### Final Layer (1x1 Convolution)
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_architecture.png" alt="A screenshot of the UNet architecture from its corresponding 2015 research paper" width="55%"
+  <img src="/UNet/Images/unet_architecture.png" alt="A screenshot of the UNet architecture from its corresponding 2015 research paper" width="55%">
 </p>
 
 After having performed the many associated concatenation, convolution, activation function, and upsampling operations, we arrive at the final stage of our architecture. Now, our output needs to be understandable for the network to classify its performance. We map our image to the expected number of output channels with a 1x1 convolution. In the architecture above, this involves taking our 64-channel image and performing convolution to output an image with 2 channels. Notice that this convolution operation does not impact our height and width dimensions, it only affects our number of channels. [This is a great video](https://www.youtube.com/watch?v=c1RBQzKsDCk) on 1x1 convolutions, their utility, and use cases.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_final_conv.png" alt="The final convolution operation taken from the Unet research paper" width="35%"
+  <img src="/UNet/Images/unet_final_conv.png" alt="The final convolution operation taken from the Unet research paper" width="35%">
 </p>
 
 Using the example from the research paper, we have 1x1 convolution performed to transform our 388x388x64 image to 388x388x2. This requires 2 filters, each with 64 1x1 kernels. Each of the 1x1 kernels convolves with every cell of one channel of our input matrix. These results are summed across the 64 input channels to give one output channel for our image. Repeating this process for our second filter gives our second channel for our output image. Similar to the other convolutional kernels throughout our network, the values of these kernels are learned through network training to produce the best results for our task. The number of output channels for our image is also wholly controllable, allowing as many output channels as needed to review network performance. Now that our image has the expected dimensions, we can evaluate the performance of our network.
@@ -220,7 +221,7 @@ Softmax measures the predicted activation of every pixel in our image across our
 
 ### Data Augmentation
 <p align="center" width="100%">
-  <img src="/UNet/Images/data_augmentation.png" alt="An example image showing data augmentation variations" width="50%"
+  <img src="/UNet/Images/data_augmentation.png" alt="An example image showing data augmentation variations" width="50%">
 </p>
   
 When training on a limited set of images, as with biomedical image segmenation, it is important to maximize the value we extract from our training set. Data Augmenation is one possibility and plays a large role in the success of the U-Net with biomedical image segmentation. Data Augmentation performs a variety of operations on our images to build robustness in our model against new presentations of the same objects. We might flip our images horizontally, vertically, rotate, crop, or change the saturation of our images. The idea is to present the subject of the image in as many different conditions as possible, such that the network can identify our image subject regardless of the surrounding environment. After all, a bike will always be a bike. By presenting our images in various situations, our network learns to identify the object regardless of its context.
@@ -242,38 +243,64 @@ Some details were abstracted through this explanation, including the size of our
 
 Below are some examples of the U-Net's functionality from a self-trained U-Net on the following [dataset](https://molab.es/datasets-brain-metastasis-1/?type=metasrd). The dataset contains images of a metastasis in the brain from Patient 040102. More information can be found in the code subdirectory of the U-Net folder. The U-Net was provided high-resolution imaging of the patient's brain across multiple time points and slowly learned to segment the metastasis from the provided annotated segmentations before being evaluated on images it was not trained on.
 
-<img src="/UNet/Images/0172_img.png" width="33%" /> <img src="/UNet/Images/0172_msk.png" width="33%" /> <img src="/UNet/Images/0172_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0172_img.png" width="15%" /> <img src="/UNet/Images/0172_msk.png" width="15%" /> <img src="/UNet/Images/0172_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/0185_img.png" width="33%" /> <img src="/UNet/Images/0185_msk.png" width="33%" /> <img src="/UNet/Images/0185_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0185_img.png" width="15%" /> <img src="/UNet/Images/0185_msk.png" width="15%" /> <img src="/UNet/Images/0185_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/0205_img.png" width="33%" /> <img src="/UNet/Images/0205_msk.png" width="33%" /> <img src="/UNet/Images/0205_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0205_img.png" width="15%" /> <img src="/UNet/Images/0205_msk.png" width="15%" /> <img src="/UNet/Images/0205_pred.png" width="15%" />
+</p>
 
 As you can see above, the model demonstrates some success in segmenting the larger instances in the brain, but lacks nuance. The provided ground-truth examples mirror a coastline, accounting for minute details in the metastasis area. The U-Net predicitions lack this detail, and favor a circular segmentation, likely resulting from the loss metrics the model was trained on and the minimal resources put towards training this model. Let's look at how the model performs with smaller segmentation areas. Does the struggle to capture detail in the segmentation area result in an inability to segment smaller instances?
+<p align="center" width=100%>
+  <img src="/UNet/Images/0457_img.png" width="15%" /> <img src="/UNet/Images/0457_msk.png" width="15%" /> <img src="/UNet/Images/0457_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/0457_img.png" width="33%" /> <img src="/UNet/Images/0457_msk.png" width="33%" /> <img src="/UNet/Images/0457_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0530_img.png" width="15%" /> <img src="/UNet/Images/0530_msk.png" width="15%" /> <img src="/UNet/Images/0530_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/0530_img.png" width="33%" /> <img src="/UNet/Images/0530_msk.png" width="33%" /> <img src="/UNet/Images/0530_pred.png" width="33%" />
-
-<img src="/UNet/Images/0531_img.png" width="33%" /> <img src="/UNet/Images/0531_msk.png" width="33%" /> <img src="/UNet/Images/0531_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0531_img.png" width="15%" /> <img src="/UNet/Images/0531_msk.png" width="15%" /> <img src="/UNet/Images/0531_pred.png" width="15%" />
+</p>
 
 It's a mixed bag. Some smaller segmentation instances are captured well by the model, while it misses others entirely. The U-Net still favors a circular segmentation area, regardless of the size, for all predictions. The U-Net has demonstrated success with large and small segmentation areas. Its primary limitation seems to be its inability to capture the nuance of segmentation instances. Does the U-Net demonstrate any further issues in its segmentation predictions?
 
-<img src="/UNet/Images/0551_img.png" width="33%" /> <img src="/UNet/Images/0551_msk.png" width="33%" /> <img src="/UNet/Images/0551_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0551_img.png" width="15%" /> <img src="/UNet/Images/0551_msk.png" width="15%" /> <img src="/UNet/Images/0551_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/0552_img.png" width="15%" /> <img src="/UNet/Images/0552_msk.png" width="15%" /> <img src="/UNet/Images/0552_pred.png" width="15%" />
+</p>
 
 In both of the images above, the segmentation area is large. We might expect our model to provide an inadequate border of the area, similar to our previous examples. Instead, the model predicts a much smaller segmentation area. The model lacks confidence in predicting a larger segmentation area despite previously successful performances with similarly sized segmentation instances. Let's take a look through the lens of the U-Net and what the model receives as input to understand its decision-making. 
 
-<img src="/UNet/Images/z_0551_img.png" width="33%" /> <img src="/UNet/Images/0551_msk.png" width="33%" /> <img src="/UNet/Images/0551_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/z_0551_img.png" width="15%" /> <img src="/UNet/Images/0551_msk.png" width="15%" /> <img src="/UNet/Images/0551_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/z_0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/z_0552_img.png" width="15%" /> <img src="/UNet/Images/0552_msk.png" width="15%" /> <img src="/UNet/Images/0552_pred.png" width="15%" />
+</p>
 
 It's difficult to see any segmentation area and understandable why the model would struggle to correctly highlight the relevant area. Let's revisit our original three examples to view the correlation between model input and a more successful segmentation prediction.
-<img src="/UNet/Images/z_0172_img.png" width="33%" /> <img src="/UNet/Images/0172_msk.png" width="33%" /> <img src="/UNet/Images/0172_pred.png" width="33%" />
 
-<img src="/UNet/Images/z_0185_img.png" width="33%" /> <img src="/UNet/Images/0185_msk.png" width="33%" /> <img src="/UNet/Images/0185_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/z_0172_img.png" width="15%" /> <img src="/UNet/Images/0172_msk.png" width="15%" /> <img src="/UNet/Images/0172_pred.png" width="15%" />
+</p>
 
-<img src="/UNet/Images/z_0205_img.png" width="33%" /> <img src="/UNet/Images/0205_msk.png" width="33%" /> <img src="/UNet/Images/0205_pred.png" width="33%" />
+<p align="center" width=100%>
+  <img src="/UNet/Images/z_0185_img.png" width="15%" /> <img src="/UNet/Images/0185_msk.png" width="15%" /> <img src="/UNet/Images/0185_pred.png" width="15%" />
+</p>
+
+<p align="center" width=100%>
+  <img src="/UNet/Images/z_0205_img.png" width="15%" /> <img src="/UNet/Images/0205_msk.png" width="15%" /> <img src="/UNet/Images/0205_pred.png" width="15%" />
+</p>
 
 Medical imaging is a complex technology. Patient movement during examination and instrument calibration play important roles in the success of [medical scans](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5447676/). The examples above highlight the limitations of an automatic detection model dependent on low signal-to-noise ratio imaging inputs. This model was far from perfect, it was created solely to serve as an implementation example for the U-Net technology presented in this page. Developing a model for industry would require many more iterations, careful tuning, and, in such a high-risk domain, likely still be semi-automatic and reliant on human annotation for support. The model would certainly need to be improved, but so could the data input to the model.
 
