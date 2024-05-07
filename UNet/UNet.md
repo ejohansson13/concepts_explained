@@ -259,10 +259,22 @@ It's a mixed bag. Some smaller segmentation instances are captured well by the m
 
 <img src="/UNet/Images/0553_img.png" width="33%" /> <img src="/UNet/Images/0553_msk.png" width="33%" /> <img src="/UNet/Images/0553_pred.png" width="33%" />
 
-In both of the images above, the segmentation area is large. We might expect our model to provide an inadequate border of the area, similar to our previous examples. Instead, the model predicts a much smaller segmentation area. Evidently, the model lacks confidence in predicting a larger segmentation area despite previously performing successfully with similarly sized segmentation instances. Let's take another look through the perspective 
+In both of the images above, the segmentation area is large. We might expect our model to provide an inadequate border of the area, similar to our previous examples. Instead, the model predicts a much smaller segmentation area. The model lacks confidence in predicting a larger segmentation area despite previously successful performances with similarly sized segmentation instances. Let's take a look through the lens of the U-Net and what the model receives as input to understand its decision-making. 
+<img src="/UNet/Images/z_0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
 
-Images with what the U-Net sees.
+<img src="/UNet/Images/z_0553_img.png" width="33%" /> <img src="/UNet/Images/0553_msk.png" width="33%" /> <img src="/UNet/Images/0553_pred.png" width="33%" />
 
-Something about how model improvements are data-centric now, as opposed to model-centric.
+It's difficult to see any segmentation area and understandable why the model would struggle to correctly highlight the relevant area. Let's revisit our original three examples to view the correlation between model input and a more successful segmentation prediction.
+<img src="/UNet/Images/z_0172_img.png" width="33%" /> <img src="/UNet/Images/0172_msk.png" width="33%" /> <img src="/UNet/Images/0172_pred.png" width="33%" />
+
+<img src="/UNet/Images/z_0185_img.png" width="33%" /> <img src="/UNet/Images/0185_msk.png" width="33%" /> <img src="/UNet/Images/0185_pred.png" width="33%" />
+
+<img src="/UNet/Images/z_0205_img.png" width="33%" /> <img src="/UNet/Images/0205_msk.png" width="33%" /> <img src="/UNet/Images/0205_pred.png" width="33%" />
+
+Medical imaging is a complex technology. Patient movement during examination and instrument calibration play important roles in the success of [medical scans](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5447676/). The examples above highlight the limitations of an automatic detection model dependent on low signal-to-noise ratio imaging inputs. This model was far from perfect, it was created solely to serve as an implementation example for the U-Net technology presented in this page. Developing a model for industry would require many more iterations, careful tuning, and, in such a high-risk domain, likely still be semi-automatic and reliant on human annotation for support. The model would certainly need to be improved, but so too could the data input to the model.
+
+The industry shift to [data improvement over model improvement](https://www.enterpriseai.news/2021/10/08/ai-modeling-reinvented-its-time-to-shift-to-better-data-rather-than-just-building-better-models/) represents a fundamental shift in the approach to machine learning. The early focus of machine learning models was to improve their performance by refining ...
+
+Something about how model improvements are data-centric now, as opposed to model-centric. Can go into F1 comparison with driver-car interaction but doesn't seem necessary. Dall-E 3 example -> longer captions. 
 
 Thank you for reading! I hope you enjoyed this explanation of the U-Net, intended for readers without any background ML knowledge to understand the architecture and training process of the model. Feel free to check out some of my other model explanations in their respective folders!
