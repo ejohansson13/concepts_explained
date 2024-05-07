@@ -258,15 +258,15 @@ As you can see above, the model demonstrates some success in segmenting the larg
 
 It's a mixed bag. Some smaller segmentation instances are captured well by the model, while it misses others entirely. The U-Net still favors a circular segmentation area, regardless of the size, for all predictions. The U-Net has demonstrated success with large and small segmentation areas. Its primary limitation seems to be its inability to capture the nuance of segmentation instances. Does the U-Net demonstrate any further issues in its segmentation predictions?
 
-<img src="/UNet/Images/0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
+<img src="/UNet/Images/0551_img.png" width="33%" /> <img src="/UNet/Images/0551_msk.png" width="33%" /> <img src="/UNet/Images/0551_pred.png" width="33%" />
 
-<img src="/UNet/Images/0553_img.png" width="33%" /> <img src="/UNet/Images/0553_msk.png" width="33%" /> <img src="/UNet/Images/0553_pred.png" width="33%" />
+<img src="/UNet/Images/0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
 
 In both of the images above, the segmentation area is large. We might expect our model to provide an inadequate border of the area, similar to our previous examples. Instead, the model predicts a much smaller segmentation area. The model lacks confidence in predicting a larger segmentation area despite previously successful performances with similarly sized segmentation instances. Let's take a look through the lens of the U-Net and what the model receives as input to understand its decision-making. 
 
-<img src="/UNet/Images/z_0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
+<img src="/UNet/Images/z_0551_img.png" width="33%" /> <img src="/UNet/Images/0551_msk.png" width="33%" /> <img src="/UNet/Images/0551_pred.png" width="33%" />
 
-<img src="/UNet/Images/z_0553_img.png" width="33%" /> <img src="/UNet/Images/0553_msk.png" width="33%" /> <img src="/UNet/Images/0553_pred.png" width="33%" />
+<img src="/UNet/Images/z_0552_img.png" width="33%" /> <img src="/UNet/Images/0552_msk.png" width="33%" /> <img src="/UNet/Images/0552_pred.png" width="33%" />
 
 It's difficult to see any segmentation area and understandable why the model would struggle to correctly highlight the relevant area. Let's revisit our original three examples to view the correlation between model input and a more successful segmentation prediction.
 <img src="/UNet/Images/z_0172_img.png" width="33%" /> <img src="/UNet/Images/0172_msk.png" width="33%" /> <img src="/UNet/Images/0172_pred.png" width="33%" />
