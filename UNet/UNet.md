@@ -105,14 +105,14 @@ In our earlier convolution example, we treated a singular 6x6 matrix as a graysc
   <img src="/UNet/Images/two_channel_image.png" width="30%">
 </p>
 
-If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. We would need three filters. Each filter would have one kernel for each channel of our input image. For us, that means each filter will have two kernels. That gives us three filters (one for each output channel), each with two kernels (one for each input channel). The filters we'll be using are given below and will be highlighted in yellow throughout the example.
+If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. We would need three filters. Each filter would have one kernel for each channel of our input image. For us, that means each filter will have two kernels. That gives us three filters (one for each output channel), each with two kernels (one for each input channel). The filters are given below and will be highlighted in yellow throughout the example.
 <p align="center">
   <img src="/UNet/Images/unet_filter1.png" width="10%" /> <img src="/UNet/Images/unet_filter2.png" width="10%" /> <img src="/UNet/Images/unet_filter3.png" width="10%" />
 </p>
 
-Next, let’s perform convolution with these three filters, each containing one kernel. Feeding in our input matrix, we repeat the same convolutional process described above, and arrive at the same result. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
+Now, let's perform convolution with these three filters, each containing two kernels. Each kernel corresponds to one image input channel. The first kernel in each filter will only interact with the first image channel and the second kernel in each filter will only ever interact with the second image channel. Feeding in our image, we repeat the same convolutional process described above. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel1.png" width="30%">
+  <img src="/UNet/Images/unet_conv_filter1.png" width="30%">
 </p>
 
 We move on to the second convolutional filter and apply its solitary kernel across our input matrix, generating another channel for our output image.
