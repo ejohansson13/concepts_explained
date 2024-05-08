@@ -40,8 +40,12 @@ In the first stage, -1(1) + 2(2) + -3(3) + 4(0) + 5(1) + -6(0) + 7(1) + -8(2) + 
 So far, we have only been looking at the top row of the kaleidoscope image. And so we shift the lens down slightly to the next stage. Accordingly, our matrix subset will shift down one row, and we will repeat the above process for the next row in our matrix. A lot of the image will look the same but we have swapped the topmost row for the next row down. ![Second row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_second_row.png) We complete the second row, shift down, and perform the same operations on the third row in our matrix. ![Third row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_third_row.png) We shift down another row and arrive at all the information our kaleidoscope has to offer and correspondingly all the information our kernel has taken from our input matrix. ![Fourth row of a convolution operation between a matrix and a kernel](/UNet/Images/cwc_fourth_row.png) 
 As you can see in the example, our input matrix is 6x6 while our output matrix is 4x4. The reason for this decrease in size is that as we move the kernel around the input matrix, we lose out on the edgemost matrix elements. Convolution discards the edges of the image due to the incomplete context around those pixels, similar to our example.
 
+#### Stride, Padding, and Kernel Size
+
+Talk about stride and padding; also 3x3 kernel size and how convolution works with local context
+
 ### Rectified Linear Unit
-Now that we have our output matrix, we apply an element-wise activation function. An activation function takes in a value and acts like a security checkpoint at the airport. At the airport, if you have a bottle with liquid over a certain volume, you must empty it before continuing. Rules are in place and if you fall short of those rules, you alter your input before proceeding. Depending on the value input to the activation function, it may allow that value to pass unaffected or reject the value and replace it with 0. These actions will also change dependent on the respective activation function. The rectified linear unit (ReLU) activation function allows all nonnegative values to pass, and rejects negative values, setting them to 0.
+Now that we thoroughly understand convolution, let's talk about activation functions. Continuing with our matrix example, we can take our output matrix and apply an element-wise activation function. An activation function takes in a value and acts like a security checkpoint at the airport. At the airport, if you have a bottle with liquid over a certain volume, you must empty it before continuing. Rules are in place and if you fall short of those rules, you alter your input before proceeding. Depending on the value input to the activation function, it may allow that value to pass unaffected or reject the value and replace it with 0. These actions will also change dependent on the respective activation function. The rectified linear unit (ReLU) activation function allows all nonnegative values to pass, and rejects negative values, setting them to 0.
 <p align="center" width="100%">
   <img src="/UNet/Images/relu_activation_function.png" alt="A graph demonstrating the Rectified Linear Unit activation function" width="25%">
 </p>
@@ -136,46 +140,38 @@ We've taken our 6x6x2 image input and, through convolution, arrived at 6 4x4 mat
   <img src="/UNet/Images/unet_total_conv_1.png" width="75%">
 </p>
 
-We want a 4x4x3 output, so how do we go from 6 4x4 matrices to 3? Since each convolutional filter is responsible for one channel of our output image, we sum across each filter. This is as simple as matrix addition and cuts down our image output to 4x4x3, with one channel for each image output. That process is illustrated below, along with the overall convolution result.
+You'll notice we want a 4x4x3 output, but we currently have 6 matrices. Each convolutional filter is responsible for one channel of our output image, so we sum across each filter. This is as simple as matrix addition and gives our expected image output of 4x4x3. That addition is illustrated below, along with the overall convolution result.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_total_conv_2.png" width="55%">
+  <img src="/UNet/Images/unet_total_conv_2.png" width="65%">
 </p>
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_total_conv_3.png" width="65%">
+  <img src="/UNet/Images/unet_total_conv_3.png" width="70%">
 </p>
 
-
-
-We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution allowed the broadening of our one-channel image into three channels, offering additional perspectives for the network to better understand our image. Let's consider a slightly more complex example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB 572x572x3 convolved to 570x570x64.
+We have transformed our 6x6x2 input matrix into a 4x4x3 output. Convolution allowed the broadening of our two-channel image into three channels, offering additional perspectives for the network to better understand our image. Let's consider a higher-dimension example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB image of size 572x572x3 convolved to 570x570x64.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_first_conv.png" width="10%">
 </p>
 
-Again, we'd have one 3x3 kernel for each input channel. Since our input image is 572x572x3, we have 3 kernels per filter. We have one filter for each output channel of our convolved image. Our output is going to be 570x570x64, so we need 64 filters. This gives us 64 filters (one for each output channel), each with 3 (number of input channels) kernels of dimension 3x3 (3x3 is just the preferred kernel size for these operations, it could also be 2x2 or 5x5). 
+This will be a very similar process to the one explained above. Again, we'll have one 3x3 kernel for each input channel. Since our input image is 572x572x3, we have 3 kernels per filter. We have one filter for each output channel of our convolved image. Our output is going to be 570x570x64, so we need 64 filters. This gives us 64 filters (one for each output channel), each with 3 (number of input channels) kernels of dimension 3x3. Exactly like the example given above, each kernel corresponds to one input channel and outputs one matrix. The output matrices are then summed within each filter, giving us the same number of output channels as number of filters.
 
-**Include images of kernels, so they can associate with prior examples.**
+Convolution gives our network total control over the number of input and output channels. Each kernel corresponds to one input channel. Each filter corresponds to one output channel. Having a unique kernel for each image input channel allows the network to singularly determine the best parameters to highlight the image details contained within each channel. Having multiple kernels for each filter ensures that every output channel of our image contains an amalgamation of the information offered across every channel of our input image. This preservation of information throughout our convolutional operations plays a large role in the efficiency of the U-net and its success with small training sets.
 
-Reword below better so that it's easily understood that the kernels for each filter are summed together. We output one matrix per filter. This is how.
-
-Each kernel perform convolutions with its associated channel, following the procedure we've already performed. The output of every kernel-channel pairing is summed together. 
-
-**image**
-
-This means that, although each filter has three kernels, only one matrix is output per filter. Repeating this for each of the 64 filters would give our expected output of 64 channels for our image and allows for the transformation of a 572x572x3 image to 570x570x64. 
-
-Convolution gives our network total control over the number of input and output channels. Each kernel corresponds to one input channel. Each filter corresponds to one output channel. Having a unique kernel for each image input channel allows the network to singularly determine the best parameters at highlighting the image details contained within each channel. Having multiple kernels for each filter ensures that every output channel of our image contains an amalgamation of all the information offered across every channel of our input image. This preservation of information throughout our convolutional operations plays a large role in the efficiency of the U-net and its success with small training sets.
-
-Above paragraph is good. Below paragraph needs work. Reiterate importance of channels without regurgitating previous information.
-
-In the first stage, our first convolution operation gives us 64 channels. In the next stage, following our max pooling, we perform our first convolution operation and increase the channels to 128. This continues, doubling our number of channels in the first convolution operation of each stage until we arrive at the bottom of our U-shape and the bridge in our architecture. Increasing the number of channels affords our network additional perspectives to comprehend image details. When compressing our images with every downsampling operation, preserving information becomes doubly important.
+Now that we understand convolution with multiple channels, we can better understand the importance of increasing channels while decreasing our data dimensions. Increasing the number of channels affords our network additional perspectives to digest image features. Compressing our images to smaller and smaller dimensions throughout the contracting path of the U-Net runs the risk of information loss. Doubling the number of channels after every downsampling operation mitigates that risk by augmenting the number of avenues available to the network to observe image features.
 
 ## Bridge
-The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation and serves as our input to the bridge.
+The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation (red arrow below) and serves as our input to the bridge.
 <p align="center" width="100%">
   <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%">
 </p>
 
-We repeat the process from throughout our contractive path descension. A 3x3 convolution doubles our number of channels, the ReLU function is applied elementwise, another 3x3 convolution, and another ReLU operation takes our image dimensions to 28x28x1024. Since we have arrived at the bottom of the U, rather than downsample again, we upsample and begin our ascent up the expansive path of the architecture. At some point, no matter how much you practice each technique individually, the only way to increase your proficiency with shooting coming off of a screen is to incorporate your improved individual techniques into the holistic movement of shooting off of a screen. That is what we are doing here. We've distilled our task into its multiple separate techniques and now it is time to start putting it all together again and see how we have improved. 
+We continue with one more stage of convolution and activation function operations. At the smaller dimensions present at the bridge, convolution operations grow in importance. This is because the local context available to a 3x3 convolutional kernel contains more relative information. 3x3 convolution performed on a 572x572 image will contain about 0.00275% of the total image information at one time. 3x3 convolution performed on a 30x30 matrix will contain 1% of the total information at any one time. This offers the convolutional filters near the bridge an opportunity to 
+
+Refining versus rougher filtering.
+
+Also means that it's doubly important, so we double the number of channels again to 1024.
+
+Since we have arrived at the bottom of the U, rather than downsample again, we upsample and begin our ascent up the expansive path of the architecture. At some point, no matter how much you practice each technique individually, the only way to increase your proficiency with shooting coming off of a screen is to incorporate your improved individual techniques into the holistic movement of shooting off of a screen. That is what we are doing here. We've distilled our task into its multiple separate techniques and now it is time to start putting it all together again and see how we have improved. 
 
 A continued, single-minded approach to improvement is to be admired, but excessive, overly attentive dedication to minutiae can often be damaging. In basketball, this might manifest as injury. In the U-Net, this could lead to the loss of important image details. We want to be able to see the forest and the trees. For this reason, we stop downsampling our image features and begin upsampling.
 
