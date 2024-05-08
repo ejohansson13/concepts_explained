@@ -98,11 +98,16 @@ Every rectangle indicating the image features will have the height and width dim
 
 ### Convolution with Multiple Channels
 
-In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with one kernel for each input channel. When changing the number of channels in an output image through convolution, one filter exists for each output channel. Let’s first examine the multi-filter example where we expand the number of output channels, before considering the multi-kernel example for an image input with multiple channels.
+In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with one kernel for each input channel. When changing the number of channels in an output image through convolution, one filter exists for each output channel. Let's consider a multi-kernel, multi-filter example, expanding our convolution example from earlier before scaling up to the dimensions used in the paper.
 
-Revisiting our convolution example, we treated a singular 6x6 matrix as a grayscale image. If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. Each filter would have one kernel for each channel of our input image. Since our input image only has one channel, we would have one kernel for each convolutional filter. The filters we'll be using are given below and will be highlighted in yellow throughout the example.
+In our earlier convolution example, we treated a singular 6x6 matrix as a grayscale image. Now let's consider a two-channel image. Each channel has the same dimensions, so we'll have two 6x6 matrices representing our image. Those matrices are given below, and will be highlighted in their respective colors throughout the illustration. Keep in mind this is an example, so the values for the image, convolutional kernels, and output are all arbitrary.
+<p align="center" width="100%">
+  <img src="/UNet/Images/two_channel_image.png" width="30%">
+</p>
+
+If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. We would need three filters. Each filter would have one kernel for each channel of our input image. For us, that means each filter will have two kernels. That gives us three filters (one for each output channel), each with two kernels (one for each input channel). The filters we'll be using are given below and will be highlighted in yellow throughout the example.
 <p align="center">
-  <img src="/UNet/Images/unet_kernel1.png" width="10%" /> <img src="/UNet/Images/unet_kernel2.png" width="10%" /> <img src="/UNet/Images/unet_kernel3.png" width="10%" />
+  <img src="/UNet/Images/unet_filter1.png" width="10%" /> <img src="/UNet/Images/unet_filter2.png" width="10%" /> <img src="/UNet/Images/unet_filter3.png" width="10%" />
 </p>
 
 Next, let’s perform convolution with these three filters, each containing one kernel. Feeding in our input matrix, we repeat the same convolutional process described above, and arrive at the same result. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
