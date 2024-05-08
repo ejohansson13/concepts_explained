@@ -91,7 +91,7 @@ The examples above explain the concept of image channels by tying each channel t
 
 The alternative to multiple channels for an image is only one channel. This is known as grayscale. If an image only has one channel, it lacks all of the other information we described. There is no information on color, saturation or anything besides the intensity of gray shading. A 0 in a pixel would represent white, and a 1 would represent black. Grayscale images only need one channel for information. When performing convolution, we control the number of channels in our output, allowing the network to broaden its image understanding. It can go beyond grayscale, and process multiple image features from different perspectives. In the paper, the first convolutional operation receives a grayscale image as input and converts it to 64 channels representing the image features. That diagram is presented below.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_channels.png" width="10%">
+  <img src="/UNet/Images/unet_first_conv.png" width="10%">
 </p>
 
 Every rectangle indicating the image features will have the height and width dimensions near the bottom of the rectangle and the number of channels above the rectangle. A 572x572x1 image is input and broadened to 570x570x64. Our input image only holds one channel, as the biomedical images the network was trained on are all in grayscale. If we were training on RGB images, we could feed in images with 3 channels (572x572x3) and still have a 570x570x64 sized output. Convolution allows total control of the number of channels in an output image. Let's take a look at how that works.
@@ -100,30 +100,51 @@ Every rectangle indicating the image features will have the height and width dim
 
 In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with one kernel for each input channel. When changing the number of channels in an output image through convolution, one filter exists for each output channel. Let's consider a multi-kernel, multi-filter example, expanding our convolution example from earlier before scaling up to the dimensions used in the paper.
 
-In our earlier convolution example, we treated a singular 6x6 matrix as a grayscale image. Now let's consider a two-channel image. Each channel has the same dimensions, so we'll have two 6x6 matrices representing our image. Those matrices are given below, and will be highlighted in their respective colors throughout the illustration. Keep in mind this is an example, so the values for the image, convolutional kernels, and output are all arbitrary.
+In our earlier convolution example, we treated a singular 6x6 matrix as a grayscale image. Now let's consider a two-channel image. We'll have two 6x6 matrices representing our image. Those matrices are given below, and will be highlighted in their respective colors throughout the illustration. Keep in mind this is an example, so the values for the image, convolutional kernels, and output are all arbitrary.
 <p align="center" width="100%">
-  <img src="/UNet/Images/two_channel_image.png" width="30%">
+  <img src="/UNet/Images/two_channel_image.png" width="45%">
 </p>
 
 If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. We would need three filters. Each filter would have one kernel for each channel of our input image. For us, that means each filter will have two kernels. That gives us three filters (one for each output channel), each with two kernels (one for each input channel). The filters are given below and will be highlighted in yellow throughout the example.
 <p align="center">
-  <img src="/UNet/Images/unet_filter1.png" width="10%" /> <img src="/UNet/Images/unet_filter2.png" width="10%" /> <img src="/UNet/Images/unet_filter3.png" width="10%" />
+  <img src="/UNet/Images/unet_filter1.png" width="30%" />
+</p>
+<p align="center">
+  <img src="/UNet/Images/unet_filter2.png" width="30%" />
+</p>
+<p align="center">
+  <img src="/UNet/Images/unet_filter3.png" width="30%" />
 </p>
 
-Now, let's perform convolution with these three filters, each containing two kernels. Each kernel corresponds to one image input channel. The first kernel in each filter will only interact with the first image channel and the second kernel in each filter will only ever interact with the second image channel. Feeding in our image, we repeat the same convolutional process described above. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
+Now, let's perform convolution with these three filters. Each kernel corresponds to one image input channel. The first kernel in each filter will only interact with the first image channel and the second kernel in each filter will only ever interact with the second image channel. Feeding in our image, we repeat the same convolutional process described above. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_filter1.png" width="30%">
+  <img src="/UNet/Images/unet_conv_filter1.png" width="45%">
 </p>
 
-We move on to the second convolutional filter and apply its solitary kernel across our input matrix, generating another channel for our output image.
+We move on to the second convolutional filter and repeat our convolution across both kernels. Each kernel interacts with one image channel and we output two matrices.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel2.png" width="30%">
+  <img src="/UNet/Images/unet_conv_filter2.png" width="45%">
 </p>
 
-Finally, we apply our third filter with its convolutional kernel for the third and final channel of our output image.
+We repeat the process with our third and final filter, applying its two kernels across our input image.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_conv_kernel3.png" width="30%">
+  <img src="/UNet/Images/unet_conv_filter3.png" width="45%">
 </p>
+
+We've taken our 6x6x2 image input and, through convolution, arrived at 6 4x4 matrices for our output. You can see these matrices below.
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_total_conv_1.png" width="45%">
+</p>
+
+We want a 4x4x3 output, so how do we go from 6 4x4 matrices to 3? Since each convolutional filter is responsible for one channel of our output image, we sum across each filter. This is as simple as matrix addition and cuts down our image output to 4x4x3, with one channel for each image output. That process is illustrated below, along with the overall convolution result.
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_total_conv_2.png" width="45%">
+</p>
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_total_conv_3.png" width="45%">
+</p>
+
+
 
 We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution allowed the broadening of our one-channel image into three channels, offering additional perspectives for the network to better understand our image. Let's consider a slightly more complex example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB 572x572x3 convolved to 570x570x64.
 <p align="center" width="100%">
