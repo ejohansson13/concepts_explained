@@ -133,15 +133,15 @@ We repeat the process with our third and final filter, applying its two kernels 
 
 We've taken our 6x6x2 image input and, through convolution, arrived at 6 4x4 matrices for our output. You can see these matrices below.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_total_conv_1.png" width="45%">
+  <img src="/UNet/Images/unet_total_conv_1.png" width="75%">
 </p>
 
 We want a 4x4x3 output, so how do we go from 6 4x4 matrices to 3? Since each convolutional filter is responsible for one channel of our output image, we sum across each filter. This is as simple as matrix addition and cuts down our image output to 4x4x3, with one channel for each image output. That process is illustrated below, along with the overall convolution result.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_total_conv_2.png" width="45%">
+  <img src="/UNet/Images/unet_total_conv_2.png" width="55%">
 </p>
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_total_conv_3.png" width="45%">
+  <img src="/UNet/Images/unet_total_conv_3.png" width="65%">
 </p>
 
 
