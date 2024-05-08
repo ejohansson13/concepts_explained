@@ -82,34 +82,30 @@ One way to think of this is through the RGB color space. RGB images are stored w
   <img src="/UNet/Images/image_channels.png" alt="An example image broken down to its respective red, green, and blue channels." width="75%">
 </p>
 
-Since we know that each image is a matrix, we can also consider channels as a stack of matrices. Each matrix in our stack corresponds to one channel in our image. Similar to above, our image will have three channels, one for each of the RGB colors. Therefore, our stack will have three matrices. Each matrix has the same height, width, and number of pixels. Each cell in our matrices corresponds to one pixel of our image. The value of that cell illustrates the magnitude of the channel-specific color in that pixel of our image. These values will range from 0-1, with 0 demonstrating no magnitude and 1 representing absolute magnitude. As we can see, the upper-left pixel in our image appears to be fairly split between red and blue with a slight presence of green. The bottom-left pixel appears to have a heavy red influence, but green and blue are also readily apparent in that image pixel.
+Since we know that each image is a matrix, we can also consider channels as a stack of matrices. Each matrix in our stack corresponds to one channel in our image. Similar to above, our image will have three channels, one for each of the RGB colors. Therefore, our stack will have three matrices. Each matrix has the same height, width, and number of pixels. Each cell in our matrices corresponds to one pixel of our image. The value of each cell illustrates the magnitude of the channel-specific color in that pixel of our image. In the example below, these values will range from 0-1, with 0 demonstrating no magnitude and 1 representing absolute magnitude. As we can see, the upper-left pixel in our image appears to be fairly split between red and blue with a smaller emphasis on green. The bottom-left pixel appears to have a heavy red influence, but green and blue are also apparent in that image pixel.
 <p align="center" width="100%">
   <img src="/UNet/Images/channels.png" alt="An image matrix with pixel values corresponding to its red, green, and blue channels." width="25%">
 </p>
 
-The examples above explain the concept of image channels by tying each channel to one of the RGB colors. However, channels don’t have to be restricted to the color space. Channels can represent any information on an image, and often represent image information we take for granted visually, but are essential to a computer’s comprehension. Giving a computer more channels to view an image often leads to a better understanding of the image. These channels can include information on saturation, lighting, definition, or any knowledge that helps the computer perceive image details.
+The examples above explain the concept of image channels by tying each channel to one of the RGB colors. However, channels don’t have to be restricted to the color space. Channels can represent any image feature, and often represent image information we take for granted visually, but are essential to a computer’s comprehension. Presenting an image in more channels offers more information on its features and gives the network more opportunities to learn image information.
 
-The alternative to multiple channels for an image is only one channel. This is known as grayscale. If an image only has one channel, it lacks all of the other information we described. There is no information on color or saturation or anything besides the intensity of gray shading. A 0 in a pixel would represent white, and a 1 would represent black. Grayscale images only need one channel for information.
-
-When performing convolution, we control the number of channels in our output, allowing the network to broaden its image understanding. It can go beyond grayscale, and process the image in a number of different spaces. These distinct spaces allow the network to accomplish its image processing goal. Incorporating a variety of information from different perspectives (channels), the computer gains awareness of the image it is processing.
-
-Convolution allows us to take a grayscale image and broaden it to 64 channels, deepening the network's image comprehension. This is the example in the paper. Every rectangle indicating the image will have its height and width dimensions near the bottom of the rectangle and its number of channels above the rectangle.
+The alternative to multiple channels for an image is only one channel. This is known as grayscale. If an image only has one channel, it lacks all of the other information we described. There is no information on color, saturation or anything besides the intensity of gray shading. A 0 in a pixel would represent white, and a 1 would represent black. Grayscale images only need one channel for information. When performing convolution, we control the number of channels in our output, allowing the network to broaden its image understanding. It can go beyond grayscale, and process multiple image features from different perspectives. In the paper, the first convolutional operation receives a grayscale image as input and converts it to 64 channels representing the image features. That diagram is presented below.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_channels.png" width="10%">
 </p>
 
-A 572x572x1 image is input and broadened to 570x570x64. Our input image only holds one channel, as the biomedical images the network was trained on are all in grayscale. If we were training on RGB images, we could feed in images with 3 channels (572x572x3) and still have a 570x570x64 sized output. Convolution allows total control of the number of channels in an output image. Let's take a look at how that works.
+Every rectangle indicating the image features will have the height and width dimensions near the bottom of the rectangle and the number of channels above the rectangle. A 572x572x1 image is input and broadened to 570x570x64. Our input image only holds one channel, as the biomedical images the network was trained on are all in grayscale. If we were training on RGB images, we could feed in images with 3 channels (572x572x3) and still have a 570x570x64 sized output. Convolution allows total control of the number of channels in an output image. Let's take a look at how that works.
 
 ### Convolution with Multiple Channels
 
 In our initial convolution example, we explained that our convolutional filter would only contain one kernel. This was a simplified example. For more complex examples, i.e. when dealing with images with multiple channels, a convolutional filter is a collection of kernels, with one kernel for each input channel. When changing the number of channels in an output image through convolution, one filter exists for each output channel. Let’s first examine the multi-filter example where we expand the number of output channels, before considering the multi-kernel example for an image input with multiple channels.
 
-Revisiting our convolution example, we treated a 6x6 matrix as a grayscale image. If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. Each filter would have one kernel for each channel of our input image. Our input image only has one channel, so in this case, we would have one kernel for each convolutional filter. We can see the filters below.
+Revisiting our convolution example, we treated a singular 6x6 matrix as a grayscale image. If we want to expand this image to 3 channels, we would have one filter for each output channel we hope to generate. Each filter would have one kernel for each channel of our input image. Since our input image only has one channel, we would have one kernel for each convolutional filter. The filters we'll be using are given below and will be highlighted in yellow throughout the example.
 <p align="center">
   <img src="/UNet/Images/unet_kernel1.png" width="10%" /> <img src="/UNet/Images/unet_kernel2.png" width="10%" /> <img src="/UNet/Images/unet_kernel3.png" width="10%" />
 </p>
 
-Next, let’s perform convolution with these three filters, each containing one kernel. Feeding in our input matrix, we repeat the same convolutional process as described above, and arrive at the same result. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
+Next, let’s perform convolution with these three filters, each containing one kernel. Feeding in our input matrix, we repeat the same convolutional process described above, and arrive at the same result. To save space, I've abstracted the calculations, but feel free to work them out for yourself.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_conv_kernel1.png" width="30%">
 </p>
@@ -124,16 +120,28 @@ Finally, we apply our third filter with its convolutional kernel for the third a
   <img src="/UNet/Images/unet_conv_kernel3.png" width="30%">
 </p>
 
-We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution allowed the broadening of our one-channel image into multiple channels, offering additional perspectives for the network to better understand our image. Let's consider a slightly more complex example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB 572x572x3 convolved to 570x570x64.
+We have transformed our 6x6x1 input matrix into a 4x4x3 output. This convolution allowed the broadening of our one-channel image into three channels, offering additional perspectives for the network to better understand our image. Let's consider a slightly more complex example, the first convolution operation in the paper, but treat our input as an RGB image. In the paper, this is an expansion of a grayscale 572x572x1 to 570x570x64. We'll be treating it as an RGB 572x572x3 convolved to 570x570x64.
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_first_conv.png" width="10%">
 </p>
 
-Again, we'd have one 3x3 kernel for each input channel. That gives us 3 kernels per filter. We'd need 64 filters, one for each output channel. This gives us 64 filters, each with 3 3x3 kernels. Each kernel perform convolutions with its associated channel, following the same operation we've demonstrated above. The output of every kernel-channel pairing is summed together. This means that, although each filter has three kernels, only one matrix is output per filter. Repeating this for each of the 64 filters would give our expected output of 64 channels for our image and allows for the transformation of a 572x572x3 image to 570x570x64. 
+Again, we'd have one 3x3 kernel for each input channel. Since our input image is 572x572x3, we have 3 kernels per filter. We have one filter for each output channel of our convolved image. Our output is going to be 570x570x64, so we need 64 filters. This gives us 64 filters (one for each output channel), each with 3 (number of input channels) kernels of dimension 3x3 (3x3 is just the preferred kernel size for these operations, it could also be 2x2 or 5x5). 
+
+**Include images of kernels, so they can associate with prior examples.**
+
+Reword below better so that it's easily understood that the kernels for each filter are summed together. We output one matrix per filter. This is how.
+
+Each kernel perform convolutions with its associated channel, following the procedure we've already performed. The output of every kernel-channel pairing is summed together. 
+
+**image**
+
+This means that, although each filter has three kernels, only one matrix is output per filter. Repeating this for each of the 64 filters would give our expected output of 64 channels for our image and allows for the transformation of a 572x572x3 image to 570x570x64. 
 
 Convolution gives our network total control over the number of input and output channels. Each kernel corresponds to one input channel. Each filter corresponds to one output channel. Having a unique kernel for each image input channel allows the network to singularly determine the best parameters at highlighting the image details contained within each channel. Having multiple kernels for each filter ensures that every output channel of our image contains an amalgamation of all the information offered across every channel of our input image. This preservation of information throughout our convolutional operations plays a large role in the efficiency of the U-net and its success with small training sets.
 
-In the first stage, our first convolution operation gives us 64 channels. In the next stage, following our max pooling, we perform our first convolution operation and increase the channels to 128. This continues, doubling our number of channels in the first convolution operation of each stage until we arrive at the bottom of our U-shape and the bridge in our architecture. Increasing the number of channels affords our network additional perspectives to comprehend image details. When compressing our images with every downsampling operation, preserving information becomes doubly important. Talk about why increasing number of channels is so important.
+Above paragraph is good. Below paragraph needs work. Reiterate importance of channels without regurgitating previous information.
+
+In the first stage, our first convolution operation gives us 64 channels. In the next stage, following our max pooling, we perform our first convolution operation and increase the channels to 128. This continues, doubling our number of channels in the first convolution operation of each stage until we arrive at the bottom of our U-shape and the bridge in our architecture. Increasing the number of channels affords our network additional perspectives to comprehend image details. When compressing our images with every downsampling operation, preserving information becomes doubly important.
 
 ## Bridge
 The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 max pooling) are repeated multiple times before arriving at the bridge, the bottom of the U-shaped architecture. This is our link between the contractive path we have descended and the expansive path we will soon ascend. Our image is at its smallest dimension size. From our initial 572x572x1 matrix, we have arrived at a 32x32x512 representation. This is the output of the final max pooling operation and serves as our input to the bridge.
