@@ -165,7 +165,7 @@ The stages described above (3x3 convolution, ReLU, 3x3 convolution, ReLU, 2x2 ma
   <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="55%">
 </p>
 
-We continue with one more stage of convolution and activation function operations. At the smaller dimensions present at the bridge, convolution operations grow in importance. This is because the local context available to a 3x3 convolutional kernel contains more relative information. 3x3 convolution performed on a 572x572 image will contain about 0.00275% of the total image information at one time. 3x3 convolution performed on a 30x30 matrix will contain 1% of the total information at any one time. This offers the convolutional filters near the bridge an opportunity to 
+We continue with one more stage of convolution and activation function operations. At the smaller dimensions present at the bridge, convolution operations grow in importance. This is because the local context available to a 3x3 convolutional kernel contains more relative information. 3x3 convolution performed on a 572x572 image contains about 0.00275% of the total image information at one time. 3x3 convolution performed on a 30x30 matrix will contain 1% of the total information at any one time. This offers the convolutional filters near the bridge an opportunity to 
 
 Refining versus rougher filtering.
 
