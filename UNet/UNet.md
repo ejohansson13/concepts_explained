@@ -208,12 +208,12 @@ Reorganize decoder section. Up-sampling -> convolution+ReLU -> skip connections.
 
 ### Final Layer (1x1 Convolution)
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_architecture.png" alt="A screenshot of the UNet architecture from its corresponding 2015 research paper" width="55%">
+  <img src="/UNet/Images/unet_architecture.png" alt="A screenshot of the UNet architecture from its corresponding 2015 research paper" width="65%">
 </p>
 
 After having performed the many associated concatenation, convolution, activation function, and upsampling operations, we arrive at the final stage of our architecture. Now, our output needs to be understandable for the network to classify its performance. We map our image to the expected number of output channels with a 1x1 convolution. In the architecture above, this involves taking our 64-channel image and performing convolution to output an image with 2 channels. Notice that this convolution operation does not impact our height and width dimensions, it only affects our number of channels. [This is a great video](https://www.youtube.com/watch?v=c1RBQzKsDCk) on 1x1 convolutions, their utility, and use cases.
 <p align="center" width="100%">
-  <img src="/UNet/Images/unet_final_conv.png" alt="The final convolution operation taken from the Unet research paper" width="35%">
+  <img src="/UNet/Images/unet_final_conv.png" alt="The final convolution operation taken from the Unet research paper" width="25%">
 </p>
 
 Explained convolution enough in prior sections, don't think there's a need to hold their hand through this operation.
