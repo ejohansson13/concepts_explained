@@ -202,21 +202,9 @@ Directly following our nearest neighbor operation, we perform 2x2 convolution. I
 First, nearest neighbor interpolation is performed as previously illustrated. Every matrix value is quadrupled, doubling our matrix dimensions and giving us an upsampled representation of our image features. In the diagram above, that would double our 196x196x128 matrix to 392x392x128. Notice our number of channels has not changed. We're only affecting the height and width dimensions of our image features. Next, 2x2 convolution is performed to halve the number of channels. Convolution at this kernel size immediately filters our upsampled feature values. Continuing the example, our features would now have dimensions of 392x392x64. Nearest neighbor interpolation quadrupled each local matrix value. Convolution refines these values across the provided number of channels, setting the stage for concatenation with the encoder-stage features arriving via skip connection. We concatenate our encoder stage matrices (white half of rectangle above) to our upsampled image features (blue half of rectangle), arriving at the depicted 392x392x128 matrix. These image dimensions then proceed to the next stage of convolution and activation functions.
 
 ### Convolution and ReLU
-After upsampling and skip connections have concatenated our images on to one another, we pass them through a series of convolution and activation function operations. The first convolution stage receives as input our concatenated decoder and encoder stage images. It halves the number of channels, absorbing the information gained from the skip connections. This matrix is then passed through an elementwise ReLU, before we repeat another stage of convolution and activation function operations with no further change to our number of channels.
+Repeat the funcitonality of conv+relu functions. Similarity to encoder stage blocks. 
 
-The purpose of these blocks is similar to their purpose in the contracting path. The convolution emphasizes our important features and the activation function implements nonlinearity for modeling complexity. Let's reexamine our single-channel convolution and activation function example and pass it through another series of convolution and activation function operations. Even in this simplified example, the operations have a notable impact. Our initial matrix with no value greater than 6 jumped to contain a much larger range of values, even with ReLU limiting any negatives.
-<p align="center" width="100%">
-  <img src="/UNet/Images/convolution_result_revisited.png" width="30%">
-</p>
-
-If we pass the matrix through another stage with the same convolutional kernel, we can observe a greater activation of the matrix values, with some jumping to triple digits. Even in this example, we see how convolution might emphasize certain features and devalue others. Our activation function ties the negative value to 0, indicating little important information for our network in this region. We've emphasized critical regions of our image and devalued regions with minimal information.
-<p align="center" width="100%">
-  <img src="/UNet/Images/convolution_next_step.png" width="50%">
-</p>
-
-What we're doing here is akin to sifting for gold. Gold panners will find lucrative riverbeds and pan through sediment to find their gold. The repeated agitation of sediment in the pan leads to gold settling at the bottom. With convolution, we know there's value in our image. The repeated application of our convolutional filters lets the dust and sediment separate itself from our gold: the important features that our network analyzes to make its decision. Convolution and the other network operations are our pans and brushes. The network determines the values of our convolution kernels, and their optimal implementation to interact with the other network operations. It works in concert with activation functions, skip connections, upsampling and downsampling operations to serve as the network's decision-makers on the important features in an image. Throughout training, these values are updated as the network realizes what produces the best results. It receives feedback on its performance and updates the values of its convolutional filters to improve future results. 
-
-This example is only meant to reiterate how convolutional operations work. It's unlikely for any two kernels, let alone filters, to have the same values. Each kernel's values are optimized by the network to highlight significant details of our image and devalue insignificant features. Additionally, the network operates on a much larger scale. Matrices are not 6x6, 4x4 or 2x2, they are anywhere from 28x28 to 572x572. This is why our encoder path condenses each image to a much smaller representation. It provides an efficient method to determine the most important features of our image, regardless of its dimensionality.
+Reorganize decoder section. Up-sampling -> convolution+ReLU -> skip connections.
 
 ### Final Layer (1x1 Convolution)
 <p align="center" width="100%">
@@ -227,6 +215,8 @@ After having performed the many associated concatenation, convolution, activatio
 <p align="center" width="100%">
   <img src="/UNet/Images/unet_final_conv.png" alt="The final convolution operation taken from the Unet research paper" width="35%">
 </p>
+
+Explained convolution enough in prior sections, don't think there's a need to hold their hand through this operation.
 
 Using the example from the research paper, we have 1x1 convolution performed to transform our 388x388x64 image to 388x388x2. This requires 2 filters, each with 64 1x1 kernels. Each of the 1x1 kernels convolves with every cell of one channel of our input matrix. These results are summed across the 64 input channels to give one output channel for our image. Repeating this process for our second filter gives our second channel for our output image. Similar to the other convolutional kernels throughout our network, the values of these kernels are learned through network training to produce the best results for our task. The number of output channels for our image is also wholly controllable, allowing as many output channels as needed to review network performance. Now that our image has the expected dimensions, we can evaluate the performance of our network.
 
