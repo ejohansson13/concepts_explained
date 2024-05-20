@@ -42,7 +42,32 @@ As you can see in the example, our input matrix is 6x6 while our output matrix i
 
 #### Stride, Padding, and Kernel Size
 
-Talk about stride and padding; also 3x3 kernel size and how convolution works with local context
+Convolution is a more complex operation than the example presented above. Now that we've walked through a simplified example, let's touch on some more details of its functionality. 
+
+##### Stride
+Stride determines how our kernel moves around our input matrix. In our example above, we utilized a 3x3 kernel to filter our 6x6 input matrix. Our kernel shifted by one value as it maneuvred through our matrix. Our kernel operated with a stride of 1. The matrix subsets that interacted with our kernel are highlighted in blue below.
+**picture of stride 1**
+
+We can see that our kernel interacted with one 3x3 submatrix before shifting and interacting with the adjacent 3x3 submatrix. This is a stride of 1. If our kernel operated with a stride of 2, it would "skip" a value and operate on the next 3x3 submatrix. Let's look at which submatrices would be used if our kernel operated with a stride of 3.
+**picture of stride 3**
+
+Our kernel starts with the same initial submatrix. It then strides 3 values and selects the next submatrix. Reaching the end of the row, it shifts down. With a stride of 1, it would shift down by one row. But, our stride defines both how our kernel moves horizontally as well as vertically. With a stride of 3, we shift down by 3 values. Our next submatrix is selected. We then shift horizontally by another 3 values and arrive at the end of our input matrix. This leaves us with far fewer submatrices that interact with our kernel, which affects the size of our output matrix. We can visualize this below.
+**picture of stride 3 convolutions**
+
+Our initial convolution operation with a stride of 1 gave us an output matrix of 4x4. With a stride of 3, the same convolutional kernel outputs a 2x2 matrix. Changing our stride changes the number of times our kernel interacts with our input matrix elements. With a stride of 3, it still touches every matrix element, but there are no overlapping values in our submatrices. Each 3x3 submatrix is isolated, convolved, then dispatched for the next submatrix. In contrast, our convolution with a stride of 1 had multiple overlapping values between operations. This allows the kernel to consider both the current window of data and its relation to our previous window, offering a comprehensive view of both the current submatrix and its broader context of neighboring data. Lengthening the stride narrows the kernel's focus to a singular window at a time and eliminates the context gleaned from shared values between operations. 
+
+##### Padding
+Another convolutional element is padding. Padding also affects the size of our convolutional output. In our initial example, convolution receives a 6x6 input matrix and outputs a 4x4 matrix. Some information on the border of our matrix is lost because of the lack of corresponding context. Values along the edge of our matrix
+Initial image was 512x512 padded to 572x572.
+
+
+##### Kernel Size
+
+
+
+
+
+Conclusion disclaimer: For the rest of this page, our convolution operations will be with a stride of 1 and padding 0, unless explicitly mentioned. 
 
 ### Rectified Linear Unit
 Now that we thoroughly understand convolution, let's talk about activation functions. Continuing with our matrix example, we can take our output matrix and apply an element-wise activation function. An activation function takes in a value and acts like a security checkpoint at the airport. At the airport, if you have a bottle with liquid over a certain volume, you must empty it before continuing. Rules are in place and if you fall short of those rules, you alter your input before proceeding. Depending on the value input to the activation function, it may allow that value to pass unaffected or reject the value and replace it with 0. These actions will also change dependent on the respective activation function. The rectified linear unit (ReLU) activation function allows all nonnegative values to pass, and rejects negative values, setting them to 0.
@@ -225,9 +250,23 @@ After feeding our image features through the network from start-to-finish, we ar
 ### Error Function (Cross-Entropy)
 We've done it. We've practiced setting our feet coming around the screen, we've practiced our hand positioning, and we've practiced our follow-through. We've spent time practicing each part of the technique separately and now it's time to put it all together. You run around the screen, catch the ball, shoot, and... CLANGGGG! Off front-rim. What happened? Somehow, somewhere in the process, something went wrong. You weren't expecting to get it right in your first attempt, were you? Despite the time and energy spent practicing your technique, something was off. Maybe it was the positioning of your feet or maybe it was your release point. This is a learning process. With time, you'll be able to adjust your shot as you learn more about what a good shot looks like and what a bad shot looks like. That learning process is exactly what happens with neural networks.
 
-After the model outputs its predicted segmentation image, we take the time to compare our model's image to the provided ground-truth image. The ground-truth image is the correct, expected answer. Any difference between our model output and the ground-truth is considered the loss. The function comparing our model output is logically called the loss function. The U-Net's loss function is cross-entropy. To perform cross-entropy, we first need to perform the softmax function.
+<p align="center" width="100%">
+  <img src="/UNet/Images/unet_output_diagram.png" width="70%">
+</p>
 
-Softmax takes our network's output across two channels and converts the raw values to probabilities. It funnels the network's calculations into a likelihood comparing each channel's probability per pixel. These probabilities sum to 1. With softmax, the network is calculating the likelihood that channel 0 (no segmentation) is dominant, or if channel 1 (segmentation area) is dominant. Cross-entropy compares those pixel probabilities to the ground-truth activations. In the example above, we can see that cross-entropy receives both the ground-truth image and model output. It returns a single value, describing the overall difference between the two.
+After the model outputs its predicted segmentation image, we compare our model's image to the provided ground-truth image, as illustrated above. The ground-truth image is the correct, expected answer. Any difference between our model output and the ground-truth is considered the loss. The function comparing our model output is logically called the loss function. The U-Net's loss function is cross-entropy. To perform cross-entropy, we first need to perform the softmax function. We apply the softmax function across our channel's two images... funneling the output into cross-entropy.
+
+<p align="center" width="100%">
+  <img src="/UNet/Images/softmax_diagram.png" width="50%">
+</p>
+
+Softmax takes our network's output across two channels and converts the raw values to probabilities. It funnels the network's calculations into a likelihood comparing each channel's probability per pixel. These probabilities sum to 1. With softmax, the network is calculating the likelihood that channel 0 (no segmentation) is dominant, or if channel 1 (segmentation area) is dominant. 
+
+<p align="center" width="100%">
+  <img src="/UNet/Images/cross_entropy.png" width="50%">
+</p>
+
+Cross-entropy compares those pixel probabilities to the ground-truth activations. In the example above, we can see that cross-entropy receives both the ground-truth image and model output. It returns a single value, describing the overall difference between the two.
 
 
 Consult YT video on U-Net for another idea on explaining backpropagation. 3:25 mark.
