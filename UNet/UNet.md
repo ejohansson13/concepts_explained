@@ -218,17 +218,19 @@ We've propagated our image through the network, arriving at our final location t
   <img src="/UNet/Images/unet_final_conv.png" alt="The final convolution operation taken from the Unet research paper" width="25%">
 </p>
 
+Something about two-channel structure. 0 channel has 0s everywhere except segmentation area. 1 channel has 1s in segmentation area, 0s everywhere else.
+
 After feeding our image features through the network from start-to-finish, we are now ready to measure our performance. Was our network successful in picking up on the relevant information of our image? Could the model correctly segment that information, highlighting the appropriate segmentation area? Was the information correctly upscaled? Does everything in our ouput image look proportional? Let's compare our output to the provided ground-truth image and determine how successful we were.
 
 ### Error Function (Cross-Entropy)
 We've done it. We've practiced setting our feet coming around the screen, we've practiced our hand positioning, and we've practiced our follow-through. We've spent time practicing each part of the technique separately and now it's time to put it all together. You run around the screen, catch the ball, shoot, and... CLANGGGG! Off front-rim. What happened? Somehow, somewhere in the process, something went wrong. You weren't expecting to get it right in your first attempt, were you? Despite the time and energy spent practicing your technique, something was off. Maybe it was the positioning of your feet or maybe it was your release point. This is a learning process. With time, you'll be able to adjust your shot as you learn more about what a good shot looks like and what a bad shot looks like. That learning process is exactly what happens with neural networks.
 
+After the model outputs its predicted segmentation image, we take the time to compare our model's image to the provided ground-truth image. The ground-truth image is the correct, expected answer. Any difference between our model output and the ground-truth is considered the loss. The function comparing our model output is logically called the loss function. The U-Net's loss function is cross-entropy. To perform cross-entropy, we first need to perform the softmax function.
+
+Softmax takes our network's output across two channels and converts the raw values to probabilities. It funnels the network's calculations into a likelihood comparing each channel's probability per pixel. These probabilities sum to 1. With softmax, the network is calculating the likelihood that channel 0 (no segmentation) is dominant, or if channel 1 (segmentation area) is dominant. Cross-entropy compares those pixel probabilities to the ground-truth activations. In the example above, we can see that cross-entropy receives both the ground-truth image and model output. It returns a single value, describing the overall difference between the two.
+
+
 Consult YT video on U-Net for another idea on explaining backpropagation. 3:25 mark.
-
-After the model outputs its predicted segmentation image, we take the time to compare our model's image to the provided ground-truth image. The ground-truth image is the correct, expected answer. Any difference between our model output and the ground-truth is considered the loss. The function comparing our model output is logically called the loss function. The U-Net's loss function is cross-entropy. To perform cross-entropy, we first need to perform the softmax function. 
-
-Softmax ... essentially compares activation at every pixel among output channels. Converts those activations to probabilities. 
-Cross-entropy takes those probabilities and compares it to the ground-truth activations. Since ground-truth images have two channels, one channel has 1s for background pixel values, the other has 1s for segmentation area. Cross-entropy comparison decides loss value. 
 
 Backpropagation is the feedback reception and adjustment a network undergoes in response to its performance. It is key to the success of any neural network. Throughout the training process, the network spends its time practicing and learning its task. It predicts values then adjusts its predictions in response to the training data's true values. In this case, the U-Net predicts its segmentations and finds out how good of a job it did. If it did a great job, it might go back and only slightly adjust its follow-through. If it did a really bad job, it might go back and do a serious rewrite of setting its feet and bringing the ball up to head height again. Backpropagation and its magnitude is decided by the network's loss function. For the U-Net, those loss functions are Softmax and Cross-Entropy. 
 
