@@ -227,9 +227,8 @@ Consult YT video on U-Net for another idea on explaining backpropagation. 3:25 m
 
 After the model outputs its predicted segmentation image, we take the time to compare our model's image to the provided ground-truth image. The ground-truth image is the correct, expected answer. Any difference between our model output and the ground-truth is considered the loss. The function comparing our model output is logically called the loss function. The U-Net's loss function is cross-entropy. To perform cross-entropy, we first need to perform the softmax function. 
 
-https://www.youtube.com/watch?v=7q7E91pHoW4
-
-Softmax measures the predicted activation of every pixel in our image across our output channels. The channel with the most activation for a particular pixel is considered a 1. For all other channels, that pixel is considered a 0.
+Softmax ... essentially compares activation at every pixel among output channels. Converts those activations to probabilities. 
+Cross-entropy takes those probabilities and compares it to the ground-truth activations. Since ground-truth images have two channels, one channel has 1s for background pixel values, the other has 1s for segmentation area. Cross-entropy comparison decides loss value. 
 
 Backpropagation is the feedback reception and adjustment a network undergoes in response to its performance. It is key to the success of any neural network. Throughout the training process, the network spends its time practicing and learning its task. It predicts values then adjusts its predictions in response to the training data's true values. In this case, the U-Net predicts its segmentations and finds out how good of a job it did. If it did a great job, it might go back and only slightly adjust its follow-through. If it did a really bad job, it might go back and do a serious rewrite of setting its feet and bringing the ball up to head height again. Backpropagation and its magnitude is decided by the network's loss function. For the U-Net, those loss functions are Softmax and Cross-Entropy. 
 
