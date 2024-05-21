@@ -101,7 +101,7 @@ The last convolutional variable we'll cover in this section is kernel size. In b
 As we can see, increasing our kernel to 5x5 has resulted in a decrease in the size of our output matrix. Considering more values at a time results in fewer operations needed to consider the entirety of our input matrix. 
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/convolution_kernel_size_results.png" width="35%">
+  <img src="/UNet/Images/convolution_kernel_size_results.png" width="30%">
 </p>
 
 If we compare our output matrices between convolution with a 3x3 kernel and a 5x5 kernel, it's difficult to observe much similarity. Broadening the window for every convolution operation can result in an unbalanced impression of certain features in the data. Some features are overemphasized, while others seem to be underemphasized. 
@@ -270,6 +270,12 @@ Directly following our nearest neighbor operation, we perform 2x2 convolution. I
 First, nearest neighbor interpolation is performed as previously described. Every matrix value is quadrupled, doubling our matrix dimensions and giving us an upsampled representation of our image features. In the diagram above, that would double our 196x196x128 matrix to 392x392x128. Notice our number of channels has not changed. We're only affecting the height and width dimensions of our image features. Next, 2x2 convolution is performed to halve the number of channels. Convolution at this kernel size immediately filters our upsampled feature values. Continuing the example, our features would now have dimensions of 392x392x64. Convolution filters the upsampled values across the provided number of channels, setting the stage for concatenation with the encoder-stage features arriving via skip connection. We concatenate our encoder stage matrices (white half of rectangle above) to our upsampled image features (blue half of rectangle), arriving at the depicted 392x392x128 matrix. These image dimensions then proceed to the next stage of convolution and activation functions.
 
 ### Convolution and ReLU
+Reiterating functionality and importance of conv+reul blocks: 
+The U-Net, like any other neural network, is dependent on the extraction of features from our data. These features are utilized in the decision-making of the network. For image segmentation, we employ the features of the image in determining the relevant area to highlight. The extraction of features for the U-Net and many other neural networks is accomplished through convolutional blocks. Convolution filters and emphasizes our image features, while our activation functions introduce nonlinearity to better model the complexity of our image features. 
+
+Role in decoder is identical to role in encoder:
+
+
 Throughout the U-Net, our model's architecture has been dependent on the building blocks of convolution and ReLU functions. Convolution filters and emphasizes certain image features, while our activation functions introduce nonlinearity to model the image features. ... serve same function in decoder as in encoder ... image of blue arrows throughout architecture representing conv + activation functions ... max pooling and upsampling serve purpose of changing image dimensions, but conv+relu determine channels and feature importance ... summarize purpose of U-Net architecture ... conv+relu determine both semantic feature learning and spatial information learning, skip connections connect spatial information back from learned encoder stage to decoder stage ... cite SD paper referring to U-Net's "inductive bias for spatial information"
 
 Repeat the funcitonality of conv+relu functions. Similarity to encoder stage blocks. 
