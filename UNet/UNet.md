@@ -46,46 +46,63 @@ Convolution is a more complex operation than the example presented above. Now th
 
 ##### Stride
 Stride determines how our kernel moves around our input matrix. In our example above, we utilized a 3x3 kernel to filter our 6x6 input matrix. Our kernel shifted by one value as it maneuvred through our matrix. Our kernel operated with a stride of 1. The matrix subsets that interacted with our kernel are highlighted in blue below.
-
-**picture of stride 1**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_stride_1.png" width="55%">
+</p>
 
 We can see that our kernel interacted with one 3x3 submatrix before shifting and interacting with the adjacent 3x3 submatrix. This is a stride of 1. If our kernel operated with a stride of 2, it would "skip" a value and operate on the next 3x3 submatrix. Let's look at which submatrices would be used if our kernel operated with a stride of 3.
 
-**picture of stride 3**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_stride_3.png" width="55%">
+</p>
 
 Our kernel starts with the same initial submatrix. It then strides 3 values and selects the next submatrix. Reaching the end of the row, it shifts down. With a stride of 1, it would shift down by one row. But, our stride defines both how our kernel moves horizontally as well as vertically. With a stride of 3, we shift down by 3 values. Our next submatrix is selected. We then shift horizontally by another 3 values and arrive at the end of our input matrix. This leaves us with far fewer submatrices that interact with our kernel, which affects the size of our output matrix. We can visualize this below.
 
-**picture of stride 3 convolutions**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_stride_3_result.png" width="55%">
+</p>
 
 Our initial convolution operation with a stride of 1 gave us an output matrix of 4x4. With a stride of 3, the same convolutional kernel outputs a 2x2 matrix. Changing our stride changes the number of times our kernel interacts with our input matrix elements. With a stride of 3, it still touches every matrix element, but there are no overlapping values in our submatrices. Each 3x3 submatrix is isolated, convolved, then dispatched for the next submatrix. In contrast, our convolution with a stride of 1 had multiple overlapping values between operations. This allows the kernel to consider both the current window of data and its relation to our previous window, offering a comprehensive view of both the current submatrix and its broader context of neighboring data. Lengthening the stride narrows the kernel's focus to a singular window at a time and eliminates the context gleaned from shared values between operations. 
 
 ##### Padding
 Another convolutional element is padding. Padding also affects the size of our convolutional output. In our initial example, we convolve a 6x6 input matrix and output a 4x4 matrix. Some information on the border of our matrix is lost because of the lack of corresponding context. Values along the edge of our matrix are minimized as they have fewer options to interact with the kernel. In order to mitigate that information loss, we can employ padding. Padding insulates our input matrix by appending it with rows and columns of additional data. The additional data offers broader context for our border values and allows them to be accordingly absorbed by our convolution function. This data usually follows one of two functions: mirroring or zeroing.
 
-**picture of mirror padding**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_padding_mirror.png" width="55%">
+</p>
 
 Mirroring, as seen above, involves copying the adjacent outer elements. The intuition behind mirroring is to extend the matrix with identical values to those along the border, ensuring the broader context extending our image follows the same distribution as our original matrix values. In our example above we padded by 1. We added 1 row on top of our matrix, 1 row along the bottom, 1 column to the left of our matrix, and 1 column to the right. We can pad by any number, up until duplicating the matrix height and width. Beyond that, there is no additional data to mirror. In the U-Net paper, input images to the network were 512x512 but were padded through mirroring to 572x572 to preserve coherency as the image features were downsampled. Increasing our image size by 15 in all directions requires mirroring the last 15 rows and columns of the input matrix.
 
-**picture of padding with zeros**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_padding_zeros.png" width="55%">
+</p>
 
 An alternative option for padding is to pad with zeros. As demonstrated above, padding with zeros is autological. We append our input matrix with zeros along the border, extending our data to allow for the border values to factor into our convolutional operation. Padding with zeros diverges from mirroring in the emphasis placed along the border values. While mirroring emphasizes homogeneity in the extension of our input data, padding with zeros prefers to attend to the matrix's original data. It extends our input matrix by zeros, increasing our height and width but not compromising our original data. Instead we append zeros to prevent the new data from conflicting with our original input.
 
-**picture of padding results**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_padding_results.png" width="55%">
+</p>
 
 Above, we can see the results of either padding operation when convolved with our original 3x3 kernel. As you can see, in both cases, our output matrix has the same height and width as our input matrix. Padding by 1 preserves the dimensionality of our image and prevents the slight shrinkage of data that would otherwise occur. Additionally, you can see that the only disctinction between the output matrices lies along the edges. This is where we padded the image and logically this is where the difference is visualized. In fact, the inner 4x4 matrix are not only identical to each other, but identical to the original 4x4 output matrix we received from our convolution without padding, demonstrated below. 
 
-**picture of original convolutional result**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_original_result.png" width="55%">
+</p>
 
 Padding allows control over the height and width of our output matrix without affecting the core values propagated throughout our network. By controlling the amount we pad to our input matrix, we have direct control over the size of our output matrix. If we want to preserve our height and width, we can pad by 1. If we actually want to increase the size of our output matrix, we can simply pad by a larger number. Regardless of our padding, we conserve both the values at the center of our output matrix and the center of our image. We don't have to worry about padding distorting our data perspective, as padding symmetrically always centers our input data. However, padding by too much would propagate nonsensical values along the edges of our output matrix. For that reason, our amount of padding is normally relatively small in proportion to our overall input matrix size. 
 
 ##### Kernel Size
 The last convolutional variable we'll cover in this section is kernel size. In both the example above and the majority of the U-Net, 3x3 kernels are used for convolution. 3x3 convolutions are fairly ubiquitous throughout machine learning architectures. They offer a local context without considering too many values for each operation. Convolution with a 3x3 kernel ensures that only adjacent values are considered at every step. It also prevents overt downsizing of our matrix dimensions. Let's look at an example with a 5x5 convolutional kernel.
 
-**picture of 5x5 convolutional kernel**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_kernel_five_by_five.png" width="55%">
+</p>
 
 As we can see, increasing our kernel to 5x5 has resulted in a decrease in the size of our output matrix. Considering more values at a time results in fewer operations needed to consider the entirety of our input matrix. 
 
-**picture of both kernel size convolution results**
+<p align="center" width="100%">
+  <img src="/UNet/Images/convolution_kernel_size_results.png" width="55%">
+</p>
 
 If we compare our output matrices between convolution with a 3x3 kernel and a 5x5 kernel, it's difficult to observe much similarity. Broadening the window for every convolution operation can result in an unbalanced impression of certain features in the data. Some features are overemphasized, while others seem to be underemphasized. 
 
