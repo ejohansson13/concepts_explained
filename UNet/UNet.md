@@ -53,7 +53,7 @@ Stride determines how our kernel moves around our input matrix. In our example a
 We can see that our kernel interacted with one 3x3 submatrix before shifting and interacting with the adjacent 3x3 submatrix. This is a stride of 1. If our kernel operated with a stride of 2, it would "skip" a value and operate on the next 3x3 submatrix. Let's look at which submatrices would be used if our kernel operated with a stride of 3.
 
 <p align="center" width="100%">
-  <img src="/UNet/Images/convolution_stride_3.png" width="55%">
+  <img src="/UNet/Images/convolution_stride_3.png" width="25%">
 </p>
 
 Our kernel starts with the same initial submatrix. It then strides 3 values and selects the next submatrix. Reaching the end of the row, it shifts down. With a stride of 1, it would shift down by one row. But, our stride defines both how our kernel moves horizontally as well as vertically. With a stride of 3, we shift down by 3 values. Our next submatrix is selected. We then shift horizontally by another 3 values and arrive at the end of our input matrix. This leaves us with far fewer submatrices that interact with our kernel, which affects the size of our output matrix. We can visualize this below.
