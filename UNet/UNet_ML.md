@@ -1,5 +1,7 @@
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 
+Make reference to doubling channels while halving height and width dimensions is to preserve time complexity throughout network. Common approach, can also reference ResNet paper. Same computational requirements at every stage.
+
 # U-Net
 
 The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency and performance with a small dataset announced its efficacy as a tool for computer vision tasks. In this page, we'll discuss the U-Net and its architecture. This page assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of any machine learning background.
