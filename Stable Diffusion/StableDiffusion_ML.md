@@ -5,7 +5,7 @@ We'll be focusing on the text-to-image case, but I urge you to check out the [or
   <img src="/Stable Diffusion/Images/SD_Images/LDM_diagram.png" alt="LDM diagram taken from original research paper" width="100%"
 </p>
 
-# Architecure
+# Architecture
 
 The latent diffusion network follows an encoder-decoder architecure interacting with a compressed, semantic latent space. Between the encoder and decoder blocks, there are three main stages: the scheduler, the denoising U-Net and the custom conditioner (again, we'll be focusing on the text conditioning case). The encoder is responsible for encoding images to their  latent representation. The U-Net is the vehicle carrying this latent representation through the latent space. The prompt suggests the latent space destination, and the scheduler guides the U-Net through the latent space to the preferred destination. This destination, decided by the U-Net, scheduler, and prompt, is the closest latent space representation to the final image. The destination latent is then decoded and transformed to a pixel-space image adhering to the details described in the provided prompt.
 
@@ -28,7 +28,19 @@ Encoders perform this initial compression role, with decoders carrying the oppos
 Encoding to a latent space requires decisions on the size of the latent space. The authors experimented with multiple downsampling factors, ultimately determining that downsampling factors of 4 or 8 offered the best performance. Downsampling factors of 1 or 2 were prohibitively expensive, operating near pixel-space, and slowed the training rate. Downsampling by a factor of 16 or more led to excessive information loss and low fidelity. Compression at that scale cannibalized the semantic information present in the training data. We'll be focusing on downsampling by a factor of 8, which was used to generate the image examples in the paper. We'll refer to a model of this downsampling factor as LDM-8 for the remainder of the page.
 
 ##### ResNet blocks
-Explanation of bread-and-butter of autoencoder. Reference ResNet research paper. Reference to U-Net skip connections in importance of residual connection.
+Before explaining the encoder and decoder aspects of the variational auto-encoder, covering their building block is conceptually relevant. [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385), released in 2015, introduced the concept of a residual network for improved performance in image processing tasks. Around 2015, conventional wisdom held that network depth was inextricably tied to model performance. More parameters should lead to better performance. In reality, unstable gradients and training accuracy degradation highlighted the flaw in arbitrarily deep models. Adding layers and layers in the hopes of modeling an implicit underlying mapping is inferior to explicitly fitting a referenced residual mapping. This was the argument made in the ResNet paper. The authors demonstrated that allowing shortcuts between layers of the neural network allowed the network to determine the relevancy and necessity of each layer. Layers deemed unnecessary to the model's decision-making could be mapped to an identity function, allowing the network's signal to propagate unperturbed.
+
+ResNet blocks are residual blocks. The fundamental definition is of 
+
+Something about how they allow signals to propagate for arbitrarily large architectures. Backpropagation ensures that weights are only helpful. If not contributing, identity mapping, signal skips.
+
+
+Explanation of bread-and-butter of autoencoder. Reference ResNet research paper. Reference to U-Net skip connections in importance of residual connection. 
+
+
+**diagram of SD ResNet blocks**
+
+Arbitrary choices i.e. activation function before/after combining input with residual
 
 #### Encoder
 <p align="center" width="100%">
