@@ -30,14 +30,16 @@ Encoding to a latent space requires decisions on the size of the latent space. T
 ##### ResNet blocks
 Before explaining the encoder and decoder aspects of the variational auto-encoder, covering their building block is conceptually relevant. [Deep Residual Learning for Image Recognition](https://arxiv.org/pdf/1512.03385), released in 2015, introduced the concept of a residual network for improved performance in image processing tasks. Around 2015, conventional wisdom held that network depth was inextricably tied to model performance. In reality, unstable gradients and training accuracy degradation highlighted the flaw in arbitrarily deep models. Adding layers and layers in the hopes of modeling an implicit underlying mapping is inferior to explicitly fitting a referenced residual mapping. This was the argument made in the ResNet paper. The authors demonstrated that allowing shortcuts between layers of the neural network allowed the network to determine the relevancy and necessity of each layer. Layers deemed unnecessary to the model's decision-making could be mapped to an identity function, allowing the network's signal to propagate unperturbed.
 
-ResNet blocks are residual blocks. The fundamental definition is of a block with a shortcut connection between the input and the propagated signal, limiting each block's responsibility to incremental, residual changes of the signal. 
+ResNet blocks are residual blocks. The fundamental definition is of a block with a shortcut connection between the input and the propagated signal, limiting each block's responsibility to incremental, residual changes of the signal. The utility of these blocks and their shortcut connections allow their utilization in networks of arbitrary depth. The network's possibility to progress the signal through the convential layer or the shortcut connection ensures that every layer contributes successfully to the model's decision-making. Improved decision-making is compounded by backpropagation. Backpropagation allows larger gradients to flow back to earlier in the network via the architectural shortcut of the original signal. Convolutional kernel weights are dictated by backpropagation, allowing the network to determine the significance of each kernel's contributions. Weights that are deemed unhelpful or unnecessary can be minimized, encouraging the original input to propagate, creating an identity mapping.
 
-Something about how they allow signals to propagate for arbitrarily large architectures. Backpropagation ensures that weights are only helpful. If not contributing, identity mapping, signal skips.
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/ResNet_composition.png" width="60%"
+</p>
 
-
-**diagram of SD ResNet blocks**
-
+Residual blocks are any blocks combining the original signal with a filtered, 
 Arbitrary choices i.e. activation function before/after combining input with residual
+
+https://arxiv.org/pdf/1603.05027 proves best-performing structure for ResNet blocks is norm->af->conv->repeat, as used in SD
 
 #### Encoder
 <p align="center" width="100%">
