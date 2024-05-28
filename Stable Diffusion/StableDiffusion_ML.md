@@ -21,6 +21,11 @@ Stable Diffusion models are trained on a wide variety of images pulled from the 
 The above graph demonstrates that the majority of bits constituting a digital image correspond to high-frequency, perceptual details. In contrast, relatively few bits comprise the semantic information of the image. Unlike previous diffusion models that tried to [jointly balance perceptual and semantic training loss terms](https://arxiv.org/pdf/2106.05931.pdf), latent diffusion models opt for a two-stage approach. Initially, the autoencoder compresses training images, creating a perceptually equivalent, but computationally cheaper latent space for semantic training. Learning the diffusion process is prioritized in the second stage of training. Semantic training freezes the autoencoder weights and prioritizes diffusion training, learning the reconstruction of coherent images from random white noise. 
 
 ### Autoencoder
+
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/autoencoder_example.png" width="70%"
+</p>
+
 Autoencoders are a staple of machine learning architectures. Their purpose is to encode and downsample an input to a compressed representation before decoding and upsampling the input to its original dimensionality with minimal information loss. Autoencoders are the first and last stage of Latent Diffusion Models. Their role is to create a stable, learnable latent space containing the distribution of compressed images from which future images can be generated. This space must contain all relevant semantic image information while obscuring superficial perceptual details. The latent space of the autoencoder is perceptually equivalent to the pixel-space of images, while offering computationally friendlier calculations owing to its lower-dimensionality scope.
 
 Encoders perform this initial compression role, with decoders carrying the opposing responsibility. Decoders need to successfully rescale lower-dimensional latents to pixel-space images. Their weights need to be carefully calibrated to avoid the reintroduction of errors when scaling a latent to a higher-dimensional representation. Jeopardizing the fidelity of the image when transitioning to higher dimensions would render latent-dimension modeling obsolete.
@@ -33,13 +38,13 @@ Before explaining the encoder and decoder aspects of the variational auto-encode
 ResNet blocks are residual blocks. Offering a shortcut connection between the input and the propagated signal, they limit each block's responsibility to incremental, residual signal changes. The utility of these blocks and their shortcut connections allow their utilization in networks of arbitrary depth. Designating two paths for the signal allows the network to determine the relative significance of each path, and weight the correct decision-making path prior to their aggregation. Improved decision-making is compounded by backpropagation. Backpropagation with residual blocks quickly allows larger gradients to flow to earlier layers in the network via the architectural shortcut of the original signal. Convolutional kernel weights are dictated by backpropagation, allowing the network to determine the significance of each kernel's contributions. Weights that are deemed unhelpful or unnecessary can be minimized, encouraging the original input to propagate, creating an identity mapping.
 
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/residual_block_types.png" width="100%"
+  <img src="/Stable Diffusion/Images/SD_Images/residual_block_types.png" width="60%"
 </p>
 
 These blocks can have multiple compositions. A [follow-up paper in 2016](https://arxiv.org/pdf/1603.05027) by the same authors as the original research paper examined these compositions and their relative performance. Ultimately they determined the full pre-activation option (the farthest-right construction with bold text underneath) offered the best performance. This conclusion was supported by two findings. Identity mapping as the shortcut for the original signal encourages optimization, promoting backpropagation to earlier layers, as described above. This accelerates training in the early stages, as the network quickly adjusts its weights in accordance with feedback. Any risk of overfitting is mitigated by their second finding: normalization in the pre-activation path prevents overfitting. Consistent regularization of the propagated signal prevents overt weight adoption of the training data distribution, allowing for successful generalization to unencountered distributions. The above configuration is utilized in the LDM autoencoder as well, illustrated below. 
 
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/ResNet_composition.png" width="100%"
+  <img src="/Stable Diffusion/Images/SD_Images/ResNet_composition.png" width="80%"
 </p>
 
 ResNet blocks' success with arbitrarily deep networks defines their success with autoencoders, where network depth is decided by the desired latent space dimensionality. Their ability to combat overfitting and generalize to new data distributions projects well to image compression, where potential image distributions include all pixel-space visual configurations. ResNet blocks extract and preserve significant image features with minimal information loss throughout the autoencoder.
