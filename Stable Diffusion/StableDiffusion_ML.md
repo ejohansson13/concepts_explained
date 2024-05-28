@@ -42,10 +42,7 @@ These blocks can have multiple compositions. A [follow-up paper in 2016](https:/
   <img src="/Stable Diffusion/Images/SD_Images/ResNet_composition.png" width="100%"
 </p>
 
-Preservation of signal
-
-Normalization
-Arbitrary depth
+ResNet blocks' success with arbitrarily deep networks defines their success with autoencoders, where network depth is decided by the desired latent space dimensionality. Their ability to combat overfitting and generalize to new data distributions projects well to image compression, where potential image distributions include all pixel-space visual configurations. ResNet blocks extract and preserve significant image features with minimal information loss throughout the autoencoder.
 
 #### Encoder
 <p align="center" width="100%">
