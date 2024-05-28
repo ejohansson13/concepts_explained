@@ -33,7 +33,7 @@ Before explaining the encoder and decoder aspects of the variational auto-encode
 ResNet blocks are residual blocks. The fundamental definition is of a block with a shortcut connection between the input and the propagated signal, limiting each block's responsibility to incremental, residual changes of the signal. The utility of these blocks and their shortcut connections allow their utilization in networks of arbitrary depth. The network's possibility to progress the signal through the convential layer or the shortcut connection ensures that every layer contributes successfully to the model's decision-making. Improved decision-making is compounded by backpropagation. Backpropagation allows larger gradients to flow back to earlier in the network via the architectural shortcut of the original signal. Convolutional kernel weights are dictated by backpropagation, allowing the network to determine the significance of each kernel's contributions. Weights that are deemed unhelpful or unnecessary can be minimized, encouraging the original input to propagate, creating an identity mapping.
 
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/ResNet_composition.png" width="60%"
+  <img src="/Stable Diffusion/Images/SD_Images/ResNet_composition.png" width="100%"
 </p>
 
 Residual blocks are any blocks combining the original signal with a filtered, 
