@@ -107,22 +107,20 @@ Perceptual loss, or [LPIPS](https://arxiv.org/pdf/1801.03924),  measures the sem
 
 Perceptual loss is focused on wholly improving the autoencoder. Parameters for both the encoder and decoder halves are tuned in response to the success of the reconstructed image in mimicking the semantic information of the original image. Patch-based adversarial loss is far more attentive to optimizing the decoder. Successful abstraction of superficial image details leads to a computationally cheaper latent space and more efficient image generation. It also runs the risk of generating bleak or somber images. Maintaining realism requires fixation on the successful reintroduction of high-frequency details at the decoding stage. This is the intuition behind patch-based adversarial loss, and why both loss functions were implemented to train the autoencoder.
 
-#### ResNet blocks in Diffusion
-Modifying the ResNet blocks utilized in the diffusion architecture compared to those employed in the autoencoder is the inclusion of temporal information. Diffusion is measured in timesteps. Additive noise and denoising progress are both measured in timesteps. Timesteps serve as a coefficient, proportionally scaling the quantity of noise to be added or removed from the latent. This information can be linearly transformed to be compatible with the latent dimensionality and the addition or removal of this quantity is the addition or removal of noise from the latent.
-
-A diagram illustrating the incorporation of time into ResNet blocks is given below. The only change is the inclusion of the timestep vector, linearly transformed to be compatible with the latent dimensionality, and joined with the latent prior to the second normalization function.
-
-<p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/ResNet_diffusion_composition.png" width="80%"
-</p>
-
 ### Scheduler
 
 The autoencoder solves the first stage of training: perceptual compression. A perceptually equivalent and computationally cheaper latent space has been achieved for the second training stage: semantic compression. Here, the conceptual composition of images will be learned to ensure high fidelity for image synthesis. The semantic learning stage centers on three core components: the scheduler, the U-Net, and the conditioner. Throughout the semantic training stage, the autoencoder is frozen to prevent any changes to its weights, and all learning takes place in the latent space.
 
 Schedulers are algorithmic guides to the denoising process implemented through the U-Net architecture. Training revolves around learning the additive noise process to understand the guided reversal of noise in an image. Many scheduling algorithms have been developed over the years, but were thought to be inextricable from the model architecture until a [2022 paper by Song et. al](https://arxiv.org/pdf/2010.02502.pdf) suggested pre-trained models could utilize different schedulers at inference time within the same family of generative models and, [another paper by Karras et. al](https://arxiv.org/pdf/2206.00364.pdf) confirmed that scheduling algorithms could be entirely separated from the denoising architecture. Schedulers learn the trajectory of Gaussian noise addition to images, allowing them to subsequently model the removal of Gaussian noise from images. The important parameters for these algorithms are a linear or cosine schedule and a vector linked to the timestep of the iterative noise removal process. These parameters can be understood as mathematical functions guiding the U-Net's denoising of latents. For more information on schedulers, I recommend the page I wrote focusing on [their literature and evolution](https://github.com/ejohansson13/concepts_explained/blob/main/Stable%20Diffusion/Schedulers_ML.md).
 
-Training: telling U-Net how many timesteps of noise to add (# of timesteps is randomly generated), we add that many timesteps of noise at once (we know mean and variance from scheduling algorithm). We then have the U-Net predict how much noise should be removed at each timestep, compare prediction to ground-truth via L2 norm.
+#### ResNet blocks in Diffusion
+Modifying the ResNet blocks utilized in the autoencoder architecture to be compatible with diffusion is the inclusion of temporal information. Diffusion is measured in timesteps. Additive noise and denoising progress are both measured in timesteps. Timesteps serve as a coefficient, proportionally scaling the quantity of noise to be added or removed from the latent. This information can be linearly transformed to adopt the latent dimensionality and the addition or removal of this quantity is the addition or removal of noise from the latent.
+
+A diagram illustrating the incorporation of time into ResNet blocks is given below. The only change is the inclusion of the timestep vector, linearly transformed to be compatible with the latent dimensionality, and joined with the latent prior to the second normalization function.
+
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/ResNet_diffusion_composition.png" width="80%"
+</p>
 
 ### U-Net
 
@@ -135,6 +133,8 @@ If you're looking for information on the U-Net architecture, check out [my page]
 Within LDMs, U-Nets can be trained to either predict the denoised latent when passed a noisy latent or predict the amount of noise that needs to be removed from a latent to arrive at the denoised latent. Throughout training the U-Net is fed three inputs: the noisy latent, the magnitude of noise that was added to the latent, and the conditioning input. Since the perceptual training stage is complete, we can have confidence in the veracity of our encoded latents. We add a randomly sampled magnitude of noise to a clean, encoded latent to create our noisy latent. This magnitude equates to the timesteps of noise in the forward process we would take to arrive at our randomly sampled noise level. Since the added noise is Gaussian, and we have learned the mean and variance of the forward process from our scheduling algorithm, we can immediately scale up our added noise to our randomly sampled noise level. This noise is added to our clean latent and we pass in both the subsequent noisy latent and the noise level as inputs to the U-Net. More information on the conditioning and its interaction with the U-Net can be found [below](#conditioning). 
 
 Knowing the number of timesteps of noise that was added to our latent, the U-Net begins iterating and progressively denoising the latent. Depending on its mode, either predicting the clean latent or the added noise, the U-Net will output either a latent or the predicted noise added to the latent. In either case, the output is compared to the ground truth via MSE. Throughout training, the U-Net learns how to progressively and iteratively denoise a latent. This becomes crucial at inference time where prompts will be fed in to the U-Net, accompanied by a randomly sampled latent, and an input number of timesteps in which to denoise the latent and synthesize an image. 
+
+Training: telling U-Net how many timesteps of noise to add (# of timesteps is randomly generated), we add that many timesteps of noise at once (we know mean and variance from scheduling algorithm). We then have the U-Net predict how much noise should be removed at each timestep, compare prediction to ground-truth via L2 norm.
 
 ### Conditioning
 
