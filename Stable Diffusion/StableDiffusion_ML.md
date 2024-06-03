@@ -125,7 +125,7 @@ A diagram illustrating the incorporation of time into ResNet blocks is given bel
 ### U-Net
 
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/unet_architecture.png" alt="Screenshot of U-Net architecture taken from original research paper" width="40%"
+  <img src="/Stable Diffusion/Images/SD_Images/original_unet_architecture.png" alt="Screenshot of U-Net architecture taken from original research paper" width="40%"
 </p>
 
 The U-Net is an encoder-decoder architecture popularized through its performance in computer vision tasks. In LDMs, the U-Net is responsible for repetitive denoising of the latent. Ostensibly, the denoising architecture for LDMs does not have to be a U-Net but, the U-Net’s integration of spatial data via its skip connections lends itself to [an inductive bias](https://arxiv.org/pdf/2105.05233.pdf). The U-Net’s success in preserving and propagating semantic image features while downsampling, prior to conserving the spatial information of said image features while upsampling, validates its utilization in denoising diffusion architectures.
@@ -140,6 +140,9 @@ Diffusion training begins with the random drawing of a timestep. A [seminal work
 
 Training the U-Net to predict variable noise levels becomes important at inference time. The U-Net’s responsibility during inference is the progressive denoising of a randomly sampled latent following a user-provided timeline. Arbitrary removal of noise is an exceedingly useful tool, allowing the U-Net to denoise a fixed number of steps at a time to follow the specified denoising chronology.
 
+<p align="center" width="100%">
+  <img src="/Stable Diffusion/Images/SD_Images/unet_architecture.png" width="100%"
+</p>
 
 ### Conditioning
 
