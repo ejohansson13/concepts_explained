@@ -144,6 +144,12 @@ Training the U-Net to predict variable noise levels becomes important at inferen
   <img src="/Stable Diffusion/Images/SD_Images/unet_architecture.png" width="100%"
 </p>
 
+Similar to the encoder and decoder from the autoencoder, one architectural implementation for the U-Net in LDMs is illustrated above. [Later literature](https://arxiv.org/pdf/2307.01952) would diverge on specific details. The perpetual presence of ResNet blocks is apparent, but the emphasis on a holistic understanding of image features necessitates an emphasis on attention blocks. Throughout the encoder and decoder paths, a pairing of ResNet and attention blocks are a fixture for the progression of image features. Convolutional blocks bookending the architecture offer control over the number of channels in addition to their local windows of feature analysis. Supporting the final convolution are normalization and activation function operations offering signal stabilization and nonlinearity for complex modeling. Similar to the autoencoder, the decoder path for the U-Net contains one additional block prior to the upsampling operation.
+
+Probably have to explain attention blocks in section similar to ResNet blocks. 
+
+Bottom of encoder and start of decoder paths are solely ResNet blocks. Bottleneck is simple sequence of ResNet-attn-ResNet. Decoder path, like in VAE, has one more block than encoder path at every stage. Skip connections.
+
 ### Conditioning
 
 Prompting our diffusion model requires the network's understanding of the prompt. We need an encoder to convert our prompt into embeddings which can interact with our latent embeddings in the U-Net. For the text-to-image case this would be a text encoder but, alternative encoders can deliver prompts through different media while remaining compatible with the LDM architecture. The original LDM paper utilized BERT, but more recent literature has demonstrated that the performance of an image synthesis model is strongly tied to the [performance of its text encoder](https://arxiv.org/pdf/2205.11487.pdf). For this reason, newer diffusion models [have opted for more powerful pre-trained text encoders](https://arxiv.org/pdf/2307.01952.pdf).
