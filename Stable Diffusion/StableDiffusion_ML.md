@@ -122,6 +122,10 @@ A diagram illustrating the incorporation of time into ResNet blocks is given bel
   <img src="/Stable Diffusion/Images/SD_Images/ResNet_diffusion_composition.png" width="80%"
 </p>
 
+#### Attention Blocks
+
+VAE and normal attention blocks are normalization -> self-attention. In this section, we'll talk about U-Net attention blocks which involve cross and self attention.
+
 ### U-Net
 
 <p align="center" width="100%">
@@ -145,10 +149,6 @@ Training the U-Net to predict variable noise levels becomes important at inferen
 </p>
 
 Similar to the encoder and decoder from the autoencoder, one architectural implementation for the U-Net in LDMs is illustrated above. [Later literature](https://arxiv.org/pdf/2307.01952) would diverge on specific details. The perpetual presence of ResNet blocks is apparent, but the emphasis on a holistic understanding of image features necessitates an emphasis on attention blocks. Throughout the encoder and decoder paths, a pairing of ResNet and attention blocks are a fixture for the progression of image features. Convolutional blocks bookending the architecture offer control over the number of channels in addition to their local windows of feature analysis. Supporting the final convolution are normalization and activation function operations offering signal stabilization and nonlinearity for complex modeling. Similar to the autoencoder, the decoder path for the U-Net contains one additional block prior to the upsampling operation.
-
-Probably have to explain attention blocks in section similar to ResNet blocks. 
-
-Bottom of encoder and start of decoder paths are solely ResNet blocks. Bottleneck is simple sequence of ResNet-attn-ResNet. Decoder path, like in VAE, has one more block than encoder path at every stage. Skip connections.
 
 ### Conditioning
 
