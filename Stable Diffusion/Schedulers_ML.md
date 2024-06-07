@@ -1,6 +1,6 @@
 # Schedulers
 
-This page is intended to cover schedulers and the more popular scheduling algorithms utilized with Stable Diffusion models. This is intended to be a summary overview, and will focus on broad comparison between the research papers inspiring these algorithms. If you are looking for a detailed examination of the algorithms' theoretical intricacies, I would suggest looking elsewhere. In this page we will abstract some of these details, and summarize each paper's contribution to the serviceability of scheduling algorithms within latent diffusion models.
+This page is intended to cover schedulers and the more popular scheduling algorithms utilized with Stable Diffusion models. These schedulers are  mathematical equations for the reverse diffusion process and adapted to neural network architectures for the purpose of image generation. This is intended to be a summary overview, and will focus on broad comparison between the research papers inspiring these algorithms. There are many more schedulers than those covered here. This page will abstract rigorous mathematical concepts and attempt to summarize each paper's contribution to the advancement of diffusion models.
 
 All quotes, ideas, and images from the summarization of each research paper are taken from the accompanying paper unless cited otherwise.
 
