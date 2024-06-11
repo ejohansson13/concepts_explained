@@ -123,11 +123,15 @@ Modifying the ResNet blocks utilized in the autoencoder architecture to be compa
 A diagram illustrating the incorporation of time into ResNet blocks is given above. The only change is the inclusion of the timestep vector, linearly transformed to be compatible with the latent dimensionality, and added to the latent prior to the second normalization function.
 
 #### Attention Blocks
+In the above section, the integration of noise into the U-Net, via timesteps, was covered. That can also be considered the merging of scheduler functionality with the primary diffusion architecture: the U-Net. In this section, the final diffusion component, conditioning, and its integration into the U-Net will be covered. Conditioning encodes user directions into embeddings that can interact with the noised latent in vector space. The interaction occurs due to the U-Net’s attention blocks.
+
+These attention blocks’ noteworthy operations are the application of self-attention and cross-attention. Self-attention operates identically to its behavior in the VAE, attending holistically to the latent features and enhancing the network’s understanding. Cross-attention operates as the intersection of conditioning information and the latent. The latent acts as the query vector, with the conditioning taking the role of key and value vectors. 
+
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/SD_Images/unet_attn_composition.png" width="80%"
 </p>
 
-VAE and normal attention blocks are normalization -> self-attention. In this section, we'll talk about U-Net attention blocks which involve cross and self attention.
+words. here.
 
 ### U-Net
 
