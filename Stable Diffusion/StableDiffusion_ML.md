@@ -131,7 +131,9 @@ These attention blocks’ noteworthy operations are the application of self-atte
   <img src="/Stable Diffusion/Images/SD_Images/unet_attn_composition.png" width="80%"
 </p>
 
-words. here.
+The architectural implementation of attention blocks aligned with our overall architecture can be seen above. The green arrows between blocks represent natural signal propagation. Blue arrows denote inputs that are summed prior to entering an operation block, while the purple arrows delineate the product of the inputs entering the operation block. For example, the output of the self-attention block above is added to the output of the 3x3 convolution block before entering the next layer normalization block. The output of the first Linear operation is multiplied by the output of the sequential activation function before being fed into the second Linear operation. Notice the initial input has a shortcut to the final output where it is summed with the last convolutional output. This sum is the overall output of each attention block. 
+
+Despite the convoluted illustration, the attention block can be viewed as the decoder portion of a [transformer block](https://arxiv.org/pdf/1706.03762). The latent features are treated as the decoder input and self-attended to before feeding into cross-attention as the query vector. The conditioning acts as the encoder output, taking the role of key and value vectors. After performing cross-attention between the latents and the conditioning, the signal continues to a feed-forward network, with this one based around the [GeGLU](https://arxiv.org/pdf/2002.05202v1). The shortcut between the original input and the final output allow the network to determine the significance of the shortcut and the propagating path.
 
 ### U-Net
 
