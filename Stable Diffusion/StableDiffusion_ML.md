@@ -116,15 +116,15 @@ Schedulers are algorithmic guides to the denoising process implemented through t
 #### ResNet blocks in Diffusion
 Modifying the ResNet blocks utilized in the autoencoder architecture to be compatible with diffusion is the inclusion of temporal information. Diffusion is measured in timesteps. Additive noise and denoising progress are both measured in timesteps. Timesteps serve as a coefficient, proportionally scaling the quantity of noise to be added or removed from the latent. This information can be linearly transformed to adopt the latent dimensionality and the addition or removal of this quantity is the addition or removal of noise from the latent.
 
-A diagram illustrating the incorporation of time into ResNet blocks is given below. The only change is the inclusion of the timestep vector, linearly transformed to be compatible with the latent dimensionality, and added to the latent prior to the second normalization function.
-
 <p align="center" width="100%">
   <img src="/Stable Diffusion/Images/SD_Images/ResNet_diffusion_composition.png" width="80%"
 </p>
 
+A diagram illustrating the incorporation of time into ResNet blocks is given above. The only change is the inclusion of the timestep vector, linearly transformed to be compatible with the latent dimensionality, and added to the latent prior to the second normalization function.
+
 #### Attention Blocks
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/SD_Images/unet_attention_composition.png" width="80%"
+  <img src="/Stable Diffusion/Images/SD_Images/unet_attn_composition.png" width="80%"
 </p>
 
 VAE and normal attention blocks are normalization -> self-attention. In this section, we'll talk about U-Net attention blocks which involve cross and self attention.
