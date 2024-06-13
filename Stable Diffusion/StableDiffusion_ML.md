@@ -199,7 +199,7 @@ Another reason for the success of diffusion models over previous architectures i
 
 ### Decoder
 
-Denoising our latent to the suggested latent destination is the first stage of our inference process. Arriving at a successful pixel-space image from our latent is still dependent on the decoder. Only the decoding portion of our autoencoder is employed at inference time. Ideally, it performs successfully scaling the denoised latent to higher dimensions and translating the image's features to pixel values. **something about perceptual loss** The role of the patch-based adversarial loss in the training stage encourages the decoder to ensure fidelity across the image and promotes the inclusion of high-frequency details in the final decoded product. Training a discriminator in partnership with the autoencoder pushes the decoder to ensure decoded images are as realistic and inclusive of superficial details as the real images to which they are compared. Luckily, this push towards realism and detailed images in training doubles as an insurance policy for the fidelity of generated images at inference time.
+After the diffusion process takes place in the latent space, the decoder’s responsibility is to decode the latent to pixel-space. Following training, the decoder should be capable of a successful reconstruction of the latent (thanks to the LPIPS metric) and the reintroduction of high-frequency details boosting the realism of the image (thanks to the patch-based adversarial loss). These two training objectives ensure the successful upsampling and translation of the denoised latent to a high fidelity image.
 
 ## LDM Success
 
