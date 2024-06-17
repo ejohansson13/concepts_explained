@@ -11,7 +11,7 @@ The first of a generation of research papers re-examining diffusion models for i
 The forward process of adding noise to an image was dependent on a predetermined, linear schedule of variances. Adhering to Markov chain principles, each state was solely dependent on the previous state. A benefit of expressing the forward process as a schedule of variances was its sampling ability of any arbitrary latent variable along the chain. Changing the notation of the forward variance and taking the cumulative product of the rewritten variance allowed succinct expression of any state of x dependent only on the initial state. This removed the sequential restrictions of a Markov chain in the forward process. This equation can be seen below. Mention alpha = 1-beta, alpha_bar = cumpord(alpha) and beta is forward process variance.
 
 <p align="center" width="100%">
-  <img src="/Stable Diffusion/Images/Schedulers_Images/nice_property.png" width="100%">
+  <img src="/Stable Diffusion/Images/Schedulers_Images/nice_property.png" width="50%">
 </p>
 
 The negative log likelihood of the reverse process (removing noise to arrive at a clean signal) could be optimized to arrive at an objective function comparing Gaussians via KL divergence. This simplified objective function was then optimizable via MSE and easily compatible with neural network architectures. The rewritten likelihood can be seen below.
