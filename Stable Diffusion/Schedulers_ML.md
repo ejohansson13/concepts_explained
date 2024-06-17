@@ -82,6 +82,8 @@ Talk about avoiding connection directly between noisy input to network and direc
 
 # Conclusion
 
+If you do want a look at some of the derivations and an intuitive understanding of both schedulers and the advancement of diffusion models overall, I urge you to check out [Lillian Weng's blog on diffusion models](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/) which is an invaluable resource summarizing the relevant literature.
+
 ## Citations
 
 [1] https://www.youtube.com/watch?v=IVcl0bW3C70&t=903s
