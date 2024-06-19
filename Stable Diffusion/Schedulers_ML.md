@@ -4,6 +4,12 @@ This page is intended to cover schedulers and the more popular scheduling algori
 
 All quotes, ideas, and images from the summarization of each research paper are taken from the accompanying paper unless cited otherwise.
 
+## Background
+
+Forward process: addition of noise.
+Reverse process: intractable reverse process of denoising variables, entire dataset is necessary to calculate it.
+Generative process: approximation of reverse process.
+
 ## DDPM
 
 The first of a generation of research papers re-examining diffusion models for image synthesis, [Denoising Diffusion Probabilistic Models (DDPM)](https://arxiv.org/abs/2006.11239) proposed that diffusion models were capable of synthesizing high-quality images and bridged [noise conditional score networks](https://arxiv.org/pdf/1907.05600) during training with annealed Langevin dynamics while sampling. Following the [2015 Sohl-Dickstein et. al paper](https://arxiv.org/pdf/1503.03585), diffusion models were Markov chains parameterized with Gaussian noise and trained to reverse the diffusion process to generate samples matching their training data. Sohl-Dickstein proved that, given small additions of Gaussian noise along the Markov chain, both the forward and reverse processes would express valid samples from the same underlying distribution.
