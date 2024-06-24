@@ -119,3 +119,5 @@ If you do want a look at some of the derivations and an intuitive understanding 
 [1] https://www.youtube.com/watch?v=IVcl0bW3C70&t=903s
 
 [2] https://huggingface.co/docs/diffusers/v0.14.0/en/api/schedulers/euler
+
+[3] Helpful with DDIMs - https://www.cs.cmu.edu/~epxing/Class/10708-17/notes-17/10708-scribe-lecture19.pdf
