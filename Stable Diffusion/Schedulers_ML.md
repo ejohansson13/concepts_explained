@@ -12,6 +12,8 @@ Generative process: approximation of reverse process.
 
 ## DDPM
 
+Signal rescaling.
+
 The first of a generation of research papers re-examining diffusion models for image synthesis, [Denoising Diffusion Probabilistic Models (DDPM)](https://arxiv.org/abs/2006.11239) proposed that diffusion models were capable of synthesizing high-quality images and bridged [noise conditional score networks](https://arxiv.org/pdf/1907.05600) during training with annealed Langevin dynamics while sampling. Following the [2015 Sohl-Dickstein et. al paper](https://arxiv.org/pdf/1503.03585), diffusion models were Markov chains parameterized with Gaussian noise and trained to reverse the diffusion process to generate samples matching their training data. Sohl-Dickstein proved that, given small additions of Gaussian noise along the Markov chain, both the forward and reverse processes would express valid samples from the same underlying distribution.
 
 The forward process of adding noise to an image was dependent on a predetermined, linear schedule of variances. Adhering to Markov chain principles, each state was solely dependent on the previous state. A benefit of expressing the forward process as a schedule of variances was its sampling ability of any arbitrary latent variable along the chain. Changing the notation of the forward variance and taking the cumulative product of the rewritten variance allowed succinct expression of any state of x dependent only on the initial state. This removed the sequential restrictions of a Markov chain in the forward process. This equation can be seen below. Mention alpha = 1-beta, alpha_bar = cumpord(alpha) and beta is forward process variance.
