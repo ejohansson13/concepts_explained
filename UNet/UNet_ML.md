@@ -1,5 +1,7 @@
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 
+Pixel-perfect segmentation thanks to skip connection and success with small datasets.
+
 # U-Net
 
 The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency with a small dataset announced its efficacy for computer vision tasks. This page will discuss the U-Net and its architecture. It assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of a machine learning background.
@@ -58,14 +60,19 @@ Decoding the encoded features involves a similar process to the encoding path, i
 
 In the original paper, upsampling was “up-convolution”. Every feature value was quadrupled, doubling the number of rows and columns of feature data before being passed through a 2x2 convolution to halve the number of channels. Halving the number of channels is required to create space for the image features arriving from the skip connection. In the image above, the number of channels from the decoder stage features are convolved down to 64 channels following the upsampling operation (blue half of rectangle above green arrow). Augmenting the decoder stage features are the encoder stage features arriving via skip connection (white half of rectangle above green arrow). Concatenating the two stages of features together, the network arrives at the 392x392x128 dimensionality of image feature representation depicted above. Since the release of the paper, newer iterations have implemented upsampling via transposed convolutions, increasing the number of parameters and computations required of the model in the hope of a more accurate upsampling procedure.
 
+Augmentation of image features from skip connections and upsampled image features.
 After upsampling, image features are propagated through the same blocks of convolutions and activation functions [covered above](#convolution-block) in the hopes of further refining the semantic analysis of the image information while incorporating the spatial information of the encoder stage features.
 
 #### Final Layer
 
 After having trained on its myriad of images, the network employs a 1x1 convolutional layer at the end of the architecture to control the number of output channels. Each feature vector is mapped to the desired number of classes.
 
+### Loss Metrics
+
+MSE and backpropagation.
+
 ## Impact
 
-The U-Net's success with image processing tasks led to its ubiquity for computer vision problems. Similar to the [Transformer](https://arxiv.org/pdf/1706.03762.pdf) architecture's triumph with natural language processing tasks, the U-Net quickly found success with a variety of computer vision tasks, including: image segmentation, image classification, image restoration, image synthesis, and image superresolution. A significant component of the U-Net's success with image processing tasks arrives from its [inductive bias](https://arxiv.org/pdf/2105.05233). The incorporation of spatial information from encoder-stage features by the decoding stage ensures accurate positioning of all objects in the reconstructed image. Following the success of [Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2006.11239), U-Nets became the signature backbones of diffusion models.
+The U-Net's success with image processing tasks led to its ubiquity for computer vision problems. Similar to the [Transformer](https://arxiv.org/pdf/1706.03762.pdf) architecture's triumph with natural language processing tasks, the U-Net quickly found success with a variety of computer vision tasks, including: image segmentation, image synthesis, and image superresolution. A significant component of the U-Net's success with image processing tasks arrives from its [inductive bias](https://arxiv.org/pdf/2105.05233). The incorporation of spatial information from encoder-stage features by the decoding stage ensures accurate pixel-based positioning of all objects in the reconstructed image. This compatibility with high-resolution data is particularly useful for image synthesis. Following the success of [Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2006.11239), U-Nets became the signature backbones of diffusion models and continue to be employed in the most competitive [contemporary image generation architectures](https://cdn.openai.com/papers/dall-e-3.pdf).
 
 Thanks to Olaf Ronneberger, Philipp Fischer, and Thomas Brox, the arrival of the U-Net accelerated performance in computer vision tasks and contributed heavily to the advancement of diffusion models, one of the most exciting applications of generative artificial intelligence in the last five years.
