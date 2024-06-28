@@ -1,7 +1,5 @@
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 
-Pixel-perfect segmentation thanks to skip connection and success with small datasets.
-
 # U-Net
 
 The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency with a small dataset announced its efficacy for computer vision tasks. This page will discuss the U-Net and its architecture. It assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of a machine learning background.
@@ -69,7 +67,7 @@ After having trained on its myriad of images, the network employs a 1x1 convolut
 
 ### Loss Metrics
 
-MSE and backpropagation.
+After the output layer funnels the image features to the preferred number of channels, the pixel-space image is compatible for comparison with the ground-truth masks. The loss function measuring the distance between the model's predicted output and the ground-truth is cross entropy. Following the cross entropy calculation, the determined loss is backpropagated throughout the network, fine-tuning network parameters and improving future predictions. With enough iterations, the model converges on the ground-truth images and becomes a competent performer of the computer vision task. 
 
 ## Impact
 
