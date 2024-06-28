@@ -1,7 +1,5 @@
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 
-Make reference to doubling channels while halving height and width dimensions is to preserve time complexity throughout network. Common approach, can also reference ResNet paper. Same computational requirements at every stage.
-
 # U-Net
 
 The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency with a small dataset announced its efficacy for computer vision tasks. This page will discuss the U-Net and its architecture. It assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of a machine learning background.
@@ -24,7 +22,7 @@ In the encoding path, the described blocks (depicted as blue arrows in the below
   <img src="/UNet/Images/first_downsampling_step.png" alt="The first max pooling operation performed on the contracting path of the U-Net" width="20%"
 </p>
 
-Each downsampling operation (red arrow in the above diagram) is a 2x2 max pooling operation, taking the maximum value in a 2x2 window of the image features. Max pooling functions as an effortless downsampling application, halving the height and width dimensionality of the image features. Repeated applications quickly distill the high dimensional image information into their critical image features. 
+Each downsampling operation (red arrow in the above diagram) is a 2x2 max pooling operation with a stride of 2, taking the maximum value in a 2x2 window of the image features. Max pooling functions as an effortless downsampling application, halving the height and width dimensionality of the image features. Repeated applications quickly distill the high dimensional image information into their critical image features. 
 
 ### Bridge
 
@@ -34,11 +32,11 @@ After repeated downsampling, image features arrive at the bridge, illustrated be
   <img src="/UNet/Images/bridge.png" alt="Diagram of the bridge of the U-Net architure taken from the corresponding 2015 research paper" width="35%"
 </p>
 
-For custom architectures, the location of the bridge in the architecture can be a deliberate choice. Determining the lowest dimensionality for image features requires analysis of the risk of information loss at lower dimensions, the opportunity given to the network to analyze the image features, and the number of model parameters compatible with your available compute resources (likely marginalized as matmul-concentrated resources continue to grow).
+For custom architectures, the location of the bridge in the architecture can be a deliberate choice. Determining the lowest dimensionality for image features requires analysis of the risk of information loss at lower dimensions, the number of layers provided to the network to comprehensively analyze image features, and the number of model parameters compatible with your available compute resources (likely a marginalized concern as matmul-concentrated compute continues to grow).
 
 ### Skip connections
 
-Skip connections (gray arrow in below diagram) offer another framework for linking the encoder and decoder, connecting corresponding stages symmetrically across the architecture. After passing through an encoding stage (prior to being downsampled), image features are transmitted across the architecture and concatenated onto the equivalent decoding stage. The original research paper accomplished this by cropping the encoder stage image features to satisfy the dimensions of the decoder stage features. Implementing padding in all convolutions eliminates this requirement.
+Skip connections (gray arrow in the below diagram) offer another framework for linking the encoder and decoder, connecting corresponding stages symmetrically across the architecture. After passing through an encoding stage (prior to being downsampled), image features are transmitted across the architecture and concatenated onto the equivalent decoding stage. The original research paper accomplished this by cropping the encoder stage image features to satisfy the dimensions of the decoder stage features. Implementing padding in all convolutions eliminates this requirement.
 
 <p align="center" width="100%">
   <img src="/UNet/Images/connecting_path_crop.png" alt="Crop of the U-Net architure taken from the corresponding 2015 research paper" width="75%"
@@ -60,7 +58,7 @@ Decoding the encoded features involves a similar process to the encoding path, i
 
 In the original paper, upsampling was “up-convolution”. Every feature value was quadrupled, doubling the number of rows and columns of feature data before being passed through a 2x2 convolution to halve the number of channels. Halving the number of channels is required to create space for the image features arriving from the skip connection. In the image above, the number of channels from the decoder stage features are convolved down to 64 channels following the upsampling operation (blue half of rectangle above green arrow). Augmenting the decoder stage features are the encoder stage features arriving via skip connection (white half of rectangle above green arrow). Concatenating the two stages of features together, the network arrives at the 392x392x128 dimensionality of image feature representation depicted above. Since the release of the paper, newer iterations have implemented upsampling via transposed convolutions, increasing the number of parameters and computations required of the model in the hope of a more accurate upsampling procedure.
 
-After upsampling, image features are then propagated through further blocks of convolutions and activation functions in the hopes of further refining the semantic analysis of the image information while incorporating the spatial information provided by the encoder stage features.
+After upsampling, image features are propagated through the same blocks of convolutions and activation functions [covered above](#convolution-block) in the hopes of further refining the semantic analysis of the image information while incorporating the spatial information of the encoder stage features.
 
 #### Final Layer
 
