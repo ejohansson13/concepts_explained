@@ -1,5 +1,11 @@
 ![A screenshot of the UNet architecture from its corresponding 2015 research paper](/UNet/Images/unet_architecture.png)
 
+Could touch on localization - each pixel should have class label
+
+Convolution best for localization -> considers local region; Convolution can receive combined features from skip connections and upsampled features for better localization
+
+Larger patches require more max pooling layers that reduce localization accuracy, while smaller patches reduce context available to network
+
 # U-Net
 
 The original U-Net research paper was released in 2015 and demonstrated improved success with biomedical image segmentation. The architecture's efficiency with a small dataset announced its efficacy for computer vision tasks. This page will discuss the U-Net and its architecture. It assumes familiarity with machine learning technology and operations. If you don't have any machine learning experience, check out my [other page on the U-Net](https://github.com/ejohansson13/concepts_explained/blob/main/UNet/UNet.md), which makes no assumptions of a machine learning background.
