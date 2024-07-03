@@ -152,10 +152,16 @@ One way to think of this is through the RGB color space. RGB images are stored w
 <p align="center" width="100%">
   <img src="/UNet/Images/image_channels.png" alt="An example image broken down to its respective red, green, and blue channels." width="75%">
 </p>
+<p align="center">
+  <em>Image from https://e2eml.school/convert_rgb_to_grayscale</em>
+</p>
 
 Since we know that each image is a matrix, we can also consider channels as a stack of matrices. Each matrix in our stack corresponds to one channel in our image. Similar to above, our image will have three channels, one for each of the RGB colors. Therefore, our stack will have three matrices. Each matrix has the same height, width, and number of cells. Each cell in our matrices corresponds to one pixel of our image. The value of each cell illustrates the magnitude of the channel-specific color in that pixel of our image. In the example below, these values will range from 0-1, with 0 demonstrating an absence of color and 1 representing the full magnitude of that color. As we can see, the upper-left pixel in our image appears to be fairly split between red and blue with a smaller emphasis on green. The bottom-left pixel appears to have a heavy red influence, but green and blue are also apparent in that image pixel.
 <p align="center" width="100%">
   <img src="/UNet/Images/channels.png" alt="An image matrix with pixel values corresponding to its red, green, and blue channels." width="25%">
+</p>
+<p align="center">
+  <em>Image from https://e2eml.school/convert_rgb_to_grayscale</em>
 </p>
 
 The examples above explain the concept of image channels by tying each channel to one of the RGB colors. However, channels don’t have to be restricted to the color space. Channels can represent any image feature, and often represent image information we take for granted visually, but are essential to a computer’s comprehension. Presenting an image in more channels offers more information on its features and gives the network more opportunities to learn image information.
