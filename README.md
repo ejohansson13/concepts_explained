@@ -1,4 +1,8 @@
 # Concepts Explained
+
+
+**Previously the home of all explanatory material covering technologies employed in my personal projects**
+
 On this repo's purpose:
 Welcome to concepts explained!! In this repository, I'll be covering machine learning technology and architectures I come across in the development of personal projects. There's a common train of thought that if you can't explain a specialized concept to an individual outside your specialized field, you don't truly understand said concept. This space offers me an opportunity to explain all kinds of specialized machine learning concepts to those outside of machine learning. 
 
